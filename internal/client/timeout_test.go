@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -109,7 +110,10 @@ func TestRequestTimeoutCoversHeadersAndBody(t *testing.T) {
 				defer cancel()
 				start := time.Now()
 				err := op.run(ctx, c)
-				if !errors.Is(err, context.DeadlineExceeded) {
+				// Older supported Go versions expose HTTP timeouts through net.Error
+				// without matching context.DeadlineExceeded through errors.Is.
+				var timeoutErr net.Error
+				if !errors.Is(err, context.DeadlineExceeded) && !(errors.As(err, &timeoutErr) && timeoutErr.Timeout()) {
 					t.Fatalf("expected timeout error, got %v", err)
 				}
 				if elapsed := time.Since(start); elapsed > time.Second {

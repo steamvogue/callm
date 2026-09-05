@@ -43,7 +43,7 @@ Validation:
 - The [CLI regression harness](probe_cli.py) executes 91 local scenarios and asserts the repaired behaviors: [captured requests and outputs](probe-results-fixed.json).
 - Linux amd64/arm64, macOS amd64/arm64, and Windows amd64 compile checks: [results](cross-build-fixed.txt). Native macOS/Windows execution was not performed.
 - `actionlint`, ShellCheck, and `git diff --check` pass. A fake executable verifies live-script success, incorrect-marker failure, and all-skipped exit 2 without paid provider calls.
-- Local race execution remains unavailable because ThreadSanitizer rejects this ARM host's VMA layout. The code change enables it in Linux amd64 CI; CI itself was not run remotely.
+- Local race execution remains unavailable because ThreadSanitizer rejects this ARM host's VMA layout. Linux amd64 CI now runs race detection. Its first run found a Go 1.22 timeout-error assertion mismatch (requests timed out correctly); the assertion now also checks `net.Error.Timeout()`. See the [CI runs](https://github.com/steamvogue/callm/actions/workflows/ci.yml) for release validation.
 - Provider generation quality, live billing, and account-specific availability have not been tested. Current provider documentation supports the selected Claude 4.6 model and manual thinking configuration, and the public OpenRouter catalog lists the gateway shortcut.
 
 Reproduce from the project root:
