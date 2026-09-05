@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"io"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -13,7 +14,7 @@ import (
 
 func parsePricePerMillion(priceVal interface{}) string {
 	if priceVal == nil {
-		return "0"
+		return "unknown"
 	}
 	var f float64
 	switch v := priceVal.(type) {
@@ -24,7 +25,14 @@ func parsePricePerMillion(priceVal interface{}) string {
 	case string:
 		if parsed, err := strconv.ParseFloat(v, 64); err == nil {
 			f = parsed
+		} else {
+			return "unknown"
 		}
+	default:
+		return "unknown"
+	}
+	if math.IsNaN(f) || math.IsInf(f, 0) || f < 0 {
+		return "unknown"
 	}
 	perMtok := f * 1000000
 	if perMtok == 0 {
@@ -52,8 +60,8 @@ func PrintModelsTable(out io.Writer, models []client.ModelInfo, filter string) e
 			continue
 		}
 
-		priceIn := "0"
-		priceOut := "0"
+		priceIn := "unknown"
+		priceOut := "unknown"
 		if m.Pricing != nil {
 			priceIn = parsePricePerMillion(m.Pricing.Prompt)
 			priceOut = parsePricePerMillion(m.Pricing.Completion)
@@ -64,8 +72,8 @@ func PrintModelsTable(out io.Writer, models []client.ModelInfo, filter string) e
 			modalities = strings.Join(m.Architecture.InputModalities, ",")
 		}
 
-		fmt.Fprintf(w, "%s\t%d\t%s\t%s\t%s\n",
-			m.ID, m.ContextLength, priceIn, priceOut, modalities)
+		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n",
+			m.ID, formatContext(m.ContextLength), priceIn, priceOut, modalities)
 	}
 
 	return w.Flush()
@@ -73,10 +81,10 @@ func PrintModelsTable(out io.Writer, models []client.ModelInfo, filter string) e
 
 // PrintModelInfo displays detailed specifications for a single model.
 func PrintModelInfo(out io.Writer, m client.ModelInfo) {
-	priceIn := "0"
-	priceOut := "0"
-	cacheRead := "0"
-	cacheWrite := "0"
+	priceIn := "unknown"
+	priceOut := "unknown"
+	cacheRead := "unknown"
+	cacheWrite := "unknown"
 	if m.Pricing != nil {
 		priceIn = parsePricePerMillion(m.Pricing.Prompt)
 		priceOut = parsePricePerMillion(m.Pricing.Completion)
@@ -111,7 +119,7 @@ func PrintModelInfo(out io.Writer, m client.ModelInfo) {
 
 	fmt.Fprintf(out, "Model ID:         %s\n", m.ID)
 	fmt.Fprintf(out, "Canonical Slug:   %s\n", slug)
-	fmt.Fprintf(out, "Context Length:   %d tokens\n", m.ContextLength)
+	fmt.Fprintf(out, "Context Length:   %s\n", formatContext(m.ContextLength))
 	fmt.Fprintf(out, "Modality:         %s\n", modality)
 	fmt.Fprintf(out, "Input Modalities: %s\n", inputs)
 	fmt.Fprintf(out, "Output Modalities:%s\n", outputs)
@@ -120,4 +128,11 @@ func PrintModelInfo(out io.Writer, m client.ModelInfo) {
 	fmt.Fprintf(out, "Cache Read:       $%s/Mtok\n", cacheRead)
 	fmt.Fprintf(out, "Cache Write:      $%s/Mtok\n", cacheWrite)
 	fmt.Fprintf(out, "Supported Params: %s\n", supported)
+}
+
+func formatContext(n int64) string {
+	if n <= 0 {
+		return "unknown"
+	}
+	return strconv.FormatInt(n, 10)
 }

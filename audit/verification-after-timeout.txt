@@ -1,0 +1,4 @@
+ok  	callm/cmd/callm	(cached)	coverage: 59.1% of statements
+ok  	callm/internal/client	0.649s	coverage: 70.1% of statements
+	callm/internal/config		coverage: 0.0% of statements
+ok  	callm/internal/ui	(cached)	coverage: 39.2% of statements

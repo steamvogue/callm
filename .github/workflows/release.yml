@@ -51,12 +51,14 @@ jobs:
             echo "--> Compiling ${GOOS}/${GOARCH}..."
             mkdir -p "${STAGING_DIR}"
             GOOS="${GOOS}" GOARCH="${GOARCH}" CGO_ENABLED=0 go build -ldflags="${LDFLAGS}" -o "${STAGING_DIR}/${BIN_NAME}" ./cmd/callm
-            cp README.md LICENSE "${STAGING_DIR}/"
+            cp README.md LICENSE CHANGELOG.md "${STAGING_DIR}/"
+            mkdir -p "${STAGING_DIR}/skills/callm"
+            cp skills/callm/SKILL.md "${STAGING_DIR}/skills/callm/"
 
             if [ "${GOOS}" = "windows" ]; then
-              (cd "${STAGING_DIR}" && zip "../dist/${ARCHIVE_NAME}.zip" "${BIN_NAME}" README.md LICENSE)
+              (cd "${STAGING_DIR}" && zip "../dist/${ARCHIVE_NAME}.zip" "${BIN_NAME}" README.md LICENSE CHANGELOG.md skills/callm/SKILL.md)
             else
-              tar -czf "dist/${ARCHIVE_NAME}.tar.gz" -C "${STAGING_DIR}" "${BIN_NAME}" README.md LICENSE
+              tar -czf "dist/${ARCHIVE_NAME}.tar.gz" -C "${STAGING_DIR}" "${BIN_NAME}" README.md LICENSE CHANGELOG.md skills/callm/SKILL.md
             fi
 
             rm -rf "${STAGING_DIR}"

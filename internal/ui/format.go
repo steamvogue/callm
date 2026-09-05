@@ -23,11 +23,11 @@ func IsTerminal(w io.Writer) bool {
 
 // StreamRenderer manages visual output of reasoning and content tokens.
 type StreamRenderer struct {
-	Out           io.Writer
-	Err           io.Writer
-	IsTTY         bool
-	ShowReasoning bool
-	OnlyReasoning bool
+	Out            io.Writer
+	Err            io.Writer
+	IsTTY          bool
+	ShowReasoning  bool
+	OnlyReasoning  bool
 	InReasoning    bool
 	HasReasoned    bool
 	ContentStarted bool
@@ -183,8 +183,8 @@ func PrintStats(err io.Writer, duration time.Duration, usage *client.Usage, mode
 		promptTok = usage.PromptTokens
 		compTok = usage.CompletionTokens
 		totalTok = usage.TotalTokens
-		cost := usage.GetCostFloat()
-		if cost > 0 {
+		cost, available := usage.CostValue()
+		if available {
 			costStr = fmt.Sprintf(" | cost: $%.6f", cost)
 		}
 	}
@@ -195,8 +195,11 @@ func PrintStats(err io.Writer, duration time.Duration, usage *client.Usage, mode
 		speedStr = fmt.Sprintf(" | %.1f tok/s", tokPerSec)
 	}
 
-	statsText := fmt.Sprintf("[stats: %v | %d tokens (%d in / %d out)%s%s | model: %s]",
-		duration.Round(time.Millisecond), totalTok, promptTok, compTok, speedStr, costStr, model)
+	tokens := "usage unavailable"
+	if usage != nil {
+		tokens = fmt.Sprintf("%d tokens (%d in / %d out)", totalTok, promptTok, compTok)
+	}
+	statsText := fmt.Sprintf("[stats: %v | %s%s%s | model: %s]", duration.Round(time.Millisecond), tokens, speedStr, costStr, model)
 
 	if isTTY {
 		fmt.Fprintf(err, "\033[90m%s\033[0m\n", statsText)

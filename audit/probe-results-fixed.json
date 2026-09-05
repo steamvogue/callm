@@ -1,0 +1,1722 @@
+[
+  {
+    "name": "combined-generic-knobs",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "[stats: 2ms | 5 tokens (3 in / 2 out) | 1081.4 tok/s | cost: $0.125000 | model: custom]\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "custom",
+          "messages": [
+            {
+              "role": "system",
+              "content": "system text"
+            },
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "temperature": 0,
+          "max_tokens": 321,
+          "reasoning_effort": "medium",
+          "top_p": 0,
+          "response_format": {
+            "type": "json_object"
+          }
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias -m",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "custom-model",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --model",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "custom-model",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias -k",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer explicit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --key",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer explicit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --api-key",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer explicit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --key-env",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer explicit-env-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --api-key-env",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer explicit-env-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias -s",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "system",
+              "content": "system text"
+            },
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --system",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "system",
+              "content": "system text"
+            },
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias -t",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "temperature": 0.7
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --temp",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "temperature": 0.7
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --temperature",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "temperature": 0.7
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias -n",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "max_tokens": 128
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --max-tokens",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "max_tokens": 128
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --effort",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --reasoning-effort",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --api",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/custom/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "alias --base-url",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/custom/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --st",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --or",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --ds",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek-chat",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --ant",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/messages",
+        "body": {
+          "model": "claude-sonnet-4-6",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "max_tokens": 4096
+        },
+        "authorization": null,
+        "x-api-key": "audit-dummy"
+      }
+    ]
+  },
+  {
+    "name": "preset --anthropic",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/messages",
+        "body": {
+          "model": "claude-sonnet-4-6",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "max_tokens": 4096
+        },
+        "authorization": null,
+        "x-api-key": "audit-dummy"
+      }
+    ]
+  },
+  {
+    "name": "preset --claude",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "anthropic/claude-sonnet-4.6",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --ms",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "moonshot-v1-auto",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --moonshot",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "moonshot-v1-auto",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --kimi",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "moonshot-v1-auto",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --zai",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "glm-4-flash",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --glm",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "glm-4-flash",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --qw",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "qwen-plus",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --qwen",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "qwen-plus",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --oa",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "gpt-4o",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --openai",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "gpt-4o",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --groq",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "llama-3.3-70b-versatile",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "preset --ollama",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek-r1",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "files-and-images",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "File `/tmp/callm-audit-rj3f1m2i/context.txt`:\n```txt\ncontext-data\n```\n\nFile `/tmp/callm-audit-rj3f1m2i/context.txt`:\n```txt\ncontext-data\n```\n\nprompt"
+                },
+                {
+                  "type": "image_url",
+                  "image_url": {
+                    "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII="
+                  }
+                },
+                {
+                  "type": "image_url",
+                  "image_url": {
+                    "url": "https://example.com/image.png"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "ready-stdin",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "input-context\n\nprompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "default-streaming-redirected-output",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "output --stream",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "reason",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "stream": true
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "output --no-stream",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "reason",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "output --stream=false",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "reason",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "output --no-stream --stream",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: --stream conflicts with --no-stream and --json\n",
+    "requests": []
+  },
+  {
+    "name": "output --reasoning",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "reason\n\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "reason",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "output --no-reasoning",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "reason",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "output --only-reasoning",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "reason\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "reason",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "output --only-reasoning --no-reasoning",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: --no-reasoning conflicts with --reasoning and --only-reasoning\n",
+    "requests": []
+  },
+  {
+    "name": "nonstream inline --no-reasoning",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "inline",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "nonstream inline --only-reasoning",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "private\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "inline",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "nonstream inline --reasoning",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "private\n\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "inline",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "nonstream thought --no-reasoning",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "thought",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "nonstream thought --only-reasoning",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "thought-only\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "thought",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "nonstream thought --reasoning",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "thought-only\n\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "thought",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "json-is-lossy-and-skips-stats",
+    "exit": 0,
+    "stdout": "{\"id\": \"test\", \"model\": \"deepseek/deepseek-v4-flash-0731\", \"provider_extension\": \"keep-me\", \"choices\": [{\"message\": {\"role\": \"assistant\", \"content\": \"answer\", \"thought\": \"\", \"reasoning\": \"\"}, \"finish_reason\": \"stop\"}], \"usage\": {\"prompt_tokens\": 3, \"completion_tokens\": 2, \"total_tokens\": 5, \"cost\": 0.125}}\n",
+    "stderr": "[stats: 1ms | 5 tokens (3 in / 2 out) | 1665.1 tok/s | cost: $0.125000 | model: deepseek/deepseek-v4-flash-0731]\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "string-cost",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "[stats: 1ms | 5 tokens (3 in / 2 out) | 1538.7 tok/s | cost: $0.125000 | model: string-cost]\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "string-cost",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "stream-stats-with-opt-in-usage-server",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "[stats: 1ms | 5 tokens (3 in / 2 out) | 1627.4 tok/s | cost: $0.125000 | model: deepseek/deepseek-v4-flash-0731]\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "stream malformed",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: invalid stream JSON: invalid character 'b' looking for beginning of object key string\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "malformed",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "stream": true
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "stream truncated",
+    "exit": 1,
+    "stdout": "answer\n",
+    "stderr": "callm: stream ended before [DONE]: unexpected EOF\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "truncated",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "stream": true
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "stream no-space",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "no-space",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "stream": true
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "stream json-stream",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: stream ended before [DONE]: unexpected EOF\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "json-stream",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "stream": true
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "nonstream-body-error",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: API error (status 200): provider failure\n",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "body-error",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "raw-http-error",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: API error (status 429): rate limited\n",
+    "requests": [
+      {
+        "path": "/fail/endpoint",
+        "body": {},
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "raw-unknown-flag",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "flag provided but not defined: -bogus\nUsage of raw:\n  -ant\n    \tUse Anthropic Direct API preset\n  -anthropic\n    \tUse Anthropic Direct API preset\n  -api string\n    \tCustom API base URL\n  -api-key string\n    \tAPI key\n  -api-key-env string\n    \tEnvironment variable name containing API key\n  -base-url string\n    \tCustom API base URL\n  -claude\n    \tShortcut to use Claude model\n  -ds\n    \tUse DeepSeek Direct preset\n  -glm\n    \tUse Zhipu AI (GLM) preset\n  -groq\n    \tUse Groq OSS preset\n  -header-timeout value\n    \theader-timeout (default 5m0s; seconds or duration; 0 disables)\n  -k string\n    \tAPI key\n  -key string\n    \tAPI key\n  -key-env string\n    \tEnvironment variable name containing API key\n  -kimi\n    \tUse Moonshot AI (Kimi) preset\n  -moonshot\n    \tUse Moonshot AI (Kimi) preset\n  -ms\n    \tUse Moonshot AI (Kimi) preset\n  -oa\n    \tUse OpenAI Direct preset\n  -ollama\n    \tUse Ollama Local preset\n  -openai\n    \tUse OpenAI Direct preset\n  -or\n    \tUse OpenRouter preset\n  -qw\n    \tUse Alibaba DashScope (Qwen) preset\n  -qwen\n    \tUse Alibaba DashScope (Qwen) preset\n  -st\n    \tUse Straitly preset (default)\n  -timeout value\n    \ttimeout (default 5m0s; seconds or duration; 0 disables)\n  -zai\n    \tUse Zhipu AI (GLM) preset\ncallm: flag provided but not defined: -bogus\n",
+    "requests": []
+  },
+  {
+    "name": "models-command",
+    "exit": 0,
+    "stdout": "MODEL        CONTEXT   $/Mtok-IN   $/Mtok-OUT   MODALITIES\ntest-model   unknown   unknown     unknown      text\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/models",
+        "body": {},
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "documented-preset-before-models",
+    "exit": 0,
+    "stdout": "MODEL        CONTEXT   $/Mtok-IN   $/Mtok-OUT   MODALITIES\ntest-model   unknown   unknown     unknown      text\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/models",
+        "body": {},
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "info-command",
+    "exit": 0,
+    "stdout": "Model ID:         test-model\nCanonical Slug:   test-model\nContext Length:   unknown\nModality:         text->text\nInput Modalities: text\nOutput Modalities:text\nPricing (Prompt): $unknown/Mtok\nPricing (Comp):   $unknown/Mtok\nCache Read:       $unknown/Mtok\nCache Write:      $unknown/Mtok\nSupported Params: none specified\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/models",
+        "body": {},
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "info-global-url-precedence",
+    "exit": 0,
+    "stdout": "Model ID:         test-model\nCanonical Slug:   test-model\nContext Length:   unknown\nModality:         text->text\nInput Modalities: text\nOutput Modalities:text\nPricing (Prompt): $unknown/Mtok\nPricing (Comp):   $unknown/Mtok\nCache Read:       $unknown/Mtok\nCache Write:      $unknown/Mtok\nSupported Params: none specified\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/global/models",
+        "body": {},
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "invalid --max-tokens=123junk",
+    "exit": 1,
+    "stdout": "callm dev \u2014 High-performance CLI for calling LLMs across Straitly, OpenRouter, DeepSeek, Anthropic, Moonshot, Zhipu, Qwen, OpenAI, Groq, and Ollama.\n\nUsage:\n  callm [chat] [OPTIONS] [\"PROMPT\"...]\n                                    Chat completion. Reads PROMPT from arguments, files, or stdin.\n  callm models [FILTER]            List available models with context length, pricing, and modalities.\n  callm info <MODEL>               Inspect full technical specs, pricing, and parameters for a model.\n  callm raw <ENDPOINT> '<JSON>'    POST raw JSON body to any endpoint (e.g. /chat/completions).\n  callm version | -v | --version   Print version, commit, and build date.\n  callm -h | --help                Show this help message.\n\nProvider Presets:\n  --st                             Straitly Gateway (default)\n                                   URL: https://api.straitly.ai/v1 | Model: deepseek/deepseek-v4-flash-0731\n  --or                             OpenRouter Gateway\n                                   URL: https://openrouter.ai/api/v1 | Model: deepseek/deepseek-v4-flash-0731\n  --ds                             DeepSeek Direct API\n                                   URL: https://api.deepseek.com | Model: deepseek-chat\n  --ant, --anthropic               Anthropic Direct API (/v1/messages)\n                                   URL: https://api.anthropic.com/v1 | Model: claude-sonnet-4-6\n  --claude                         Claude Shortcut (selects Claude Sonnet 4.6 on active gateway)\n  --ms, --moonshot, --kimi         Moonshot AI (Kimi)\n                                   URL: https://api.moonshot.cn/v1 | Model: moonshot-v1-auto\n  --zai, --glm                     Zhipu AI (GLM / ZAI)\n                                   URL: https://open.bigmodel.cn/api/paas/v4 | Model: glm-4-flash\n  --qw, --qwen                     Alibaba Cloud DashScope (Qwen)\n                                   URL: https://dashscope.aliyuncs.com/compatible-mode/v1 | Model: qwen-plus\n  --oa, --openai                   OpenAI Direct API\n                                   URL: https://api.openai.com/v1 | Model: gpt-4o\n  --groq                           Groq Ultra-Fast OSS\n                                   URL: https://api.groq.com/openai/v1 | Model: llama-3.3-70b-versatile\n  --ollama                         Ollama Local Gateway\n                                   URL: http://localhost:11434/v1 | Model: deepseek-r1\n  --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)\n\nOptions:\n  -m, --model MODEL                Model ID override\n  -k, --key, --api-key KEY         API key value override\n      --key-env, --api-key-env ENV Custom environment variable name containing API key\n  -s, --system SYSTEM              System prompt instruction\n  -t, --temp TEMPERATURE           Sampling temperature (e.g. 0.7, 0.0)\n  -n, --max-tokens N               Maximum tokens to generate\n      --max-completion-tokens N    Maximum completion tokens (for OpenAI o1/o3 reasoning models)\n      --effort EFFORT              Reasoning effort: low, medium, high (OpenAI o1/o3, OpenRouter, Claude)\n      --thinking-budget N          Extended thinking token budget (Claude / OpenRouter)\n      --top-p P                    Top-p nucleus sampling\n  -f, --file FILE                  Include contents of FILE in prompt context (can repeat)\n      --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)\n      --json-object                Request structured JSON object response_format\n      --stream                     Force streaming response (default when stdout is terminal)\n      --no-stream                  Disable streaming response\n      --reasoning                  Display reasoning / chain-of-thought tokens (default in terminal)\n      --no-reasoning               Hide reasoning tokens\n      --only-reasoning             Only output reasoning tokens (suppress final answer)\n      --stats                      Print token usage, latency, tok/s, and cost to stderr\n      --json                       Output full unparsed JSON response\n      --header-timeout DURATION    Response-header timeout (default 300s; 0 disables)\n      --idle-timeout DURATION      Stream read idle timeout (default 300s; 0 disables)\n      --stdin-timeout DURATION     Piped-input timeout (default 300s; 0 disables)\n      --no-stdin                   Ignore stdin, even when it is a pipe\n      --timeout DURATION           Total API timeout (default 300s; seconds or 5m; 0 disables)\n\nEnvironment Variables:\n  CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,\n  OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY, DASHSCOPE_API_KEY, GROQ_API_KEY\n  CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL\n  CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL\n\nExamples:\n  # Quick query using default model (deepseek/deepseek-v4-flash-0731):\n  callm \"Explain quantum entanglement in 2 sentences\"\n\n  # Quick query to Claude Sonnet 4.6 (via Straitly/OpenRouter):\n  callm --claude \"Refactor this Go function\"\n\n  # Direct Anthropic Claude with extended thinking:\n  callm --ant --effort=high \"Prove the Riemann hypothesis\"\n\n  # Moonshot Kimi or Alibaba Qwen:\n  callm --ms \"Search and summarize 2026 AI developments\"\n  callm --qw \"Explain quantum computing fundamentals\"\n\n  # OpenAI o3-mini with reasoning effort:\n  callm --oa -m o3-mini --effort=medium \"Solve this competitive programming problem\"\n\n  # Pipe stdin + add instruction:\n  cat main.go | callm \"Find concurrency race conditions\"\n\n  # Attach files and show reasoning + latency/cost stats:\n  callm -f schema.sql --reasoning --stats \"Generate 3 sample INSERT statements\"\n\n  # Local Ollama model with inline <think> tags:\n  callm --ollama \"Solve 17 * 23 step by step\"\n",
+    "stderr": "invalid value \"123junk\" for flag -max-tokens: strconv.Atoi: parsing \"123junk\": invalid syntax\ncallm: invalid value \"123junk\" for flag -max-tokens: strconv.Atoi: parsing \"123junk\": invalid syntax\n",
+    "requests": []
+  },
+  {
+    "name": "invalid --temp=0.7junk",
+    "exit": 1,
+    "stdout": "callm dev \u2014 High-performance CLI for calling LLMs across Straitly, OpenRouter, DeepSeek, Anthropic, Moonshot, Zhipu, Qwen, OpenAI, Groq, and Ollama.\n\nUsage:\n  callm [chat] [OPTIONS] [\"PROMPT\"...]\n                                    Chat completion. Reads PROMPT from arguments, files, or stdin.\n  callm models [FILTER]            List available models with context length, pricing, and modalities.\n  callm info <MODEL>               Inspect full technical specs, pricing, and parameters for a model.\n  callm raw <ENDPOINT> '<JSON>'    POST raw JSON body to any endpoint (e.g. /chat/completions).\n  callm version | -v | --version   Print version, commit, and build date.\n  callm -h | --help                Show this help message.\n\nProvider Presets:\n  --st                             Straitly Gateway (default)\n                                   URL: https://api.straitly.ai/v1 | Model: deepseek/deepseek-v4-flash-0731\n  --or                             OpenRouter Gateway\n                                   URL: https://openrouter.ai/api/v1 | Model: deepseek/deepseek-v4-flash-0731\n  --ds                             DeepSeek Direct API\n                                   URL: https://api.deepseek.com | Model: deepseek-chat\n  --ant, --anthropic               Anthropic Direct API (/v1/messages)\n                                   URL: https://api.anthropic.com/v1 | Model: claude-sonnet-4-6\n  --claude                         Claude Shortcut (selects Claude Sonnet 4.6 on active gateway)\n  --ms, --moonshot, --kimi         Moonshot AI (Kimi)\n                                   URL: https://api.moonshot.cn/v1 | Model: moonshot-v1-auto\n  --zai, --glm                     Zhipu AI (GLM / ZAI)\n                                   URL: https://open.bigmodel.cn/api/paas/v4 | Model: glm-4-flash\n  --qw, --qwen                     Alibaba Cloud DashScope (Qwen)\n                                   URL: https://dashscope.aliyuncs.com/compatible-mode/v1 | Model: qwen-plus\n  --oa, --openai                   OpenAI Direct API\n                                   URL: https://api.openai.com/v1 | Model: gpt-4o\n  --groq                           Groq Ultra-Fast OSS\n                                   URL: https://api.groq.com/openai/v1 | Model: llama-3.3-70b-versatile\n  --ollama                         Ollama Local Gateway\n                                   URL: http://localhost:11434/v1 | Model: deepseek-r1\n  --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)\n\nOptions:\n  -m, --model MODEL                Model ID override\n  -k, --key, --api-key KEY         API key value override\n      --key-env, --api-key-env ENV Custom environment variable name containing API key\n  -s, --system SYSTEM              System prompt instruction\n  -t, --temp TEMPERATURE           Sampling temperature (e.g. 0.7, 0.0)\n  -n, --max-tokens N               Maximum tokens to generate\n      --max-completion-tokens N    Maximum completion tokens (for OpenAI o1/o3 reasoning models)\n      --effort EFFORT              Reasoning effort: low, medium, high (OpenAI o1/o3, OpenRouter, Claude)\n      --thinking-budget N          Extended thinking token budget (Claude / OpenRouter)\n      --top-p P                    Top-p nucleus sampling\n  -f, --file FILE                  Include contents of FILE in prompt context (can repeat)\n      --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)\n      --json-object                Request structured JSON object response_format\n      --stream                     Force streaming response (default when stdout is terminal)\n      --no-stream                  Disable streaming response\n      --reasoning                  Display reasoning / chain-of-thought tokens (default in terminal)\n      --no-reasoning               Hide reasoning tokens\n      --only-reasoning             Only output reasoning tokens (suppress final answer)\n      --stats                      Print token usage, latency, tok/s, and cost to stderr\n      --json                       Output full unparsed JSON response\n      --header-timeout DURATION    Response-header timeout (default 300s; 0 disables)\n      --idle-timeout DURATION      Stream read idle timeout (default 300s; 0 disables)\n      --stdin-timeout DURATION     Piped-input timeout (default 300s; 0 disables)\n      --no-stdin                   Ignore stdin, even when it is a pipe\n      --timeout DURATION           Total API timeout (default 300s; seconds or 5m; 0 disables)\n\nEnvironment Variables:\n  CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,\n  OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY, DASHSCOPE_API_KEY, GROQ_API_KEY\n  CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL\n  CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL\n\nExamples:\n  # Quick query using default model (deepseek/deepseek-v4-flash-0731):\n  callm \"Explain quantum entanglement in 2 sentences\"\n\n  # Quick query to Claude Sonnet 4.6 (via Straitly/OpenRouter):\n  callm --claude \"Refactor this Go function\"\n\n  # Direct Anthropic Claude with extended thinking:\n  callm --ant --effort=high \"Prove the Riemann hypothesis\"\n\n  # Moonshot Kimi or Alibaba Qwen:\n  callm --ms \"Search and summarize 2026 AI developments\"\n  callm --qw \"Explain quantum computing fundamentals\"\n\n  # OpenAI o3-mini with reasoning effort:\n  callm --oa -m o3-mini --effort=medium \"Solve this competitive programming problem\"\n\n  # Pipe stdin + add instruction:\n  cat main.go | callm \"Find concurrency race conditions\"\n\n  # Attach files and show reasoning + latency/cost stats:\n  callm -f schema.sql --reasoning --stats \"Generate 3 sample INSERT statements\"\n\n  # Local Ollama model with inline <think> tags:\n  callm --ollama \"Solve 17 * 23 step by step\"\n",
+    "stderr": "invalid value \"0.7junk\" for flag -temp: strconv.ParseFloat: parsing \"0.7junk\": invalid syntax\ncallm: invalid value \"0.7junk\" for flag -temp: strconv.ParseFloat: parsing \"0.7junk\": invalid syntax\n",
+    "requests": []
+  },
+  {
+    "name": "invalid --top-p=2",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: top-p must be between 0 and 1\n",
+    "requests": []
+  },
+  {
+    "name": "invalid --max-tokens=-1",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: max-tokens must be positive\n",
+    "requests": []
+  },
+  {
+    "name": "invalid --effort=banana",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: effort must be low, medium, or high\n",
+    "requests": []
+  },
+  {
+    "name": "dual-o3-token-limits",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: choose either max-tokens or max-completion-tokens\n",
+    "requests": []
+  },
+  {
+    "name": "gateway-effort-and-budget",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: choose either effort or thinking-budget\n",
+    "requests": []
+  },
+  {
+    "name": "anthropic-rejects-unsupported-json",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: json-object is not supported by Anthropic Messages; use raw with an Anthropic structured-output schema\n",
+    "requests": []
+  },
+  {
+    "name": "anthropic-exceeds-explicit-cap",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: thinking-budget must be smaller than the explicit token cap (100)\n",
+    "requests": []
+  },
+  {
+    "name": "local-command --version",
+    "exit": 0,
+    "stdout": "callm dev (commit: none, built at: unknown)\n",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "name": "local-command -v",
+    "exit": 0,
+    "stdout": "callm dev (commit: none, built at: unknown)\n",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "name": "local-command version",
+    "exit": 0,
+    "stdout": "callm dev (commit: none, built at: unknown)\n",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "name": "local-command --help",
+    "exit": 0,
+    "stdout": "callm dev \u2014 High-performance CLI for calling LLMs across Straitly, OpenRouter, DeepSeek, Anthropic, Moonshot, Zhipu, Qwen, OpenAI, Groq, and Ollama.\n\nUsage:\n  callm [chat] [OPTIONS] [\"PROMPT\"...]\n                                    Chat completion. Reads PROMPT from arguments, files, or stdin.\n  callm models [FILTER]            List available models with context length, pricing, and modalities.\n  callm info <MODEL>               Inspect full technical specs, pricing, and parameters for a model.\n  callm raw <ENDPOINT> '<JSON>'    POST raw JSON body to any endpoint (e.g. /chat/completions).\n  callm version | -v | --version   Print version, commit, and build date.\n  callm -h | --help                Show this help message.\n\nProvider Presets:\n  --st                             Straitly Gateway (default)\n                                   URL: https://api.straitly.ai/v1 | Model: deepseek/deepseek-v4-flash-0731\n  --or                             OpenRouter Gateway\n                                   URL: https://openrouter.ai/api/v1 | Model: deepseek/deepseek-v4-flash-0731\n  --ds                             DeepSeek Direct API\n                                   URL: https://api.deepseek.com | Model: deepseek-chat\n  --ant, --anthropic               Anthropic Direct API (/v1/messages)\n                                   URL: https://api.anthropic.com/v1 | Model: claude-sonnet-4-6\n  --claude                         Claude Shortcut (selects Claude Sonnet 4.6 on active gateway)\n  --ms, --moonshot, --kimi         Moonshot AI (Kimi)\n                                   URL: https://api.moonshot.cn/v1 | Model: moonshot-v1-auto\n  --zai, --glm                     Zhipu AI (GLM / ZAI)\n                                   URL: https://open.bigmodel.cn/api/paas/v4 | Model: glm-4-flash\n  --qw, --qwen                     Alibaba Cloud DashScope (Qwen)\n                                   URL: https://dashscope.aliyuncs.com/compatible-mode/v1 | Model: qwen-plus\n  --oa, --openai                   OpenAI Direct API\n                                   URL: https://api.openai.com/v1 | Model: gpt-4o\n  --groq                           Groq Ultra-Fast OSS\n                                   URL: https://api.groq.com/openai/v1 | Model: llama-3.3-70b-versatile\n  --ollama                         Ollama Local Gateway\n                                   URL: http://localhost:11434/v1 | Model: deepseek-r1\n  --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)\n\nOptions:\n  -m, --model MODEL                Model ID override\n  -k, --key, --api-key KEY         API key value override\n      --key-env, --api-key-env ENV Custom environment variable name containing API key\n  -s, --system SYSTEM              System prompt instruction\n  -t, --temp TEMPERATURE           Sampling temperature (e.g. 0.7, 0.0)\n  -n, --max-tokens N               Maximum tokens to generate\n      --max-completion-tokens N    Maximum completion tokens (for OpenAI o1/o3 reasoning models)\n      --effort EFFORT              Reasoning effort: low, medium, high (OpenAI o1/o3, OpenRouter, Claude)\n      --thinking-budget N          Extended thinking token budget (Claude / OpenRouter)\n      --top-p P                    Top-p nucleus sampling\n  -f, --file FILE                  Include contents of FILE in prompt context (can repeat)\n      --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)\n      --json-object                Request structured JSON object response_format\n      --stream                     Force streaming response (default when stdout is terminal)\n      --no-stream                  Disable streaming response\n      --reasoning                  Display reasoning / chain-of-thought tokens (default in terminal)\n      --no-reasoning               Hide reasoning tokens\n      --only-reasoning             Only output reasoning tokens (suppress final answer)\n      --stats                      Print token usage, latency, tok/s, and cost to stderr\n      --json                       Output full unparsed JSON response\n      --header-timeout DURATION    Response-header timeout (default 300s; 0 disables)\n      --idle-timeout DURATION      Stream read idle timeout (default 300s; 0 disables)\n      --stdin-timeout DURATION     Piped-input timeout (default 300s; 0 disables)\n      --no-stdin                   Ignore stdin, even when it is a pipe\n      --timeout DURATION           Total API timeout (default 300s; seconds or 5m; 0 disables)\n\nEnvironment Variables:\n  CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,\n  OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY, DASHSCOPE_API_KEY, GROQ_API_KEY\n  CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL\n  CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL\n\nExamples:\n  # Quick query using default model (deepseek/deepseek-v4-flash-0731):\n  callm \"Explain quantum entanglement in 2 sentences\"\n\n  # Quick query to Claude Sonnet 4.6 (via Straitly/OpenRouter):\n  callm --claude \"Refactor this Go function\"\n\n  # Direct Anthropic Claude with extended thinking:\n  callm --ant --effort=high \"Prove the Riemann hypothesis\"\n\n  # Moonshot Kimi or Alibaba Qwen:\n  callm --ms \"Search and summarize 2026 AI developments\"\n  callm --qw \"Explain quantum computing fundamentals\"\n\n  # OpenAI o3-mini with reasoning effort:\n  callm --oa -m o3-mini --effort=medium \"Solve this competitive programming problem\"\n\n  # Pipe stdin + add instruction:\n  cat main.go | callm \"Find concurrency race conditions\"\n\n  # Attach files and show reasoning + latency/cost stats:\n  callm -f schema.sql --reasoning --stats \"Generate 3 sample INSERT statements\"\n\n  # Local Ollama model with inline <think> tags:\n  callm --ollama \"Solve 17 * 23 step by step\"\n",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "name": "local-command chat --help",
+    "exit": 0,
+    "stdout": "callm dev \u2014 High-performance CLI for calling LLMs across Straitly, OpenRouter, DeepSeek, Anthropic, Moonshot, Zhipu, Qwen, OpenAI, Groq, and Ollama.\n\nUsage:\n  callm [chat] [OPTIONS] [\"PROMPT\"...]\n                                    Chat completion. Reads PROMPT from arguments, files, or stdin.\n  callm models [FILTER]            List available models with context length, pricing, and modalities.\n  callm info <MODEL>               Inspect full technical specs, pricing, and parameters for a model.\n  callm raw <ENDPOINT> '<JSON>'    POST raw JSON body to any endpoint (e.g. /chat/completions).\n  callm version | -v | --version   Print version, commit, and build date.\n  callm -h | --help                Show this help message.\n\nProvider Presets:\n  --st                             Straitly Gateway (default)\n                                   URL: https://api.straitly.ai/v1 | Model: deepseek/deepseek-v4-flash-0731\n  --or                             OpenRouter Gateway\n                                   URL: https://openrouter.ai/api/v1 | Model: deepseek/deepseek-v4-flash-0731\n  --ds                             DeepSeek Direct API\n                                   URL: https://api.deepseek.com | Model: deepseek-chat\n  --ant, --anthropic               Anthropic Direct API (/v1/messages)\n                                   URL: https://api.anthropic.com/v1 | Model: claude-sonnet-4-6\n  --claude                         Claude Shortcut (selects Claude Sonnet 4.6 on active gateway)\n  --ms, --moonshot, --kimi         Moonshot AI (Kimi)\n                                   URL: https://api.moonshot.cn/v1 | Model: moonshot-v1-auto\n  --zai, --glm                     Zhipu AI (GLM / ZAI)\n                                   URL: https://open.bigmodel.cn/api/paas/v4 | Model: glm-4-flash\n  --qw, --qwen                     Alibaba Cloud DashScope (Qwen)\n                                   URL: https://dashscope.aliyuncs.com/compatible-mode/v1 | Model: qwen-plus\n  --oa, --openai                   OpenAI Direct API\n                                   URL: https://api.openai.com/v1 | Model: gpt-4o\n  --groq                           Groq Ultra-Fast OSS\n                                   URL: https://api.groq.com/openai/v1 | Model: llama-3.3-70b-versatile\n  --ollama                         Ollama Local Gateway\n                                   URL: http://localhost:11434/v1 | Model: deepseek-r1\n  --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)\n\nOptions:\n  -m, --model MODEL                Model ID override\n  -k, --key, --api-key KEY         API key value override\n      --key-env, --api-key-env ENV Custom environment variable name containing API key\n  -s, --system SYSTEM              System prompt instruction\n  -t, --temp TEMPERATURE           Sampling temperature (e.g. 0.7, 0.0)\n  -n, --max-tokens N               Maximum tokens to generate\n      --max-completion-tokens N    Maximum completion tokens (for OpenAI o1/o3 reasoning models)\n      --effort EFFORT              Reasoning effort: low, medium, high (OpenAI o1/o3, OpenRouter, Claude)\n      --thinking-budget N          Extended thinking token budget (Claude / OpenRouter)\n      --top-p P                    Top-p nucleus sampling\n  -f, --file FILE                  Include contents of FILE in prompt context (can repeat)\n      --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)\n      --json-object                Request structured JSON object response_format\n      --stream                     Force streaming response (default when stdout is terminal)\n      --no-stream                  Disable streaming response\n      --reasoning                  Display reasoning / chain-of-thought tokens (default in terminal)\n      --no-reasoning               Hide reasoning tokens\n      --only-reasoning             Only output reasoning tokens (suppress final answer)\n      --stats                      Print token usage, latency, tok/s, and cost to stderr\n      --json                       Output full unparsed JSON response\n      --header-timeout DURATION    Response-header timeout (default 300s; 0 disables)\n      --idle-timeout DURATION      Stream read idle timeout (default 300s; 0 disables)\n      --stdin-timeout DURATION     Piped-input timeout (default 300s; 0 disables)\n      --no-stdin                   Ignore stdin, even when it is a pipe\n      --timeout DURATION           Total API timeout (default 300s; seconds or 5m; 0 disables)\n\nEnvironment Variables:\n  CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,\n  OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY, DASHSCOPE_API_KEY, GROQ_API_KEY\n  CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL\n  CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL\n\nExamples:\n  # Quick query using default model (deepseek/deepseek-v4-flash-0731):\n  callm \"Explain quantum entanglement in 2 sentences\"\n\n  # Quick query to Claude Sonnet 4.6 (via Straitly/OpenRouter):\n  callm --claude \"Refactor this Go function\"\n\n  # Direct Anthropic Claude with extended thinking:\n  callm --ant --effort=high \"Prove the Riemann hypothesis\"\n\n  # Moonshot Kimi or Alibaba Qwen:\n  callm --ms \"Search and summarize 2026 AI developments\"\n  callm --qw \"Explain quantum computing fundamentals\"\n\n  # OpenAI o3-mini with reasoning effort:\n  callm --oa -m o3-mini --effort=medium \"Solve this competitive programming problem\"\n\n  # Pipe stdin + add instruction:\n  cat main.go | callm \"Find concurrency race conditions\"\n\n  # Attach files and show reasoning + latency/cost stats:\n  callm -f schema.sql --reasoning --stats \"Generate 3 sample INSERT statements\"\n\n  # Local Ollama model with inline <think> tags:\n  callm --ollama \"Solve 17 * 23 step by step\"\n",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "name": "anthropic-image-and-top-p",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/messages",
+        "body": {
+          "model": "claude-sonnet-4-6",
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "text": "prompt",
+                  "type": "text"
+                },
+                {
+                  "source": {
+                    "data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=",
+                    "media_type": "image/png",
+                    "type": "base64"
+                  },
+                  "type": "image"
+                }
+              ]
+            }
+          ],
+          "max_tokens": 4096,
+          "top_p": 0.8
+        },
+        "authorization": null,
+        "x-api-key": "audit-dummy"
+      }
+    ]
+  },
+  {
+    "name": "gateway-budget",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "reasoning": {
+            "max_tokens": 1500
+          },
+          "include_reasoning": true
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "max-completion-tokens-only",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "max_completion_tokens": 654
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "stdin-timeout",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "ready\n\nprompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "provider-conflict",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: select only one provider preset\n",
+    "requests": []
+  },
+  {
+    "name": "stdin-ignore",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "delayed-stdin",
+    "exit": 0,
+    "stdout": "answer\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/chat/completions",
+        "body": {
+          "model": "deepseek/deepseek-v4-flash-0731",
+          "messages": [
+            {
+              "role": "user",
+              "content": "delayed-important-context\n\nsummarize"
+            }
+          ]
+        },
+        "authorization": "Bearer audit-dummy",
+        "x-api-key": null
+      }
+    ]
+  },
+  {
+    "name": "stream-stall",
+    "alive_after_250ms": true,
+    "exit_after_sigterm": 1,
+    "stdout": "",
+    "stderr": "callm: stream ended before [DONE]: terminated signal received\n"
+  },
+  {
+    "name": "anthropic-nonstream-stall",
+    "alive_after_250ms": true,
+    "exit_after_sigterm": 1,
+    "stdout": "",
+    "stderr": "callm: failed to read response: terminated signal received\n"
+  },
+  {
+    "name": "stdin-open-pipe-cancellation",
+    "still_blocked_after_sigterm": false,
+    "stdout": "",
+    "stderr": "callm: stdin: context canceled\n"
+  }
+]

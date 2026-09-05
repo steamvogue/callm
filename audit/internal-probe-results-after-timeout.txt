@@ -1,0 +1,44 @@
+=== RUN   TestAuditTimeouts
+    audit_internal_test.go:35: NewClient.HTTPClient.Timeout=5m0s
+    audit_internal_test.go:28: https://example.invalid/v1/chat/completions deadline=true remaining=5m0s
+    audit_internal_test.go:28: https://example.invalid/v1/chat/completions deadline=true remaining=5m0s
+    audit_internal_test.go:28: https://example.invalid/v1/models deadline=true remaining=5m0s
+    audit_internal_test.go:28: https://example.invalid/v1/raw deadline=true remaining=5m0s
+    audit_internal_test.go:28: https://api.anthropic.com/v1/messages deadline=true remaining=5m0s
+    audit_internal_test.go:28: https://api.anthropic.com/v1/messages deadline=true remaining=5m0s
+--- PASS: TestAuditTimeouts (0.00s)
+=== RUN   TestAuditIgnoredClientAndInfoURL
+    audit_internal_test.go:49: default transport used: https://example.invalid/v1/chat/completions
+    audit_internal_test.go:59: Chat used configured HTTPClient=true
+    audit_internal_test.go:49: default transport used: https://example.invalid/v1/models
+    audit_internal_test.go:61: ListModels used configured HTTPClient=true
+    audit_internal_test.go:49: default transport used: https://example.invalid/v1/raw
+    audit_internal_test.go:63: RawRequest used configured HTTPClient=true
+    audit_internal_test.go:49: default transport used: https://api.openai.com/v1/models
+Model ID:         test-model
+Canonical Slug:   test-model
+Context Length:   0 tokens
+Modality:         text->text
+Input Modalities: text
+Output Modalities:text
+Pricing (Prompt): $0/Mtok
+Pricing (Comp):   $0/Mtok
+Cache Read:       $0/Mtok
+Cache Write:      $0/Mtok
+Supported Params: none specified
+--- PASS: TestAuditIgnoredClientAndInfoURL (0.00s)
+=== RUN   TestAuditKeysAndEnv
+    audit_internal_test.go:74: OpenAI with only DeepSeek key configured resolves key="deepseek-dummy" err=<nil>
+    audit_internal_test.go:97: explicit/global/provider key precedence and quoted .env loading passed
+--- PASS: TestAuditKeysAndEnv (0.00s)
+=== RUN   TestAuditAnthropicStopEvent
+    audit_internal_test.go:112: complete message_stop followed by open connection: err=stream read error: context deadline exceeded
+--- PASS: TestAuditAnthropicStopEvent (0.10s)
+=== RUN   TestAuditAnthropicRedirect
+    audit_internal_test.go:134: credential received by different redirect host: "anthropic-redirect-dummy"
+--- PASS: TestAuditAnthropicRedirect (0.00s)
+=== RUN   TestAuditAnthropicPagination
+    audit_internal_test.go:147: paginated catalog: has_more=true but requests=1 returned_models=1
+--- PASS: TestAuditAnthropicPagination (0.00s)
+PASS
+ok  	callm/cmd/callm	0.112s

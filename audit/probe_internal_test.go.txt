@@ -1,0 +1,148 @@
+package main
+
+import (
+    "context"
+    "io"
+    "net/http"
+    "net/http/httptest"
+    "os"
+    "path/filepath"
+    "strings"
+    "testing"
+    "time"
+
+    "callm/internal/client"
+    "callm/internal/config"
+)
+
+type auditTransport func(*http.Request) (*http.Response, error)
+func (f auditTransport) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+func TestAuditTimeouts(t *testing.T) {
+    original := http.DefaultTransport
+    t.Cleanup(func() { http.DefaultTransport = original })
+    http.DefaultTransport = auditTransport(func(r *http.Request) (*http.Response, error) {
+        d, ok := r.Context().Deadline()
+        timeout := time.Duration(0)
+        if ok { timeout = time.Until(d).Round(time.Second) }
+        t.Logf("%s deadline=%v remaining=%v", r.URL, ok, timeout)
+        body := `{"choices":[],"data":[],"content":[]}`
+        if r.Header.Get("Accept") == "text/event-stream" { body = "data: [DONE]\n\n" }
+        return &http.Response{StatusCode: 200, Header: make(http.Header), Body: io.NopCloser(strings.NewReader(body)), Request: r}, nil
+    })
+    ctx := context.Background()
+    c := client.NewClient("https://example.invalid/v1", "dummy")
+    t.Logf("NewClient.HTTPClient.Timeout=%v", c.HTTPClient.Timeout)
+    _, _ = c.Chat(ctx, client.ChatRequest{})
+    _, _ = c.StreamChat(ctx, client.ChatRequest{}, func(client.StreamChunk) error { return nil })
+    _, _ = c.ListModels(ctx)
+    _, _ = c.RawRequest(ctx, "/raw", []byte("{}"))
+    a := client.NewClient("https://api.anthropic.com/v1", "dummy")
+    _, _ = a.Chat(ctx, client.ChatRequest{})
+    _, _ = a.StreamChat(ctx, client.ChatRequest{}, func(client.StreamChunk) error { return nil })
+}
+
+func TestAuditIgnoredClientAndInfoURL(t *testing.T) {
+    original := http.DefaultTransport
+    t.Cleanup(func() { http.DefaultTransport = original })
+    http.DefaultTransport = auditTransport(func(r *http.Request) (*http.Response, error) {
+        t.Logf("default transport used: %s", r.URL)
+        return &http.Response{StatusCode: 200, Header: make(http.Header), Body: io.NopCloser(strings.NewReader(`{"choices":[],"data":[{"id":"test-model"}]}`)), Request:r},nil
+    })
+    used := false
+    c := client.NewClient("https://example.invalid/v1", "dummy")
+    c.HTTPClient = &http.Client{Timeout:time.Millisecond, Transport:auditTransport(func(r *http.Request)(*http.Response,error){
+        used = true
+        return http.DefaultTransport.RoundTrip(r)
+    })}
+    _, _ = c.Chat(context.Background(), client.ChatRequest{})
+    t.Logf("Chat used configured HTTPClient=%v", used)
+    _, _ = c.ListModels(context.Background())
+    t.Logf("ListModels used configured HTTPClient=%v", used)
+    _, _ = c.RawRequest(context.Background(), "/raw", []byte("{}"))
+    t.Logf("RawRequest used configured HTTPClient=%v", used)
+    t.Setenv("CALLM_BASE_URL", "")
+    t.Setenv("OPENAI_BASE_URL", "http://configured.invalid/v1")
+    runInfo(context.Background(), []string{"--oa", "--api-key", "dummy", "test-model"})
+}
+
+func TestAuditKeysAndEnv(t *testing.T) {
+    keys := []string{"CALLM_API_KEY", "STRAITLY_API_KEY", "OPENROUTER_API_KEY", "DEEPSEEK_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY", "MOONSHOT_API_KEY", "ZAI_API_KEY", "ZHIPU_API_KEY", "DASHSCOPE_API_KEY", "QWEN_API_KEY", "GROQ_API_KEY", "OLLAMA_API_KEY"}
+    for _, k := range keys { t.Setenv(k, "") }
+    t.Setenv("DEEPSEEK_API_KEY", "deepseek-dummy")
+    key, err := config.ResolveAPIKey("oa", "", "")
+    t.Logf("OpenAI with only DeepSeek key configured resolves key=%q err=%v", key, err)
+    t.Setenv("OPENAI_API_KEY", "openai-dummy")
+    key, _ = config.ResolveAPIKey("oa", "", "")
+    if key != "openai-dummy" { t.Fatal("provider precedence failed") }
+    t.Setenv("CALLM_API_KEY", "global-dummy")
+    key, _ = config.ResolveAPIKey("oa", "", "")
+    if key != "global-dummy" { t.Fatal("global precedence failed") }
+    t.Setenv("AUDIT_NAMED_KEY", "named-dummy")
+    key, _ = config.ResolveAPIKey("oa", "", "AUDIT_NAMED_KEY")
+    if key != "named-dummy" { t.Fatal("named key precedence failed") }
+    key, _ = config.ResolveAPIKey("oa", "explicit-dummy", "AUDIT_NAMED_KEY")
+    if key != "explicit-dummy" { t.Fatal("explicit precedence failed") }
+    _, err = config.ResolveAPIKey("oa", "", "AUDIT_MISSING_KEY")
+    if err == nil { t.Fatal("missing explicit env should fail") }
+    cwd, _ := os.Getwd()
+    dir := t.TempDir()
+    if err := os.Chdir(dir); err != nil { t.Fatal(err) }
+    t.Cleanup(func(){ _ = os.Chdir(cwd) })
+    t.Setenv("AUDIT_FILE_KEY", "")
+    t.Setenv("AUDIT_EXISTING_KEY", "existing")
+    if err := os.WriteFile(filepath.Join(dir,".env"), []byte("export AUDIT_FILE_KEY='from-file'\nAUDIT_EXISTING_KEY=replaced\n"),0600); err != nil { t.Fatal(err) }
+    config.LoadEnvFiles()
+    if os.Getenv("AUDIT_FILE_KEY") != "from-file" || os.Getenv("AUDIT_EXISTING_KEY") != "existing" { t.Fatal("env loading failed") }
+    t.Log("explicit/global/provider key precedence and quoted .env loading passed")
+}
+
+func TestAuditAnthropicStopEvent(t *testing.T) {
+    server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "text/event-stream")
+        _, _ = io.WriteString(w, "event: message_stop\ndata: {\"type\":\"message_stop\"}\n\n")
+        w.(http.Flusher).Flush()
+        <-r.Context().Done()
+    }))
+    defer server.Close()
+    c := client.NewClient(server.URL+"/api.anthropic.com", "dummy")
+    ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+    defer cancel()
+    _, err := c.StreamChat(ctx, client.ChatRequest{}, func(client.StreamChunk) error { return nil })
+    t.Logf("complete message_stop followed by open connection: err=%v", err)
+    if err == nil { t.Fatal("observation changed: now stops at message_stop") }
+}
+
+func TestAuditAnthropicRedirect(t *testing.T) {
+    received := make(chan string, 1)
+    destination := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        received <- r.Header.Get("x-api-key")
+        _, _ = io.WriteString(w, `{"content":[],"usage":{}}`)
+    }))
+    defer destination.Close()
+    // localhost and 127.0.0.1 are distinct URL hosts, even though both stay local.
+    target := strings.Replace(destination.URL, "127.0.0.1", "localhost", 1)
+    source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        http.Redirect(w, r, target, http.StatusTemporaryRedirect)
+    }))
+    defer source.Close()
+    c := client.NewClient(source.URL+"/api.anthropic.com", "anthropic-redirect-dummy")
+    ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+    defer cancel()
+    _, err := c.Chat(ctx, client.ChatRequest{})
+    if err != nil { t.Fatal(err) }
+    t.Logf("credential received by different redirect host: %q", <-received)
+}
+
+func TestAuditAnthropicPagination(t *testing.T) {
+    calls := 0
+    server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        calls++
+        _, _ = io.WriteString(w, `{"data":[{"id":"first-model"}],"has_more":true,"last_id":"first-model"}`)
+    }))
+    defer server.Close()
+    c := client.NewClient(server.URL+"/api.anthropic.com", "dummy")
+    models, err := c.ListModels(context.Background())
+    if err != nil { t.Fatal(err) }
+    t.Logf("paginated catalog: has_more=true but requests=%d returned_models=%d", calls, len(models))
+}

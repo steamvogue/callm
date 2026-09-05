@@ -82,12 +82,12 @@ func TestProviderAPICallMinimal(t *testing.T) {
 
 func TestProviderAPICallReasoning(t *testing.T) {
 	testCases := []struct {
-		name              string
-		model             string
-		effort            string
-		simulatedDelta    string
-		expectReasoning   string
-		checkPayload      func(t *testing.T, req ChatRequest)
+		name            string
+		model           string
+		effort          string
+		simulatedDelta  string
+		expectReasoning string
+		checkPayload    func(t *testing.T, req ChatRequest)
 	}{
 		{
 			name:            "deepseek_reasoner",
@@ -175,14 +175,16 @@ func TestProviderAPICallReasoning(t *testing.T) {
 				baseURL = server.URL + "/openrouter.ai/api/v1"
 			}
 
-			c := NewClient(baseURL, "test-key")
+			provider := ""
+			if tc.name == "openrouter_reasoning" {
+				provider = "or"
+			}
+			c := NewClient(baseURL, "test-key", provider)
 			var reasoning strings.Builder
 			var content strings.Builder
 
-			temp := 0.7
 			_, err := c.StreamChat(context.Background(), ChatRequest{
 				Model:           tc.model,
-				Temperature:     &temp,
 				ReasoningEffort: tc.effort,
 				Messages: []Message{
 					{Role: "user", Content: "Solve"},

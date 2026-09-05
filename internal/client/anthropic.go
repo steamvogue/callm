@@ -1,13 +1,12 @@
 package client
 
 import (
-	"bufio"
-	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -15,290 +14,261 @@ type anthropicMessage struct {
 	Role    string      `json:"role"`
 	Content interface{} `json:"content"`
 }
-
 type anthropicReq struct {
 	Model       string             `json:"model"`
 	Messages    []anthropicMessage `json:"messages"`
 	System      string             `json:"system,omitempty"`
 	MaxTokens   int                `json:"max_tokens"`
 	Temperature *float64           `json:"temperature,omitempty"`
+	TopP        *float64           `json:"top_p,omitempty"`
 	Stream      bool               `json:"stream,omitempty"`
 	Thinking    *ThinkingConfig    `json:"thinking,omitempty"`
 }
-
 type anthropicContentBlock struct {
 	Type     string `json:"type"`
 	Text     string `json:"text,omitempty"`
 	Thinking string `json:"thinking,omitempty"`
 }
-
 type anthropicDelta struct {
 	Type     string `json:"type"`
 	Text     string `json:"text,omitempty"`
 	Thinking string `json:"thinking,omitempty"`
 }
-
+type anthropicUsage struct {
+	InputTokens          int `json:"input_tokens"`
+	OutputTokens         int `json:"output_tokens"`
+	CacheReadInputTokens int `json:"cache_read_input_tokens"`
+}
 type anthropicEvent struct {
 	Type         string                 `json:"type"`
-	Index        int                    `json:"index,omitempty"`
 	ContentBlock *anthropicContentBlock `json:"content_block,omitempty"`
 	Delta        *anthropicDelta        `json:"delta,omitempty"`
 	Message      *struct {
-		Usage struct {
-			InputTokens  int `json:"input_tokens"`
-			OutputTokens int `json:"output_tokens"`
-		} `json:"usage"`
+		Usage anthropicUsage `json:"usage"`
 	} `json:"message,omitempty"`
-	Usage *struct {
-		OutputTokens int `json:"output_tokens"`
-	} `json:"usage,omitempty"`
-	Error *struct {
-		Message string `json:"message"`
-	} `json:"error,omitempty"`
+	Usage *anthropicUsage `json:"usage,omitempty"`
+	Error *APIError       `json:"error,omitempty"`
 }
 
-// isAnthropicURL checks if the endpoint is Anthropic's direct API.
-func (c *Client) isAnthropicURL() bool {
-	return strings.Contains(c.BaseURL, "api.anthropic.com")
-}
-
-// StreamAnthropic streams responses from Anthropic /v1/messages.
-func (c *Client) streamAnthropic(ctx context.Context, req ChatRequest, onChunk func(chunk StreamChunk) error) (*Usage, error) {
-	areq := convertToAnthropicReq(req, true)
-	bodyBytes, err := json.Marshal(areq)
+func (c *Client) streamAnthropic(ctx context.Context, req ChatRequest, onChunk func(StreamChunk) error) (*Usage, error) {
+	areq, err := convertToAnthropicReq(req, true)
 	if err != nil {
-		return nil, fmt.Errorf("failed to encode anthropic request: %w", err)
+		return nil, err
 	}
-
-	url := c.BaseURL + "/messages"
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(bodyBytes))
+	body, err := json.Marshal(areq)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
+		return nil, err
 	}
-
-	httpReq.Header.Set("x-api-key", c.APIKey)
-	httpReq.Header.Set("anthropic-version", "2023-06-01")
-	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("Accept", "text/event-stream")
-
-	resp, err := c.HTTPClient.Do(httpReq)
+	resp, err := c.openStream(ctx, "/messages", body)
 	if err != nil {
-		return nil, fmt.Errorf("anthropic request failed: %w", err)
+		return nil, err
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		respBody, _ := io.ReadAll(resp.Body)
-		var apiErr struct {
-			Error struct {
-				Message string `json:"message"`
-			} `json:"error"`
-		}
-		if json.Unmarshal(respBody, &apiErr) == nil && apiErr.Error.Message != "" {
-			return nil, fmt.Errorf("Anthropic API error (status %d): %s", resp.StatusCode, apiErr.Error.Message)
-		}
-		return nil, fmt.Errorf("HTTP error (status %d): %s", resp.StatusCode, string(respBody))
-	}
-
-	var totalUsage Usage
-	reader := bufio.NewReader(resp.Body)
-
+	reader := newSSEReader(resp.Body)
+	var usage *Usage
 	for {
-		line, err := reader.ReadString('\n')
+		data, err := reader.next()
 		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return &totalUsage, fmt.Errorf("stream read error: %w", err)
+			return usage, fmt.Errorf("Anthropic stream ended before message_stop: %w", err)
 		}
-
-		line = strings.TrimRight(line, "\r\n")
-		if !strings.HasPrefix(line, "data: ") {
-			continue
-		}
-
-		data := strings.TrimPrefix(line, "data: ")
 		var ev anthropicEvent
 		if err := json.Unmarshal([]byte(data), &ev); err != nil {
-			continue
+			return usage, fmt.Errorf("invalid Anthropic stream JSON: %w", err)
 		}
-
-		if ev.Error != nil && ev.Error.Message != "" {
-			return &totalUsage, fmt.Errorf("anthropic stream error: %s", ev.Error.Message)
+		if ev.Error != nil {
+			return usage, fmt.Errorf("Anthropic stream error: %s", ev.Error.Message)
 		}
-
-		if ev.Message != nil && ev.Message.Usage.InputTokens > 0 {
-			totalUsage.PromptTokens = ev.Message.Usage.InputTokens
-			totalUsage.TotalTokens = totalUsage.PromptTokens + totalUsage.CompletionTokens
+		if ev.Message != nil {
+			u := ev.Message.Usage
+			usage = &Usage{PromptTokens: u.InputTokens, CompletionTokens: u.OutputTokens, TotalTokens: u.InputTokens + u.OutputTokens, CacheReadInputTokens: u.CacheReadInputTokens}
 		}
-		if ev.Usage != nil && ev.Usage.OutputTokens > 0 {
-			totalUsage.CompletionTokens = ev.Usage.OutputTokens
-			totalUsage.TotalTokens = totalUsage.PromptTokens + totalUsage.CompletionTokens
+		if ev.Usage != nil {
+			if usage == nil {
+				usage = &Usage{}
+			}
+			usage.CompletionTokens = ev.Usage.OutputTokens
+			usage.TotalTokens = usage.PromptTokens + usage.CompletionTokens
 		}
-
+		if ev.Type == "message_stop" {
+			return usage, nil
+		}
+		delta := StreamDelta{}
+		if ev.ContentBlock != nil {
+			delta.Content = ev.ContentBlock.Text
+			delta.Reasoning = ev.ContentBlock.Thinking
+		}
 		if ev.Delta != nil {
-			chunk := StreamChunk{
-				Model: req.Model,
-			}
-			if ev.Delta.Type == "thinking_delta" && ev.Delta.Thinking != "" {
-				chunk.Choices = []StreamChoice{
-					{
-						Delta: StreamDelta{
-							Reasoning: ev.Delta.Thinking,
-						},
-					},
-				}
-				if err := onChunk(chunk); err != nil {
-					return &totalUsage, err
-				}
-			} else if ev.Delta.Type == "text_delta" && ev.Delta.Text != "" {
-				chunk.Choices = []StreamChoice{
-					{
-						Delta: StreamDelta{
-							Content: ev.Delta.Text,
-						},
-					},
-				}
-				if err := onChunk(chunk); err != nil {
-					return &totalUsage, err
-				}
+			delta.Content = ev.Delta.Text
+			delta.Reasoning = ev.Delta.Thinking
+		}
+		if delta.Content != "" || delta.Reasoning != "" {
+			if err := onChunk(StreamChunk{Model: req.Model, Choices: []StreamChoice{{Delta: delta}}}); err != nil {
+				return usage, err
 			}
 		}
 	}
-
-	return &totalUsage, nil
 }
 
-// chatAnthropic performs non-streaming completion via Anthropic /v1/messages.
 func (c *Client) chatAnthropic(ctx context.Context, req ChatRequest) (*ChatResponse, error) {
-	areq := convertToAnthropicReq(req, false)
-	bodyBytes, err := json.Marshal(areq)
+	areq, err := convertToAnthropicReq(req, false)
 	if err != nil {
-		return nil, fmt.Errorf("failed to encode anthropic request: %w", err)
+		return nil, err
 	}
-
-	url := c.BaseURL + "/messages"
-	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(bodyBytes))
+	body, err := json.Marshal(areq)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
+		return nil, err
 	}
-
-	httpReq.Header.Set("x-api-key", c.APIKey)
-	httpReq.Header.Set("anthropic-version", "2023-06-01")
-	httpReq.Header.Set("Content-Type", "application/json")
-
-	resp, err := c.HTTPClient.Do(httpReq)
+	request, err := c.request(ctx, http.MethodPost, "/messages", body)
 	if err != nil {
-		return nil, fmt.Errorf("anthropic request failed: %w", err)
+		return nil, err
 	}
-	defer resp.Body.Close()
-
-	respBody, err := io.ReadAll(resp.Body)
+	resp, err := c.HTTPClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response: %w", err)
+		return nil, err
 	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("Anthropic API error (status %d): %s", resp.StatusCode, string(respBody))
+	body, err = responseBytes(resp)
+	if err != nil {
+		return nil, err
 	}
-
 	var raw struct {
-		ID      string                  `json:"id"`
-		Content []anthropicContentBlock `json:"content"`
-		Usage   struct {
-			InputTokens  int `json:"input_tokens"`
-			OutputTokens int `json:"output_tokens"`
-		} `json:"usage"`
+		ID         string                  `json:"id"`
+		Model      string                  `json:"model"`
+		StopReason string                  `json:"stop_reason"`
+		Content    []anthropicContentBlock `json:"content"`
+		Usage      *anthropicUsage         `json:"usage"`
 	}
-	if err := json.Unmarshal(respBody, &raw); err != nil {
-		return nil, fmt.Errorf("failed to decode response: %w", err)
+	if err := json.Unmarshal(body, &raw); err != nil {
+		return nil, fmt.Errorf("invalid Anthropic response JSON: %w", err)
 	}
-
-	var fullContent strings.Builder
-	var fullReasoning strings.Builder
-
+	var content, reasoning strings.Builder
 	for _, block := range raw.Content {
-		if block.Type == "thinking" {
-			fullReasoning.WriteString(block.Thinking)
-		} else if block.Type == "text" {
-			fullContent.WriteString(block.Text)
+		switch block.Type {
+		case "thinking":
+			reasoning.WriteString(block.Thinking)
+		case "text":
+			content.WriteString(block.Text)
 		}
 	}
-
-	return &ChatResponse{
-		ID:    raw.ID,
-		Model: req.Model,
-		Choices: []ChatChoice{
-			{
-				Message: RespMsg{
-					Role:      "assistant",
-					Content:   fullContent.String(),
-					Reasoning: fullReasoning.String(),
-				},
-			},
-		},
-		Usage: &Usage{
-			PromptTokens:     raw.Usage.InputTokens,
-			CompletionTokens: raw.Usage.OutputTokens,
-			TotalTokens:      raw.Usage.InputTokens + raw.Usage.OutputTokens,
-		},
-	}, nil
+	model := raw.Model
+	if model == "" {
+		model = req.Model
+	}
+	result := &ChatResponse{Raw: body, ID: raw.ID, Model: model, Choices: []ChatChoice{{FinishReason: raw.StopReason, Message: RespMsg{Role: "assistant", Content: content.String(), Reasoning: reasoning.String()}}}}
+	if raw.Usage != nil {
+		u := raw.Usage
+		result.Usage = &Usage{PromptTokens: u.InputTokens, CompletionTokens: u.OutputTokens, TotalTokens: u.InputTokens + u.OutputTokens, CacheReadInputTokens: u.CacheReadInputTokens}
+	}
+	return result, nil
 }
 
-func convertToAnthropicReq(req ChatRequest, stream bool) anthropicReq {
-	var systemParts []string
+func convertToAnthropicReq(req ChatRequest, stream bool) (anthropicReq, error) {
+	if err := validateRequest(req); err != nil {
+		return anthropicReq{}, err
+	}
+	if req.ResponseFormat != nil {
+		return anthropicReq{}, fmt.Errorf("json-object is not supported by Anthropic Messages; use raw with an Anthropic structured-output schema")
+	}
+	if req.Temperature != nil && *req.Temperature > 1 {
+		return anthropicReq{}, fmt.Errorf("Anthropic temperature must be between 0 and 1")
+	}
+	var system []string
 	var messages []anthropicMessage
-
 	for _, msg := range req.Messages {
 		if msg.Role == "system" {
-			if s, ok := msg.Content.(string); ok {
-				systemParts = append(systemParts, s)
+			text, ok := msg.Content.(string)
+			if !ok {
+				return anthropicReq{}, fmt.Errorf("Anthropic system content must be text")
 			}
-		} else {
-			messages = append(messages, anthropicMessage{
-				Role:    msg.Role,
-				Content: msg.Content,
-			})
+			system = append(system, text)
+			continue
 		}
+		content, err := anthropicContent(msg.Content)
+		if err != nil {
+			return anthropicReq{}, err
+		}
+		messages = append(messages, anthropicMessage{Role: msg.Role, Content: content})
 	}
-
 	maxTokens := 4096
-	if req.MaxTokens != nil && *req.MaxTokens > 0 {
+	explicit := req.MaxTokens != nil || req.MaxCompletionTokens != nil
+	if req.MaxTokens != nil {
 		maxTokens = *req.MaxTokens
-	} else if req.MaxCompletionTokens != nil && *req.MaxCompletionTokens > 0 {
+	} else if req.MaxCompletionTokens != nil {
 		maxTokens = *req.MaxCompletionTokens
 	}
-
-	var thinking *ThinkingConfig
-	if req.Thinking != nil {
-		thinking = req.Thinking
-	} else if req.ReasoningEffort != "" {
-		budget := 2048
-		switch strings.ToLower(req.ReasoningEffort) {
-		case "low":
-			budget = 1024
-		case "medium":
-			budget = 2048
-		case "high":
-			budget = 4096
+	thinking := req.Thinking
+	if req.ReasoningEffort != "" {
+		budget := map[string]int{"low": 1024, "medium": 2048, "high": 4096}[strings.ToLower(req.ReasoningEffort)]
+		thinking = &ThinkingConfig{Type: "enabled", BudgetTokens: budget}
+	}
+	if thinking != nil {
+		if thinking.BudgetTokens < 1024 {
+			return anthropicReq{}, fmt.Errorf("Anthropic thinking-budget must be at least 1024")
 		}
-		thinking = &ThinkingConfig{
-			Type:         "enabled",
-			BudgetTokens: budget,
+		if maxTokens <= thinking.BudgetTokens {
+			if explicit {
+				return anthropicReq{}, fmt.Errorf("thinking-budget must be smaller than the explicit token cap (%d)", maxTokens)
+			}
+			if thinking.BudgetTokens > int(^uint(0)>>1)-2048 {
+				return anthropicReq{}, fmt.Errorf("thinking-budget is too large")
+			}
+			maxTokens = thinking.BudgetTokens + 2048
+		}
+		if req.Temperature != nil && *req.Temperature != 1 {
+			return anthropicReq{}, fmt.Errorf("Anthropic thinking requires temperature 1 or omission")
+		}
+		if req.TopP != nil && *req.TopP < 0.95 {
+			return anthropicReq{}, fmt.Errorf("Anthropic thinking requires top-p between 0.95 and 1")
 		}
 	}
+	return anthropicReq{Model: req.Model, Messages: messages, System: strings.Join(system, "\n\n"), MaxTokens: maxTokens, Temperature: req.Temperature, TopP: req.TopP, Stream: stream, Thinking: thinking}, nil
+}
 
-	if thinking != nil && maxTokens <= thinking.BudgetTokens {
-		maxTokens = thinking.BudgetTokens + 2048
+func anthropicContent(content interface{}) (interface{}, error) {
+	if text, ok := content.(string); ok {
+		return text, nil
 	}
-
-	return anthropicReq{
-		Model:       req.Model,
-		Messages:    messages,
-		System:      strings.Join(systemParts, "\n\n"),
-		MaxTokens:   maxTokens,
-		Temperature: req.Temperature,
-		Stream:      stream,
-		Thinking:    thinking,
+	data, err := json.Marshal(content)
+	if err != nil {
+		return nil, err
 	}
+	var parts []ContentPart
+	if err := json.Unmarshal(data, &parts); err != nil {
+		return nil, fmt.Errorf("invalid image/text content: %w", err)
+	}
+	blocks := make([]map[string]interface{}, 0, len(parts))
+	for _, part := range parts {
+		if part.Type == "text" {
+			blocks = append(blocks, map[string]interface{}{"type": "text", "text": part.Text})
+			continue
+		}
+		if part.Type != "image_url" || part.ImageURL == nil {
+			return nil, fmt.Errorf("unsupported Anthropic content type %q", part.Type)
+		}
+		image := part.ImageURL.URL
+		source := map[string]interface{}{}
+		if strings.HasPrefix(image, "data:") {
+			metadata, payload, ok := strings.Cut(strings.TrimPrefix(image, "data:"), ",")
+			if !ok || !strings.HasSuffix(metadata, ";base64") {
+				return nil, fmt.Errorf("image must be a base64 data URI")
+			}
+			media := strings.TrimSuffix(metadata, ";base64")
+			switch media {
+			case "image/png", "image/jpeg", "image/gif", "image/webp":
+			default:
+				return nil, fmt.Errorf("unsupported image type %q", media)
+			}
+			if _, err := base64.StdEncoding.DecodeString(payload); err != nil {
+				return nil, fmt.Errorf("invalid base64 image: %w", err)
+			}
+			source = map[string]interface{}{"type": "base64", "media_type": media, "data": payload}
+		} else {
+			u, err := url.Parse(image)
+			if err != nil || u.Host == "" || (u.Scheme != "https" && u.Scheme != "http") {
+				return nil, fmt.Errorf("image URL must use http or https")
+			}
+			source = map[string]interface{}{"type": "url", "url": image}
+		}
+		blocks = append(blocks, map[string]interface{}{"type": "image", "source": source})
+	}
+	return blocks, nil
 }

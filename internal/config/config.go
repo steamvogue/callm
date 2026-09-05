@@ -38,7 +38,7 @@ var Presets = map[string]ProviderPreset{
 	"ant": {
 		Name:         "Anthropic Direct",
 		BaseURL:      "https://api.anthropic.com/v1",
-		DefaultModel: "claude-3-7-sonnet-20250219",
+		DefaultModel: "claude-sonnet-4-6",
 		KeyEnv:       "ANTHROPIC_API_KEY",
 	},
 	"ms": {
@@ -100,7 +100,7 @@ type Config struct {
 	ImagePaths          []string
 }
 
-// LoadEnvFiles loads environment variables from .env and ~/.config/straitly/config without overwriting existing vars.
+// LoadEnvFiles fills missing or empty variables from local .env files and user configs.
 func LoadEnvFiles() {
 	// Try current directory .env
 	loadEnvFile(".env")
@@ -158,7 +158,7 @@ func loadEnvFile(path string) {
 // 2. Explicit environment variable name via flagKeyEnv (--api-key-env)
 // 3. CALLM_API_KEY
 // 4. Preset-specific default key (and aliases)
-// 5. Fallback keys
+// Missing provider credentials remain missing; unrelated provider keys are never used.
 func ResolveAPIKey(preset string, flagKey string, flagKeyEnv string) (string, error) {
 	if flagKey != "" {
 		return flagKey, nil
@@ -195,25 +195,22 @@ func ResolveAPIKey(preset string, flagKey string, flagKeyEnv string) (string, er
 		return "ollama", nil
 	}
 
-	// Priority 3: Fallbacks across known keys
-	fallbacks := []string{
-		"STRAITLY_API_KEY",
-		"OPENROUTER_API_KEY",
-		"DEEPSEEK_API_KEY",
-		"ANTHROPIC_API_KEY",
-		"OPENAI_API_KEY",
-		"MOONSHOT_API_KEY",
-		"ZAI_API_KEY",
-		"ZHIPU_API_KEY",
-		"DASHSCOPE_API_KEY",
-		"QWEN_API_KEY",
-		"GROQ_API_KEY",
-	}
-	for _, env := range fallbacks {
-		if val := os.Getenv(env); val != "" {
-			return val, nil
-		}
-	}
-
 	return "", nil
+}
+
+// ResolveBaseURL applies the same endpoint precedence to every command.
+func ResolveBaseURL(preset, explicit string) string {
+	if explicit != "" {
+		return explicit
+	}
+	if value := os.Getenv("CALLM_BASE_URL"); value != "" {
+		return value
+	}
+	if preset == "st" && os.Getenv("STRAITLY_BASE_URL") != "" {
+		return os.Getenv("STRAITLY_BASE_URL")
+	}
+	if preset == "oa" && os.Getenv("OPENAI_BASE_URL") != "" {
+		return os.Getenv("OPENAI_BASE_URL")
+	}
+	return Presets[preset].BaseURL
 }

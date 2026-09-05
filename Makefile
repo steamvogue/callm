@@ -8,7 +8,7 @@ DATE    ?= $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
 LDFLAGS := -s -w -X main.Version=$(VERSION) -X main.Commit=$(COMMIT) -X main.Date=$(DATE)
 
-.PHONY: all help build version test test-unit test-live models info install uninstall check-env lint clean cross-compile
+.PHONY: all help build version test test-unit test-race test-live models info install uninstall check-env lint clean cross-compile
 
 all: build
 
@@ -37,19 +37,22 @@ build: ## Compile Go binary into bin/callm
 version: build ## Print built binary version
 	@./bin/callm --version
 
-check-env: ## Verify required environment variables
-	@if [ -z "$$STRAITLY_API_KEY" ] && [ -z "$$CALLM_API_KEY" ] && [ -z "$$OPENAI_API_KEY" ] && [ ! -f .env ]; then \
-		printf "\033[31mError:\033[0m No API key configured and .env does not exist.\n" >&2; \
-		printf "Export CALLM_API_KEY, STRAITLY_API_KEY, or OPENAI_API_KEY, or create .env\n" >&2; \
+check-env: ## Check for default-provider key or configuration-file hints
+	@if [ -z "$$STRAITLY_API_KEY" ] && [ -z "$$CALLM_API_KEY" ] && [ ! -f .env ] && [ ! -f "$$HOME/.config/callm/config" ] && [ ! -f "$$HOME/.config/straitly/config" ]; then \
+		printf "\033[31mError:\033[0m No default-provider key or configuration file found.\n" >&2; \
+		printf "Export CALLM_API_KEY or STRAITLY_API_KEY, or create .env\n" >&2; \
 		exit 1; \
 	else \
-		printf "\033[32mOK:\033[0m API key configured.\n"; \
+		printf "\033[32mOK:\033[0m Key/config source found; the CLI validates credentials.\n"; \
 	fi
 
 test: test-unit ## Run all unit tests including mock API and reasoning streaming tests
 
-test-unit: ## Run unit tests with race detection and verbose output
+test-unit: ## Run unit tests with verbose output (use test-race on a supported host)
 	@go test -v ./...
+
+test-race: ## Run tests with the Go race detector
+	@go test -race -timeout=60s ./...
 
 test-live: build ## Run live minimal and reasoning tests across all configured providers
 	@./scripts/test_live.sh

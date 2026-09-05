@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -8,9 +9,11 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -50,9 +53,10 @@ func printUsage() {
 Usage:
   callm [chat] [OPTIONS] ["PROMPT"...]
                                     Chat completion. Reads PROMPT from arguments, files, or stdin.
-  callm models [FILTER]            List available models with context length, pricing, and modalities.
-  callm info <MODEL>               Inspect full technical specs, pricing, and parameters for a model.
-  callm raw <ENDPOINT> '<JSON>'    POST raw JSON body to any endpoint (e.g. /chat/completions).
+  callm models [OPTIONS] [FILTER]  List available models with context length, pricing, and modalities.
+  callm info [OPTIONS] <MODEL>     Inspect full technical specs, pricing, and parameters for a model.
+  callm raw [OPTIONS] <ENDPOINT> '<JSON>'
+                                    POST raw JSON body to any endpoint (e.g. /chat/completions).
   callm version | -v | --version   Print version, commit, and build date.
   callm -h | --help                Show this help message.
 
@@ -64,8 +68,8 @@ Provider Presets:
   --ds                             DeepSeek Direct API
                                    URL: https://api.deepseek.com | Model: deepseek-chat
   --ant, --anthropic               Anthropic Direct API (/v1/messages)
-                                   URL: https://api.anthropic.com/v1 | Model: claude-3-7-sonnet-20250219
-  --claude                         Claude Shortcut (selects Claude 3.7 Sonnet on active gateway)
+                                   URL: https://api.anthropic.com/v1 | Model: claude-sonnet-4-6
+  --claude                         Claude Shortcut (selects Claude Sonnet 4.6 on active gateway)
   --ms, --moonshot, --kimi         Moonshot AI (Kimi)
                                    URL: https://api.moonshot.cn/v1 | Model: moonshot-v1-auto
   --zai, --glm                     Zhipu AI (GLM / ZAI)
@@ -80,39 +84,61 @@ Provider Presets:
                                    URL: http://localhost:11434/v1 | Model: deepseek-r1
   --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)
 
-Options:
+Options (chat unless stated otherwise):
+  Provider, URL, key, --timeout and --header-timeout flags apply to all API commands.
+  Flags must precede positional arguments; use COMMAND --help for command-specific help.
+
   -m, --model MODEL                Model ID override
   -k, --key, --api-key KEY         API key value override
       --key-env, --api-key-env ENV Custom environment variable name containing API key
   -s, --system SYSTEM              System prompt instruction
-  -t, --temp TEMPERATURE           Sampling temperature (e.g. 0.7, 0.0)
+  -t, --temp, --temperature T      Sampling temperature (omitted by default)
   -n, --max-tokens N               Maximum tokens to generate
-      --max-completion-tokens N    Maximum completion tokens (for OpenAI o1/o3 reasoning models)
-      --effort EFFORT              Reasoning effort: low, medium, high (OpenAI o1/o3, OpenRouter, Claude)
-      --thinking-budget N          Extended thinking token budget (Claude 3.7 / OpenRouter)
+      --max-completion-tokens N    Maximum completion tokens (for OpenAI o1/o3/o4 reasoning models)
+      --effort, --reasoning-effort E   Reasoning effort: low, medium, high (omitted by default)
+      --thinking-budget N          Extended thinking token budget (Claude / OpenRouter)
       --top-p P                    Top-p nucleus sampling
   -f, --file FILE                  Include contents of FILE in prompt context (can repeat)
       --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)
       --json-object                Request structured JSON object response_format
       --stream                     Force streaming response (default when stdout is terminal)
       --no-stream                  Disable streaming response
-      --reasoning                  Display reasoning / chain-of-thought tokens (default in terminal)
+      --reasoning                  Display returned reasoning on stderr (default when stdout is terminal)
       --no-reasoning               Hide reasoning tokens
       --only-reasoning             Only output reasoning tokens (suppress final answer)
       --stats                      Print token usage, latency, tok/s, and cost to stderr
-      --json                       Output full unparsed JSON response
+      --json                       Output original JSON response (non-streaming)
+      --header-timeout DURATION    Wait for response headers (inherits --timeout; 0 disables)
+      --idle-timeout DURATION      Wait for streamed bytes (inherits --timeout; 0 disables)
+      --stdin-timeout DURATION     Wait for piped input EOF (default 300s; 0 disables)
+      --no-stdin                   Ignore stdin, even when it is a pipe
+      --timeout DURATION           Total API timeout (default 300s; seconds or 5m; 0 disables)
 
 Environment Variables:
   CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
-  OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY, DASHSCOPE_API_KEY, GROQ_API_KEY
+  OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
+  DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, OLLAMA_API_KEY (optional)
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
   CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
+
+Defaults and precedence:
+  --timeout defaults to 300 seconds (5m). Header/idle limits inherit that value.
+  --stdin-timeout independently defaults to 300 seconds. Each limit accepts 0 to disable.
+  Temperature, top-p, effort and token caps are omitted unless set, except Anthropic
+  max_tokens defaults to 4096 (increased if needed for an implicit thinking cap).
+  Key: explicit key > named key-env > CALLM_API_KEY > selected provider key/alias.
+  URL/model: explicit flag > CALLM_* > selected provider STRAITLY_*/OPENAI_* > preset.
+  --claude replaces the preset model; explicit/model environment overrides still win.
+  Without an explicit provider, --claude selects Anthropic if only its key is present
+  among ANTHROPIC_API_KEY, STRAITLY_API_KEY and OPENROUTER_API_KEY.
+  Streaming/reasoning display default on only when stdout is a terminal.
+  Reasoning display flags do not enable model reasoning; --effort/--thinking-budget request it.
 
 Examples:
   # Quick query using default model (deepseek/deepseek-v4-flash-0731):
   callm "Explain quantum entanglement in 2 sentences"
 
-  # Quick query to Claude 3.7 Sonnet (via Straitly/OpenRouter):
+  # Quick query to Claude Sonnet 4.6 (via Straitly/OpenRouter):
   callm --claude "Refactor this Go function"
 
   # Direct Anthropic Claude with extended thinking:
@@ -152,7 +178,7 @@ func main() {
 		return
 	}
 
-	firstArg := os.Args[1]
+	firstArg, commandArgs := splitCommand(os.Args[1:])
 	switch firstArg {
 	case "-v", "--version", "version":
 		printVersion()
@@ -161,20 +187,20 @@ func main() {
 		printUsage()
 		return
 	case "models":
-		runModels(ctx, os.Args[2:])
+		runModels(ctx, commandArgs)
 		return
 	case "info":
-		runInfo(ctx, os.Args[2:])
+		runInfo(ctx, commandArgs)
 		return
 	case "raw":
-		runRaw(ctx, os.Args[2:])
+		runRaw(ctx, commandArgs)
 		return
 	case "chat":
-		runChat(ctx, os.Args[2:])
+		runChat(ctx, commandArgs)
 		return
 	default:
 		// Default to chat if not a special subcommand
-		runChat(ctx, os.Args[1:])
+		runChat(ctx, commandArgs)
 	}
 }
 
@@ -198,7 +224,7 @@ func (p *presetFlags) Register(fs *flag.FlagSet) {
 	fs.BoolVar(&p.dsPreset, "ds", false, "Use DeepSeek Direct preset")
 	fs.BoolVar(&p.antPreset, "ant", false, "Use Anthropic Direct API preset")
 	fs.BoolVar(&p.antPreset, "anthropic", false, "Use Anthropic Direct API preset")
-	fs.BoolVar(&p.claudeFlag, "claude", false, "Shortcut to use Claude model")
+	fs.BoolVar(&p.claudeFlag, "claude", false, "Claude chat model shortcut; may select Anthropic when only its key is present")
 	fs.BoolVar(&p.msPreset, "ms", false, "Use Moonshot AI (Kimi) preset")
 	fs.BoolVar(&p.msPreset, "moonshot", false, "Use Moonshot AI (Kimi) preset")
 	fs.BoolVar(&p.msPreset, "kimi", false, "Use Moonshot AI (Kimi) preset")
@@ -213,6 +239,19 @@ func (p *presetFlags) Register(fs *flag.FlagSet) {
 }
 
 func (p *presetFlags) ResolvePreset() string {
+	count := 0
+	for _, enabled := range []bool{p.stPreset, p.orPreset, p.dsPreset, p.antPreset, p.msPreset, p.zaiPreset, p.qwPreset, p.oaPreset, p.groqPreset, p.olPreset} {
+		if enabled {
+			count++
+		}
+	}
+	if count > 1 {
+		die(errors.New("select only one provider preset"))
+	}
+	if p.claudeFlag && (p.dsPreset || p.msPreset || p.zaiPreset || p.qwPreset || p.oaPreset || p.groqPreset || p.olPreset) {
+		die(errors.New("--claude requires Straitly, OpenRouter, or Anthropic"))
+	}
+
 	if p.orPreset {
 		return "or"
 	}
@@ -240,6 +279,9 @@ func (p *presetFlags) ResolvePreset() string {
 	if p.olPreset {
 		return "ollama"
 	}
+	if p.stPreset {
+		return "st"
+	}
 	if p.claudeFlag {
 		if os.Getenv("ANTHROPIC_API_KEY") != "" && os.Getenv("STRAITLY_API_KEY") == "" && os.Getenv("OPENROUTER_API_KEY") == "" {
 			return "ant"
@@ -248,8 +290,35 @@ func (p *presetFlags) ResolvePreset() string {
 	return "st"
 }
 
+// registerTimeout accepts either seconds or a duration such as "5m" or "500ms".
+func registerTimeout(fs *flag.FlagSet) *time.Duration {
+	return registerDuration(fs, "timeout", client.DefaultTimeout)
+}
+
+func registerDuration(fs *flag.FlagSet, name string, defaultValue time.Duration) *time.Duration {
+	timeout := defaultValue
+	description := fmt.Sprintf("%s (default %.0fs; seconds or duration; 0 disables)", name, defaultValue.Seconds())
+	if name == "header-timeout" || name == "idle-timeout" {
+		description = name + " (inherits --timeout; seconds or duration; 0 disables)"
+	}
+	fs.Func(name, description, func(value string) error {
+		duration, err := time.ParseDuration(value)
+		if err != nil {
+			duration, err = time.ParseDuration(value + "s")
+		}
+		if err != nil || duration < 0 {
+			return fmt.Errorf("timeout must be non-negative seconds or a duration such as 300s or 5m")
+		}
+		timeout = duration
+		return nil
+	})
+	return &timeout
+}
+
 func runModels(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("models", flag.ExitOnError)
+	timeout := registerTimeout(fs)
+	headerTimeout := registerDuration(fs, "header-timeout", client.DefaultTimeout)
 	var pFlags presetFlags
 	pFlags.Register(fs)
 	var customAPI, keyFlag, keyEnvFlag string
@@ -263,7 +332,7 @@ func runModels(ctx context.Context, args []string) {
 	fs.StringVar(&keyEnvFlag, "api-key-env", "", "Environment variable name containing API key")
 
 	fs.Usage = func() {
-		fmt.Println("Usage: callm models [PRESET_OPTIONS] [FILTER]")
+		fmt.Fprintln(fs.Output(), "Usage: callm models [OPTIONS] [FILTER]")
 		fs.PrintDefaults()
 	}
 
@@ -271,16 +340,7 @@ func runModels(ctx context.Context, args []string) {
 	filter := strings.Join(fs.Args(), " ")
 
 	presetName := pFlags.ResolvePreset()
-	baseURL := config.Presets[presetName].BaseURL
-	if customAPI != "" {
-		baseURL = customAPI
-	} else if envURL := os.Getenv("CALLM_BASE_URL"); envURL != "" {
-		baseURL = envURL
-	} else if envURL := os.Getenv("STRAITLY_BASE_URL"); envURL != "" && presetName == "st" {
-		baseURL = envURL
-	} else if envURL := os.Getenv("OPENAI_BASE_URL"); envURL != "" && presetName == "oa" {
-		baseURL = envURL
-	}
+	baseURL := config.ResolveBaseURL(presetName, customAPI)
 
 	apiKey, err := config.ResolveAPIKey(presetName, keyFlag, keyEnvFlag)
 	if err != nil {
@@ -290,7 +350,14 @@ func runModels(ctx context.Context, args []string) {
 		die(fmt.Errorf("API key required. Export %s or pass --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
 	}
 
-	apiClient := client.NewClient(baseURL, apiKey)
+	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
+	apiClient.HTTPClient.Timeout = *timeout
+	if !flagWasSet(fs, "header-timeout") {
+		*headerTimeout = *timeout
+	}
+	if transport, ok := apiClient.HTTPClient.Transport.(*http.Transport); ok {
+		transport.ResponseHeaderTimeout = *headerTimeout
+	}
 	models, err := apiClient.ListModels(ctx)
 	if err != nil {
 		die(err)
@@ -303,6 +370,8 @@ func runModels(ctx context.Context, args []string) {
 
 func runInfo(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("info", flag.ExitOnError)
+	timeout := registerTimeout(fs)
+	headerTimeout := registerDuration(fs, "header-timeout", client.DefaultTimeout)
 	var pFlags presetFlags
 	pFlags.Register(fs)
 	var customAPI, keyFlag, keyEnvFlag string
@@ -315,6 +384,11 @@ func runInfo(ctx context.Context, args []string) {
 	fs.StringVar(&keyEnvFlag, "key-env", "", "Environment variable name containing API key")
 	fs.StringVar(&keyEnvFlag, "api-key-env", "", "Environment variable name containing API key")
 
+	fs.Usage = func() {
+		fmt.Fprintln(fs.Output(), "Usage: callm info [OPTIONS] <MODEL>")
+		fs.PrintDefaults()
+	}
+
 	_ = fs.Parse(args)
 	if len(fs.Args()) == 0 {
 		die(errors.New("info requires a MODEL ID argument (e.g. callm info deepseek/deepseek-v4-flash-0731)"))
@@ -322,12 +396,7 @@ func runInfo(ctx context.Context, args []string) {
 	modelID := fs.Args()[0]
 
 	presetName := pFlags.ResolvePreset()
-	baseURL := config.Presets[presetName].BaseURL
-	if customAPI != "" {
-		baseURL = customAPI
-	} else if envURL := os.Getenv("CALLM_BASE_URL"); envURL != "" {
-		baseURL = envURL
-	}
+	baseURL := config.ResolveBaseURL(presetName, customAPI)
 
 	apiKey, err := config.ResolveAPIKey(presetName, keyFlag, keyEnvFlag)
 	if err != nil {
@@ -337,7 +406,14 @@ func runInfo(ctx context.Context, args []string) {
 		die(fmt.Errorf("API key required. Export %s or pass --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
 	}
 
-	apiClient := client.NewClient(baseURL, apiKey)
+	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
+	apiClient.HTTPClient.Timeout = *timeout
+	if !flagWasSet(fs, "header-timeout") {
+		*headerTimeout = *timeout
+	}
+	if transport, ok := apiClient.HTTPClient.Transport.(*http.Transport); ok {
+		transport.ResponseHeaderTimeout = *headerTimeout
+	}
 	models, err := apiClient.ListModels(ctx)
 	if err != nil {
 		die(err)
@@ -354,7 +430,11 @@ func runInfo(ctx context.Context, args []string) {
 
 func runRaw(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("raw", flag.ContinueOnError)
+	timeout := registerTimeout(fs)
+	headerTimeout := registerDuration(fs, "header-timeout", client.DefaultTimeout)
 	var keyFlag, keyEnvFlag, customAPI string
+	var pFlags presetFlags
+	pFlags.Register(fs)
 	fs.StringVar(&keyFlag, "k", "", "API key")
 	fs.StringVar(&keyFlag, "key", "", "API key")
 	fs.StringVar(&keyFlag, "api-key", "", "API key")
@@ -363,7 +443,17 @@ func runRaw(ctx context.Context, args []string) {
 	fs.StringVar(&customAPI, "api", "", "Custom API base URL")
 	fs.StringVar(&customAPI, "base-url", "", "Custom API base URL")
 
-	_ = fs.Parse(args)
+	fs.Usage = func() {
+		fmt.Fprintln(fs.Output(), "Usage: callm raw [OPTIONS] <ENDPOINT> '<JSON>'")
+		fs.PrintDefaults()
+	}
+
+	if err := fs.Parse(args); err != nil {
+		if errors.Is(err, flag.ErrHelp) {
+			return
+		}
+		die(err)
+	}
 	rem := fs.Args()
 	if len(rem) < 2 {
 		die(errors.New("raw requires <ENDPOINT> and '<JSON>' arguments (e.g. callm raw /chat/completions '{\"model\": \"...\"}')"))
@@ -371,41 +461,46 @@ func runRaw(ctx context.Context, args []string) {
 	endpoint := rem[0]
 	rawJSON := rem[1]
 
-	apiKey, err := config.ResolveAPIKey("st", keyFlag, keyEnvFlag)
+	presetName := pFlags.ResolvePreset()
+	apiKey, err := config.ResolveAPIKey(presetName, keyFlag, keyEnvFlag)
 	if err != nil {
 		die(err)
 	}
 	if apiKey == "" {
-		die(errors.New("API key required. Set STRAITLY_API_KEY or use --api-key / --api-key-env"))
+		die(fmt.Errorf("API key required. Export %s or CALLM_API_KEY or pass --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
 	}
-	baseURL := "https://api.straitly.ai/v1"
-	if customAPI != "" {
-		baseURL = customAPI
-	} else if envURL := os.Getenv("CALLM_BASE_URL"); envURL != "" {
-		baseURL = envURL
-	} else if envURL := os.Getenv("STRAITLY_BASE_URL"); envURL != "" {
-		baseURL = envURL
-	}
+	baseURL := config.ResolveBaseURL(presetName, customAPI)
 
-	apiClient := client.NewClient(baseURL, apiKey)
+	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
+	apiClient.HTTPClient.Timeout = *timeout
+	if !flagWasSet(fs, "header-timeout") {
+		*headerTimeout = *timeout
+	}
+	if transport, ok := apiClient.HTTPClient.Transport.(*http.Transport); ok {
+		transport.ResponseHeaderTimeout = *headerTimeout
+	}
 	respBytes, err := apiClient.RawRequest(ctx, endpoint, []byte(rawJSON))
 	if err != nil {
 		die(err)
 	}
 
-	var pretty bytesIndent
-	if json.Unmarshal(respBytes, &pretty) == nil {
-		indented, _ := json.MarshalIndent(pretty, "", "  ")
-		fmt.Println(string(indented))
+	var pretty bytes.Buffer
+	if json.Indent(&pretty, respBytes, "", "  ") == nil {
+		fmt.Println(pretty.String())
 	} else {
 		fmt.Println(string(respBytes))
 	}
 }
 
-type bytesIndent interface{}
-
 func runChat(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("chat", flag.ContinueOnError)
+	timeout := registerTimeout(fs)
+	headerTimeout := registerDuration(fs, "header-timeout", client.DefaultTimeout)
+	idleTimeout := registerDuration(fs, "idle-timeout", client.DefaultTimeout)
+
+	stdinTimeout := registerDuration(fs, "stdin-timeout", client.DefaultTimeout)
+	var noStdin bool
+	fs.BoolVar(&noStdin, "no-stdin", false, "Do not read stdin")
 
 	var (
 		pFlags        presetFlags
@@ -458,44 +553,52 @@ func runChat(ctx context.Context, args []string) {
 
 	fs.Func("t", "Sampling temperature", func(v string) error {
 		hasTemp = true
-		_, err := fmt.Sscanf(v, "%f", &tempVal)
+		var err error
+		tempVal, err = strconv.ParseFloat(v, 64)
 		return err
 	})
 	fs.Func("temp", "Sampling temperature", func(v string) error {
 		hasTemp = true
-		_, err := fmt.Sscanf(v, "%f", &tempVal)
+		var err error
+		tempVal, err = strconv.ParseFloat(v, 64)
 		return err
 	})
 	fs.Func("temperature", "Sampling temperature", func(v string) error {
 		hasTemp = true
-		_, err := fmt.Sscanf(v, "%f", &tempVal)
+		var err error
+		tempVal, err = strconv.ParseFloat(v, 64)
 		return err
 	})
 
 	fs.Func("n", "Max tokens", func(v string) error {
 		hasMaxTokens = true
-		_, err := fmt.Sscanf(v, "%d", &maxTokensVal)
+		var err error
+		maxTokensVal, err = strconv.Atoi(v)
 		return err
 	})
 	fs.Func("max-tokens", "Max tokens", func(v string) error {
 		hasMaxTokens = true
-		_, err := fmt.Sscanf(v, "%d", &maxTokensVal)
+		var err error
+		maxTokensVal, err = strconv.Atoi(v)
 		return err
 	})
 	fs.Func("max-completion-tokens", "Max completion tokens", func(v string) error {
 		hasMaxComp = true
-		_, err := fmt.Sscanf(v, "%d", &maxCompTokens)
+		var err error
+		maxCompTokens, err = strconv.Atoi(v)
 		return err
 	})
 	fs.Func("thinking-budget", "Thinking token budget", func(v string) error {
 		hasThinking = true
-		_, err := fmt.Sscanf(v, "%d", &thinkingBud)
+		var err error
+		thinkingBud, err = strconv.Atoi(v)
 		return err
 	})
 
 	fs.Func("top-p", "Top-p", func(v string) error {
 		hasTopP = true
-		_, err := fmt.Sscanf(v, "%f", &topPVal)
+		var err error
+		topPVal, err = strconv.ParseFloat(v, 64)
 		return err
 	})
 
@@ -527,23 +630,14 @@ func runChat(ctx context.Context, args []string) {
 	}
 
 	presetName := pFlags.ResolvePreset()
-	baseURL := config.Presets[presetName].BaseURL
-	if customAPI != "" {
-		baseURL = customAPI
-	} else if envURL := os.Getenv("CALLM_BASE_URL"); envURL != "" {
-		baseURL = envURL
-	} else if envURL := os.Getenv("STRAITLY_BASE_URL"); envURL != "" && presetName == "st" {
-		baseURL = envURL
-	} else if envURL := os.Getenv("OPENAI_BASE_URL"); envURL != "" && presetName == "oa" {
-		baseURL = envURL
-	}
+	baseURL := config.ResolveBaseURL(presetName, customAPI)
 
 	model := config.Presets[presetName].DefaultModel
 	if pFlags.claudeFlag {
 		if presetName == "ant" {
-			model = "claude-3-7-sonnet-20250219"
+			model = "claude-sonnet-4-6"
 		} else {
-			model = "anthropic/claude-3.7-sonnet"
+			model = "anthropic/claude-sonnet-4.6"
 		}
 	}
 	if modelFlag != "" {
@@ -561,13 +655,13 @@ func runChat(ctx context.Context, args []string) {
 		die(err)
 	}
 	if apiKey == "" {
-		die(fmt.Errorf("API key not found. Set %s or export OPENAI_API_KEY or use --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
+		die(fmt.Errorf("API key not found. Set %s or CALLM_API_KEY or use --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
 	}
 
 	// Read file contents
 	var fileSections []string
 	for _, fp := range filesFlag {
-		content, err := os.ReadFile(fp)
+		content, err := readContextFile(fp)
 		if err != nil {
 			die(fmt.Errorf("failed to read file '%s': %w", fp, err))
 		}
@@ -577,7 +671,19 @@ func runChat(ctx context.Context, args []string) {
 	}
 
 	// Read stdin if piped or redirected
-	stdinData, _ := readStdinIfAvailable()
+	var stdinData string
+	if !noStdin {
+		inputCtx := ctx
+		cancel := func() {}
+		if *stdinTimeout > 0 {
+			inputCtx, cancel = context.WithTimeout(ctx, *stdinTimeout)
+		}
+		stdinData, err = readStdinIfAvailable(inputCtx)
+		cancel()
+		if err != nil {
+			die(fmt.Errorf("stdin: %w", err))
+		}
+	}
 
 	// Positional arguments
 	promptArgs := strings.Join(fs.Args(), " ")
@@ -669,26 +775,59 @@ func runChat(ctx context.Context, args []string) {
 		chatReq.ResponseFormat = &client.ResponseFormat{Type: "json_object"}
 	}
 
-	apiClient := client.NewClient(baseURL, apiKey)
+	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
+	apiClient.HTTPClient.Timeout = *timeout
+	if !flagWasSet(fs, "header-timeout") {
+		*headerTimeout = *timeout
+	}
+	if !flagWasSet(fs, "idle-timeout") {
+		*idleTimeout = *timeout
+	}
+	apiClient.StreamIdleTimeout = *idleTimeout
+	if transport, ok := apiClient.HTTPClient.Transport.(*http.Transport); ok {
+		transport.ResponseHeaderTimeout = *headerTimeout
+	}
 	startTime := time.Now()
 
-	// Determine streaming behavior:
-	// Default to streaming unless --no-stream or --json is passed.
-	isStreaming := true
+	// Conflicting controls are rejected instead of silently overriding each other.
+	streamSeen := false
+	reasoningSeen := false
+	fs.Visit(func(f *flag.Flag) {
+		if f.Name == "stream" {
+			streamSeen = true
+		}
+		if f.Name == "reasoning" {
+			reasoningSeen = true
+		}
+	})
+	if streamFlag && (noStreamFlag || jsonOutput) {
+		die(errors.New("--stream conflicts with --no-stream and --json"))
+	}
+	if (reasoningFlag || onlyReasoning) && noReasoning {
+		die(errors.New("--no-reasoning conflicts with --reasoning and --only-reasoning"))
+	}
+	if jsonOutput && (reasoningFlag || noReasoning || onlyReasoning) {
+		die(errors.New("reasoning display controls cannot filter full --json output"))
+	}
+	isStreaming := ui.IsTerminal(os.Stdout)
+	if streamSeen {
+		isStreaming = streamFlag
+	}
 	if noStreamFlag || jsonOutput {
 		isStreaming = false
-	} else if streamFlag {
-		isStreaming = true
 	}
-
-	// Determine reasoning display:
-	// Enabled by default in interactive terminal unless --no-reasoning is passed.
-	displayReasoning := reasoningFlag
-	if !noReasoning && (reasoningFlag || onlyReasoning || ui.IsTerminal(os.Stdout)) {
+	displayReasoning := ui.IsTerminal(os.Stdout)
+	if reasoningSeen {
+		displayReasoning = reasoningFlag
+	}
+	if onlyReasoning {
 		displayReasoning = true
 	}
 	if noReasoning {
 		displayReasoning = false
+	}
+	if isStreaming && showStats {
+		chatReq.StreamOptions = &client.StreamOptions{IncludeUsage: true}
 	}
 
 	if isStreaming {
@@ -703,8 +842,7 @@ func runChat(ctx context.Context, args []string) {
 
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
-				fmt.Fprintln(os.Stderr, "\n[Request canceled]")
-				return
+				die(fmt.Errorf("request canceled: %w", err))
 			}
 			die(err)
 		}
@@ -724,29 +862,12 @@ func runChat(ctx context.Context, args []string) {
 	}
 
 	if jsonOutput {
-		enc, _ := json.MarshalIndent(resp, "", "  ")
-		fmt.Println(string(enc))
-		return
-	}
-
-	if len(resp.Choices) > 0 {
-		choice := resp.Choices[0]
-		reasoning := choice.Message.Reasoning
-		if reasoning == "" {
-			reasoning = choice.Message.ReasoningContent
-		}
-
-		if displayReasoning && reasoning != "" {
-			if ui.IsTerminal(os.Stderr) {
-				fmt.Fprintf(os.Stderr, "\033[2m\033[36m[Thinking...]\n%s\033[0m\n\n", reasoning)
-			} else {
-				fmt.Fprintf(os.Stderr, "[Thinking...]\n%s\n\n", reasoning)
-			}
-		}
-
-		if !onlyReasoning {
-			fmt.Println(choice.Message.Content)
-		}
+		fmt.Println(string(resp.Raw))
+	} else if len(resp.Choices) > 0 {
+		message := resp.Choices[0].Message
+		renderer := ui.NewStreamRenderer(os.Stdout, os.Stderr, displayReasoning, onlyReasoning)
+		renderer.HandleDelta(client.StreamDelta{Content: message.Content, Reasoning: message.Reasoning, ReasoningContent: message.ReasoningContent, Thought: message.Thought})
+		renderer.Finish()
 	}
 
 	if showStats {
@@ -758,7 +879,7 @@ func encodeImageToDataURI(pathOrURL string) (string, error) {
 	if strings.HasPrefix(pathOrURL, "http://") || strings.HasPrefix(pathOrURL, "https://") {
 		return pathOrURL, nil
 	}
-	data, err := os.ReadFile(pathOrURL)
+	data, err := readContextFile(pathOrURL)
 	if err != nil {
 		return "", err
 	}
@@ -780,28 +901,107 @@ func die(err error) {
 	os.Exit(1)
 }
 
-// readStdinIfAvailable reads from os.Stdin only if data is actually present or redirected from a file/pipe.
-func readStdinIfAvailable() (string, error) {
+// readStdinIfAvailable waits for pipe EOF on all supported platforms, bounded by ctx.
+func readStdinIfAvailable(ctx context.Context) (string, error) {
 	stat, err := os.Stdin.Stat()
 	if err != nil {
 		return "", err
 	}
-	// Character device = interactive terminal, don't read
-	if (stat.Mode() & os.ModeCharDevice) != 0 {
+	if stat.Mode()&os.ModeCharDevice != 0 {
 		return "", nil
 	}
-	// Regular file redirected via < file.txt
-	if stat.Mode().IsRegular() {
-		if stat.Size() == 0 {
-			return "", nil
+	type result struct {
+		data []byte
+		err  error
+	}
+	done := make(chan result, 1)
+	stdin := os.Stdin
+	go func() {
+		data, err := io.ReadAll(io.LimitReader(stdin, (64<<20)+1))
+		if len(data) > 64<<20 {
+			err = errors.New("stdin exceeds 64 MiB")
 		}
-		data, err := io.ReadAll(os.Stdin)
-		return string(data), err
+		done <- result{data, err}
+	}()
+	select {
+	case r := <-done:
+		return string(r.data), r.err
+	case <-ctx.Done():
+		return "", ctx.Err()
 	}
-	// Pipe: check if readable without blocking
-	if !isStdinReadable() {
-		return "", nil
+}
+
+// splitCommand recognizes subcommands after options without scanning inside flag values.
+func splitCommand(args []string) (string, []string) {
+	bools := flag.NewFlagSet("dispatch", flag.ContinueOnError)
+	var presets presetFlags
+	presets.Register(bools)
+	for _, name := range []string{"stream", "no-stream", "reasoning", "no-reasoning", "only-reasoning", "json", "stats", "json-object", "no-stdin", "v", "version", "h", "help"} {
+		bools.Bool(name, false, "")
 	}
-	data, err := io.ReadAll(os.Stdin)
-	return string(data), err
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
+		if arg == "--" {
+			return "chat", args
+		}
+		if strings.HasPrefix(arg, "-") && arg != "-" {
+			name, _, hasValue := strings.Cut(strings.TrimLeft(arg, "-"), "=")
+			if !hasValue && bools.Lookup(name) == nil {
+				i++
+			}
+			continue
+		}
+		switch arg {
+		case "models", "info", "raw", "chat":
+			rest := append([]string{}, args[:i]...)
+			return arg, append(rest, args[i+1:]...)
+		case "version", "help":
+			if i == 0 {
+				return arg, args[1:]
+			}
+		}
+		break
+	}
+	return "chat", args
+}
+
+func (p *presetFlags) clientProvider(preset, baseURL, explicitURL string) string {
+	if preset == "st" && !p.stPreset && (explicitURL != "" || os.Getenv("CALLM_BASE_URL") != "") && baseURL != config.Presets["st"].BaseURL {
+		return ""
+	}
+	return preset
+}
+
+// readContextFile bounds local attachments and excludes special files that can block.
+func readContextFile(path string) ([]byte, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return nil, err
+	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("attachment must be a regular file")
+	}
+	if info.Size() > 64<<20 {
+		return nil, fmt.Errorf("attachment exceeds 64 MiB")
+	}
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	data, err := io.ReadAll(io.LimitReader(file, (64<<20)+1))
+	if len(data) > 64<<20 {
+		return nil, fmt.Errorf("attachment exceeds 64 MiB")
+	}
+	return data, err
+}
+
+func flagWasSet(fs *flag.FlagSet, name string) bool {
+	found := false
+	fs.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			found = true
+		}
+	})
+	return found
 }

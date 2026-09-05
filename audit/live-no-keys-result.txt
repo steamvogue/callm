@@ -1,0 +1,13 @@
+[1;36m=== Running Live API Call Tests (Minimal + Reasoning) ===[0m
+
+[33m[Straitly Gateway] SKIPPED (no STRAITLY_API_KEY)[0m
+[33m[OpenRouter Gateway] SKIPPED (no OPENROUTER_API_KEY)[0m
+[33m[DeepSeek Direct API] SKIPPED (no DEEPSEEK_API_KEY)[0m
+[33m[OpenAI Direct API] SKIPPED (no OPENAI_API_KEY in environment)[0m
+[33m[Moonshot AI] SKIPPED (no MOONSHOT_API_KEY in environment)[0m
+[33m[Zhipu AI (GLM)] SKIPPED (no ZAI_API_KEY in environment)[0m
+[33m[Alibaba DashScope (Qwen)] SKIPPED (no DASHSCOPE_API_KEY in environment)[0m
+[33m[Groq Ultra-Fast OSS] SKIPPED (no GROQ_API_KEY in environment)[0m
+[90m[Anthropic Direct API] EXCLUDED (Anthropic not available in system)[0m
+
+[1;32m=== All Live API Tests Completed Successfully ===[0m

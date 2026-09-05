@@ -6,7 +6,7 @@ import (
 
 func TestConvertToAnthropicReq(t *testing.T) {
 	req := ChatRequest{
-		Model: "claude-3-7-sonnet-20250219",
+		Model: "claude-sonnet-4-6",
 		Messages: []Message{
 			{Role: "system", Content: "You are a master coder."},
 			{Role: "user", Content: "Write hello world."},
@@ -14,7 +14,10 @@ func TestConvertToAnthropicReq(t *testing.T) {
 		ReasoningEffort: "high",
 	}
 
-	areq := convertToAnthropicReq(req, true)
+	areq, err := convertToAnthropicReq(req, true)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if areq.System != "You are a master coder." {
 		t.Fatalf("expected system prompt extracted, got: %q", areq.System)
@@ -33,12 +36,10 @@ func TestConvertToAnthropicReq(t *testing.T) {
 func TestPrepareRequestOpenAIO1(t *testing.T) {
 	c := NewClient("https://api.openai.com/v1", "sk-test")
 	maxTokens := 1000
-	temp := 0.7
 	req := ChatRequest{
 		Model:           "o3-mini",
 		Messages:        []Message{{Role: "user", Content: "hello"}},
 		MaxTokens:       &maxTokens,
-		Temperature:     &temp,
 		ReasoningEffort: "medium",
 	}
 
@@ -58,7 +59,7 @@ func TestPrepareRequestOpenAIO1(t *testing.T) {
 func TestPrepareRequestOpenRouterReasoning(t *testing.T) {
 	c := NewClient("https://openrouter.ai/api/v1", "sk-test")
 	req := ChatRequest{
-		Model:           "anthropic/claude-3.7-sonnet",
+		Model:           "anthropic/claude-sonnet-4.6",
 		Messages:        []Message{{Role: "user", Content: "hello"}},
 		ReasoningEffort: "high",
 	}

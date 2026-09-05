@@ -1,5 +1,11 @@
 package client
 
+import (
+	"encoding/json"
+	"math"
+	"strconv"
+)
+
 // Message represents an OpenAI-compatible chat message.
 type Message struct {
 	Role    string      `json:"role"`
@@ -51,37 +57,56 @@ type ChatRequest struct {
 	TopP                *float64         `json:"top_p,omitempty"`
 	ResponseFormat      *ResponseFormat  `json:"response_format,omitempty"`
 	Stop                []string         `json:"stop,omitempty"`
+	StreamOptions       *StreamOptions   `json:"stream_options,omitempty"`
+}
+
+type StreamOptions struct {
+	IncludeUsage bool `json:"include_usage"`
 }
 
 // Usage holds token count and cost metadata.
 type Usage struct {
-	PromptTokens        int         `json:"prompt_tokens"`
-	CompletionTokens    int         `json:"completion_tokens"`
-	TotalTokens         int         `json:"total_tokens"`
-	Cost                interface{} `json:"cost,omitempty"` // float64 or string or nil
-	CacheReadInputTokens int        `json:"cache_read_input_tokens,omitempty"`
+	PromptTokens         int         `json:"prompt_tokens"`
+	CompletionTokens     int         `json:"completion_tokens"`
+	TotalTokens          int         `json:"total_tokens"`
+	Cost                 interface{} `json:"cost,omitempty"` // float64 or string or nil
+	CacheReadInputTokens int         `json:"cache_read_input_tokens,omitempty"`
 }
 
 // GetCostFloat returns cost as float64 if available.
-func (u *Usage) GetCostFloat() float64 {
+func (u *Usage) GetCostFloat() float64 { value, _ := u.CostValue(); return value }
+
+// CostValue distinguishes a reported zero cost from missing or invalid metadata.
+func (u *Usage) CostValue() (float64, bool) {
 	if u == nil || u.Cost == nil {
-		return 0.0
+		return 0, false
 	}
+	var value float64
 	switch v := u.Cost.(type) {
 	case float64:
-		return v
+		value = v
 	case float32:
-		return float64(v)
+		value = float64(v)
+	case string:
+		var err error
+		value, err = strconv.ParseFloat(v, 64)
+		if err != nil {
+			return 0, false
+		}
 	default:
-		return 0.0
+		return 0, false
 	}
+	if math.IsNaN(value) || math.IsInf(value, 0) || value < 0 {
+		return 0, false
+	}
+	return value, true
 }
 
 // ChatChoice represents a completion choice.
 type ChatChoice struct {
-	Index        int      `json:"index"`
-	Message      RespMsg  `json:"message"`
-	FinishReason string   `json:"finish_reason"`
+	Index        int     `json:"index"`
+	Message      RespMsg `json:"message"`
+	FinishReason string  `json:"finish_reason"`
 }
 
 // RespMsg holds the assistant response content and reasoning.
@@ -95,13 +120,14 @@ type RespMsg struct {
 
 // ChatResponse is the response from non-streaming /v1/chat/completions.
 type ChatResponse struct {
-	ID      string       `json:"id"`
-	Object  string       `json:"object"`
-	Created int64        `json:"created"`
-	Model   string       `json:"model"`
-	Choices []ChatChoice `json:"choices"`
-	Usage   *Usage       `json:"usage,omitempty"`
-	Error   *APIError    `json:"error,omitempty"`
+	Raw     json.RawMessage `json:"-"`
+	ID      string          `json:"id"`
+	Object  string          `json:"object"`
+	Created int64           `json:"created"`
+	Model   string          `json:"model"`
+	Choices []ChatChoice    `json:"choices"`
+	Usage   *Usage          `json:"usage,omitempty"`
+	Error   *APIError       `json:"error,omitempty"`
 }
 
 // StreamDelta holds streaming token delta.
@@ -140,8 +166,10 @@ type APIError struct {
 
 // ModelListResponse represents the list of models from /v1/models.
 type ModelListResponse struct {
-	Data  []ModelInfo `json:"data"`
-	Error *APIError   `json:"error,omitempty"`
+	Data    []ModelInfo `json:"data"`
+	Error   *APIError   `json:"error,omitempty"`
+	HasMore bool        `json:"has_more"`
+	LastID  string      `json:"last_id"`
 }
 
 // ModelInfo contains model catalog information.
@@ -154,6 +182,8 @@ type ModelInfo struct {
 	Architecture        *Architecture `json:"architecture,omitempty"`
 	Pricing             *ModelPricing `json:"pricing,omitempty"`
 	SupportedParameters []string      `json:"supported_parameters,omitempty"`
+	DisplayName         string        `json:"display_name,omitempty"`
+	MaxInputTokens      int64         `json:"max_input_tokens,omitempty"`
 }
 
 // Architecture details modalities and tokenizer.
