@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          check-latest: true
+
+      - name: Build and Package Binaries
+        run: |
+          set -e
+          TAG="${GITHUB_REF#refs/tags/}"
+          COMMIT="${GITHUB_SHA::7}"
+          BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          LDFLAGS="-s -w -X main.Version=${TAG} -X main.Commit=${COMMIT} -X main.Date=${BUILD_DATE}"
+
+          echo "Building callm release for tag ${TAG} (${COMMIT})"
+          mkdir -p dist
+
+          TARGETS=(
+            "linux/amd64/callm"
+            "linux/arm64/callm"
+            "darwin/amd64/callm"
+            "darwin/arm64/callm"
+            "windows/amd64/callm.exe"
+          )
+
+          for target in "${TARGETS[@]}"; do
+            IFS="/" read -r GOOS GOARCH BIN_NAME <<< "${target}"
+            STAGING_DIR="build_${GOOS}_${GOARCH}"
+            ARCHIVE_NAME="callm-${TAG}-${GOOS}-${GOARCH}"
+
+            echo "--> Compiling ${GOOS}/${GOARCH}..."
+            mkdir -p "${STAGING_DIR}"
+            GOOS="${GOOS}" GOARCH="${GOARCH}" CGO_ENABLED=0 go build -ldflags="${LDFLAGS}" -o "${STAGING_DIR}/${BIN_NAME}" ./cmd/callm
+            cp README.md LICENSE "${STAGING_DIR}/"
+
+            if [ "${GOOS}" = "windows" ]; then
+              (cd "${STAGING_DIR}" && zip "../dist/${ARCHIVE_NAME}.zip" "${BIN_NAME}" README.md LICENSE)
+            else
+              tar -czf "dist/${ARCHIVE_NAME}.tar.gz" -C "${STAGING_DIR}" "${BIN_NAME}" README.md LICENSE
+            fi
+
+            rm -rf "${STAGING_DIR}"
+          done
+
+          echo "--> Generating SHA256 checksums..."
+          (cd dist && sha256sum callm-* > checksums.txt)
+          cat dist/checksums.txt
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.tar.gz
+            dist/*.zip
+            dist/checksums.txt
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

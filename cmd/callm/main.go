@@ -31,8 +31,21 @@ func (s *stringSlice) Set(value string) error {
 	return nil
 }
 
+var (
+	// Version is injected at build time via -ldflags="-X main.Version=..."
+	Version = "dev"
+	// Commit is injected at build time via -ldflags="-X main.Commit=..."
+	Commit = "none"
+	// Date is injected at build time via -ldflags="-X main.Date=..."
+	Date = "unknown"
+)
+
+func printVersion() {
+	fmt.Printf("callm %s (commit: %s, built at: %s)\n", Version, Commit, Date)
+}
+
 func printUsage() {
-	fmt.Print(`callm — High-performance CLI for calling LLMs across Straitly, OpenRouter, DeepSeek, and custom OpenAI-compatible gateways.
+	fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, DeepSeek, and custom OpenAI-compatible gateways.
 
 Usage:
   callm [chat] [OPTIONS] ["PROMPT"...]
@@ -40,6 +53,7 @@ Usage:
   callm models [FILTER]            List available models with context length, pricing, and modalities.
   callm info <MODEL>               Inspect full technical specs, pricing, and parameters for a model.
   callm raw <ENDPOINT> '<JSON>'    POST raw JSON body to any endpoint (e.g. /chat/completions).
+  callm version | -v | --version   Print version, commit, and build date.
   callm -h | --help                Show this help message.
 
 Provider Presets:
@@ -101,7 +115,7 @@ Examples:
   # Inspect model catalog and specs:
   callm models deepseek
   callm info deepseek/deepseek-v4-flash-0731
-`)
+`, Version)
 }
 
 func main() {
@@ -122,6 +136,9 @@ func main() {
 
 	firstArg := os.Args[1]
 	switch firstArg {
+	case "-v", "--version", "version":
+		printVersion()
+		return
 	case "-h", "--help", "help":
 		printUsage()
 		return
@@ -343,8 +360,11 @@ func runChat(ctx context.Context, args []string) {
 		onlyReasoning bool
 		showStats     bool
 		jsonOutput    bool
+		versionFlag   bool
 	)
 
+	fs.BoolVar(&versionFlag, "v", false, "Show version")
+	fs.BoolVar(&versionFlag, "version", false, "Show version")
 	fs.BoolVar(&stPreset, "st", false, "Use Straitly preset (default)")
 	fs.BoolVar(&orPreset, "or", false, "Use OpenRouter preset")
 	fs.BoolVar(&dsPreset, "ds", false, "Use DeepSeek Direct preset")
@@ -413,6 +433,11 @@ func runChat(ctx context.Context, args []string) {
 			return
 		}
 		die(err)
+	}
+
+	if versionFlag {
+		printVersion()
+		return
 	}
 
 	presetName := "st"

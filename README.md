@@ -1,5 +1,9 @@
 # callm (call - llm)
 
+[![CI](https://github.com/steamvogue/callm/actions/workflows/ci.yml/badge.svg)](https://github.com/steamvogue/callm/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/steamvogue/callm)](https://github.com/steamvogue/callm/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A blazing-fast, zero-dependency Go CLI utility for calling LLMs across multiple OpenAI-compatible gateways.
 
 Features built-in presets for **Straitly**, **OpenRouter**, and **DeepSeek Direct API**, or any custom endpoint.
@@ -151,6 +155,7 @@ Usage:
   callm models [FILTER]
   callm info <MODEL>
   callm raw <ENDPOINT> '<JSON>'
+  callm version | -v | --version
   callm -h | --help
 
 Provider Presets:
@@ -183,14 +188,38 @@ Chat Options:
 
 ## Installation
 
-Install system-wide to `/usr/local/bin`:
+### Option 1: Download Precompiled Release Binaries
+
+Download the latest standalone binary for your architecture from the [GitHub Releases](https://github.com/steamvogue/callm/releases) page:
+
+- **Linux**: `callm-<version>-linux-amd64.tar.gz` or `callm-<version>-linux-arm64.tar.gz`
+- **macOS**: `callm-<version>-darwin-arm64.tar.gz` (Apple Silicon) or `callm-<version>-darwin-amd64.tar.gz` (Intel)
+- **Windows**: `callm-<version>-windows-amd64.zip`
+
+Extract and move `callm` to your `PATH` (e.g. `/usr/local/bin`):
 
 ```bash
-sudo make install
+tar -xzf callm-*-linux-amd64.tar.gz
+sudo mv callm /usr/local/bin/
 ```
 
-Or for user-only:
+### Option 2: Build From Source
+
+Requirements: Go 1.22+
 
 ```bash
+git clone https://github.com/steamvogue/callm.git
+cd callm
+
+# Build and install system-wide
+sudo make install
+
+# Or install for current user only ($HOME/.local/bin)
 make install PREFIX=$HOME/.local
+```
+
+Verify the installation and version:
+
+```bash
+callm --version
 ```
