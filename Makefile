@@ -8,7 +8,7 @@ DATE    ?= $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
 LDFLAGS := -s -w -X main.Version=$(VERSION) -X main.Commit=$(COMMIT) -X main.Date=$(DATE)
 
-.PHONY: all help build version test models info install uninstall check-env lint clean cross-compile
+.PHONY: all help build version test test-unit test-live models info install uninstall check-env lint clean cross-compile
 
 all: build
 
@@ -46,9 +46,13 @@ check-env: ## Verify required environment variables
 		printf "\033[32mOK:\033[0m API key configured.\n"; \
 	fi
 
-test: build check-env ## Run sanity completion test using default model (deepseek/deepseek-v4-flash-0731)
-	@echo "Testing gateway with deepseek/deepseek-v4-flash-0731..."
-	@./bin/callm --stats --no-reasoning "Reply with exactly: OK_CALLM_READY"
+test: test-unit ## Run all unit tests including mock API and reasoning streaming tests
+
+test-unit: ## Run unit tests with race detection and verbose output
+	@go test -v ./...
+
+test-live: build ## Run live minimal and reasoning tests across all configured providers
+	@./scripts/test_live.sh
 
 models: build check-env ## List DeepSeek models available on the gateway
 	@./bin/callm models deepseek
