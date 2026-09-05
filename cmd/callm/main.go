@@ -676,12 +676,8 @@ func readStdinIfAvailable() (string, error) {
 		data, err := io.ReadAll(os.Stdin)
 		return string(data), err
 	}
-	// Pipe: check if readable without blocking using Select
-	var rdfs syscall.FdSet
-	rdfs.Bits[0] = 1
-	tv := syscall.Timeval{Sec: 0, Usec: 0} // 0ms non-blocking
-	n, err := syscall.Select(1, &rdfs, nil, nil, &tv)
-	if err != nil || n <= 0 {
+	// Pipe: check if readable without blocking
+	if !isStdinReadable() {
 		return "", nil
 	}
 	data, err := io.ReadAll(os.Stdin)
