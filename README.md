@@ -20,11 +20,21 @@ Default model: **`deepseek/deepseek-v4-flash-0731`**
   - `--st` *(default)*: Straitly Gateway (`https://api.straitly.ai/v1`)
   - `--or`: OpenRouter Gateway (`https://openrouter.ai/api/v1`)
   - `--ds`: DeepSeek Direct API (`https://api.deepseek.com`)
-  - `--api=URL` / `--base-url=URL`: Custom OpenAI-compatible endpoint (Ollama, Groq, vLLM, etc.)
+  - `--ant`, `--anthropic`: Anthropic Direct API (`https://api.anthropic.com/v1/messages`)
+  - `--claude`: Claude 3.7 Sonnet shortcut across gateways
+  - `--ms`, `--moonshot`, `--kimi`: Moonshot AI Kimi (`https://api.moonshot.cn/v1`)
+  - `--zai`, `--glm`: Zhipu AI GLM / ZAI (`https://open.bigmodel.cn/api/paas/v4`)
+  - `--qw`, `--qwen`: Alibaba Cloud DashScope Qwen (`https://dashscope.aliyuncs.com/compatible-mode/v1`)
+  - `--oa`, `--openai`: OpenAI Direct API (`https://api.openai.com/v1`)
+  - `--groq`: Groq Ultra-Fast OSS (`https://api.groq.com/openai/v1`)
+  - `--ollama`: Ollama Local Gateway (`http://localhost:11434/v1`)
+  - `--api=URL` / `--base-url=URL`: Custom OpenAI-compatible endpoint (vLLM, SGLang, etc.)
 - **Real-Time SSE Streaming**: Native streaming with instant token delivery and graceful `Ctrl+C` handling.
-- **DeepSeek Chain-of-Thought (Reasoning)**:
-  - Real-time rendering of thinking tokens (`reasoning` / `reasoning_content`) before the main answer.
+- **Universal Chain-of-Thought (Reasoning)**:
+  - Real-time rendering of thinking tokens before the main answer across **DeepSeek (R1/V3)**, **Claude 3.7 Sonnet**, **OpenAI o1/o3-mini**, **Qwen (QwQ)**, **Moonshot (Kimi)**, and **local OSS models**.
+  - **Inline `<think>` Stream Parsing**: Automatically extracts and styles reasoning tokens from open-source models (Ollama, vLLM) that stream thinking tags inline.
   - Granular control via `--reasoning`, `--no-reasoning`, and `--only-reasoning`.
+  - Configurable reasoning effort: `--effort=low|medium|high` and `--thinking-budget=N`.
 - **Flexible Context Ingestion**:
   - Positional prompt arguments
   - Non-blocking piped stdin (`cat log.txt | callm "Extract errors"`)
@@ -98,11 +108,24 @@ callm "Explain quantum entanglement in 2 sentences"
 # Direct DeepSeek API
 callm --ds "Write an LRU cache in Go"
 
-# OpenRouter with Claude 3.5 Sonnet
-callm --or -m anthropic/claude-3.5-sonnet "Explain OKLCH color space"
+# Claude 3.7 Sonnet (via Straitly/OpenRouter gateway)
+callm --claude "Explain OKLCH color space"
 
-# Local Ollama or custom gateway
-callm --api=http://localhost:11434/v1 -m llama3 "Hello from local model"
+# Direct Anthropic API with extended thinking
+callm --ant --effort=high "Prove the Riemann hypothesis"
+
+# Moonshot AI (Kimi) & Alibaba Cloud (Qwen)
+callm --ms "Summarize recent breakthroughs in quantum computing"
+callm --qw -m qwq-32b "Solve this math problem"
+
+# OpenAI o3-mini reasoning model
+callm --oa -m o3-mini --effort=medium "Implement an A* pathfinding algorithm"
+
+# Fast open-source models via Groq
+callm --groq -m llama-3.3-70b-versatile "Explain Rust lifetimes"
+
+# Local Ollama (auto-detects inline <think> tags)
+callm --ollama "Solve 17 * 23 step by step"
 ```
 
 ### Piped Stdin + Instructions
@@ -121,6 +144,9 @@ callm -f schema.sql --reasoning --stats "Generate 3 sample INSERT statements"
 ### Control Reasoning Output
 
 ```bash
+# Set reasoning effort:
+callm --effort=high "Which is larger: 9.11 or 9.9?"
+
 # Only show the model's chain-of-thought:
 callm --only-reasoning "Which is larger: 9.11 or 9.9?"
 
@@ -140,6 +166,7 @@ callm -m "deepseek/deepseek-v4-flash-vision-exp" --image ./chart.png "Explain th
 # Filter models by name/regex
 callm models deepseek
 callm models claude
+callm --oa models gpt
 
 # Inspect technical specs, context length, and pricing
 callm info deepseek/deepseek-v4-flash-0731
@@ -162,6 +189,14 @@ Provider Presets:
   --st                             Straitly Gateway (default: https://api.straitly.ai/v1)
   --or                             OpenRouter Gateway (https://openrouter.ai/api/v1)
   --ds                             DeepSeek Direct API (https://api.deepseek.com)
+  --ant, --anthropic               Anthropic Direct API (https://api.anthropic.com/v1)
+  --claude                         Claude 3.7 Sonnet shortcut across gateways
+  --ms, --moonshot, --kimi         Moonshot AI Kimi (https://api.moonshot.cn/v1)
+  --zai, --glm                     Zhipu AI GLM / ZAI (https://open.bigmodel.cn/api/paas/v4)
+  --qw, --qwen                     Alibaba DashScope Qwen (https://dashscope.aliyuncs.com/compatible-mode/v1)
+  --oa, --openai                   OpenAI Direct API (https://api.openai.com/v1)
+  --groq                           Groq Ultra-Fast OSS (https://api.groq.com/openai/v1)
+  --ollama                         Ollama Local Gateway (http://localhost:11434/v1)
   --api, --base-url URL            Custom OpenAI-compatible endpoint URL
 
 Chat Options:
@@ -171,6 +206,9 @@ Chat Options:
   -s, --system SYSTEM              System prompt instruction
   -t, --temp TEMPERATURE           Sampling temperature (e.g. 0.7, 0.0)
   -n, --max-tokens N               Maximum tokens to generate
+      --max-completion-tokens N    Maximum completion tokens (for OpenAI o1/o3 reasoning models)
+      --effort EFFORT              Reasoning effort: low, medium, high (OpenAI o1/o3, OpenRouter, Claude)
+      --thinking-budget N          Extended thinking token budget (Claude 3.7 / OpenRouter)
       --top-p P                    Top-p nucleus sampling
   -f, --file FILE                  Include contents of FILE in prompt context (can repeat)
       --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)

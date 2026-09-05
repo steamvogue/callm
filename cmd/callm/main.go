@@ -45,7 +45,7 @@ func printVersion() {
 }
 
 func printUsage() {
-	fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, DeepSeek, and custom OpenAI-compatible gateways.
+	fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, DeepSeek, Anthropic, Moonshot, Zhipu, Qwen, OpenAI, Groq, and Ollama.
 
 Usage:
   callm [chat] [OPTIONS] ["PROMPT"...]
@@ -63,7 +63,22 @@ Provider Presets:
                                    URL: https://openrouter.ai/api/v1 | Model: deepseek/deepseek-v4-flash-0731
   --ds                             DeepSeek Direct API
                                    URL: https://api.deepseek.com | Model: deepseek-chat
-  --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. Ollama, Groq, vLLM)
+  --ant, --anthropic               Anthropic Direct API (/v1/messages)
+                                   URL: https://api.anthropic.com/v1 | Model: claude-3-7-sonnet-20250219
+  --claude                         Claude Shortcut (selects Claude 3.7 Sonnet on active gateway)
+  --ms, --moonshot, --kimi         Moonshot AI (Kimi)
+                                   URL: https://api.moonshot.cn/v1 | Model: moonshot-v1-auto
+  --zai, --glm                     Zhipu AI (GLM / ZAI)
+                                   URL: https://open.bigmodel.cn/api/paas/v4 | Model: glm-4-flash
+  --qw, --qwen                     Alibaba Cloud DashScope (Qwen)
+                                   URL: https://dashscope.aliyuncs.com/compatible-mode/v1 | Model: qwen-plus
+  --oa, --openai                   OpenAI Direct API
+                                   URL: https://api.openai.com/v1 | Model: gpt-4o
+  --groq                           Groq Ultra-Fast OSS
+                                   URL: https://api.groq.com/openai/v1 | Model: llama-3.3-70b-versatile
+  --ollama                         Ollama Local Gateway
+                                   URL: http://localhost:11434/v1 | Model: deepseek-r1
+  --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)
 
 Options:
   -m, --model MODEL                Model ID override
@@ -72,6 +87,9 @@ Options:
   -s, --system SYSTEM              System prompt instruction
   -t, --temp TEMPERATURE           Sampling temperature (e.g. 0.7, 0.0)
   -n, --max-tokens N               Maximum tokens to generate
+      --max-completion-tokens N    Maximum completion tokens (for OpenAI o1/o3 reasoning models)
+      --effort EFFORT              Reasoning effort: low, medium, high (OpenAI o1/o3, OpenRouter, Claude)
+      --thinking-budget N          Extended thinking token budget (Claude 3.7 / OpenRouter)
       --top-p P                    Top-p nucleus sampling
   -f, --file FILE                  Include contents of FILE in prompt context (can repeat)
       --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)
@@ -85,7 +103,8 @@ Options:
       --json                       Output full unparsed JSON response
 
 Environment Variables:
-  CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, OPENAI_API_KEY
+  CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
+  OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY, DASHSCOPE_API_KEY, GROQ_API_KEY
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
   CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
 
@@ -93,15 +112,18 @@ Examples:
   # Quick query using default model (deepseek/deepseek-v4-flash-0731):
   callm "Explain quantum entanglement in 2 sentences"
 
-  # Use custom environment variable name for API key:
-  callm --api-key-env=MY_SPECIAL_TOKEN "Summarize current news"
+  # Quick query to Claude 3.7 Sonnet (via Straitly/OpenRouter):
+  callm --claude "Refactor this Go function"
 
-  # Pass explicit bearer API key:
-  callm --api-key="sk-..." "Hello from custom key"
+  # Direct Anthropic Claude with extended thinking:
+  callm --ant --effort=high "Prove the Riemann hypothesis"
 
-  # Switch to DeepSeek direct or OpenRouter presets:
-  callm --ds "Write a binary search in Go"
-  callm --or -m anthropic/claude-3.5-sonnet "Refactor this function"
+  # Moonshot Kimi or Alibaba Qwen:
+  callm --ms "Search and summarize 2026 AI developments"
+  callm --qw "Explain quantum computing fundamentals"
+
+  # OpenAI o3-mini with reasoning effort:
+  callm --oa -m o3-mini --effort=medium "Solve this competitive programming problem"
 
   # Pipe stdin + add instruction:
   cat main.go | callm "Find concurrency race conditions"
@@ -109,12 +131,8 @@ Examples:
   # Attach files and show reasoning + latency/cost stats:
   callm -f schema.sql --reasoning --stats "Generate 3 sample INSERT statements"
 
-  # Attach image to a vision-capable model:
-  callm --image chart.png "What does this diagram represent?"
-
-  # Inspect model catalog and specs:
-  callm models deepseek
-  callm info deepseek/deepseek-v4-flash-0731
+  # Local Ollama model with inline <think> tags:
+  callm --ollama "Solve 17 * 23 step by step"
 `, Version)
 }
 
@@ -160,14 +178,82 @@ func main() {
 	}
 }
 
+type presetFlags struct {
+	stPreset   bool
+	orPreset   bool
+	dsPreset   bool
+	antPreset  bool
+	msPreset   bool
+	zaiPreset  bool
+	qwPreset   bool
+	oaPreset   bool
+	groqPreset bool
+	olPreset   bool
+	claudeFlag bool
+}
+
+func (p *presetFlags) Register(fs *flag.FlagSet) {
+	fs.BoolVar(&p.stPreset, "st", false, "Use Straitly preset (default)")
+	fs.BoolVar(&p.orPreset, "or", false, "Use OpenRouter preset")
+	fs.BoolVar(&p.dsPreset, "ds", false, "Use DeepSeek Direct preset")
+	fs.BoolVar(&p.antPreset, "ant", false, "Use Anthropic Direct API preset")
+	fs.BoolVar(&p.antPreset, "anthropic", false, "Use Anthropic Direct API preset")
+	fs.BoolVar(&p.claudeFlag, "claude", false, "Shortcut to use Claude model")
+	fs.BoolVar(&p.msPreset, "ms", false, "Use Moonshot AI (Kimi) preset")
+	fs.BoolVar(&p.msPreset, "moonshot", false, "Use Moonshot AI (Kimi) preset")
+	fs.BoolVar(&p.msPreset, "kimi", false, "Use Moonshot AI (Kimi) preset")
+	fs.BoolVar(&p.zaiPreset, "zai", false, "Use Zhipu AI (GLM) preset")
+	fs.BoolVar(&p.zaiPreset, "glm", false, "Use Zhipu AI (GLM) preset")
+	fs.BoolVar(&p.qwPreset, "qw", false, "Use Alibaba DashScope (Qwen) preset")
+	fs.BoolVar(&p.qwPreset, "qwen", false, "Use Alibaba DashScope (Qwen) preset")
+	fs.BoolVar(&p.oaPreset, "oa", false, "Use OpenAI Direct preset")
+	fs.BoolVar(&p.oaPreset, "openai", false, "Use OpenAI Direct preset")
+	fs.BoolVar(&p.groqPreset, "groq", false, "Use Groq OSS preset")
+	fs.BoolVar(&p.olPreset, "ollama", false, "Use Ollama Local preset")
+}
+
+func (p *presetFlags) ResolvePreset() string {
+	if p.orPreset {
+		return "or"
+	}
+	if p.dsPreset {
+		return "ds"
+	}
+	if p.antPreset {
+		return "ant"
+	}
+	if p.msPreset {
+		return "ms"
+	}
+	if p.zaiPreset {
+		return "zai"
+	}
+	if p.qwPreset {
+		return "qw"
+	}
+	if p.oaPreset {
+		return "oa"
+	}
+	if p.groqPreset {
+		return "groq"
+	}
+	if p.olPreset {
+		return "ollama"
+	}
+	if p.claudeFlag {
+		if os.Getenv("ANTHROPIC_API_KEY") != "" && os.Getenv("STRAITLY_API_KEY") == "" && os.Getenv("OPENROUTER_API_KEY") == "" {
+			return "ant"
+		}
+	}
+	return "st"
+}
+
 func runModels(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("models", flag.ExitOnError)
-	var stPreset, orPreset, dsPreset bool
+	var pFlags presetFlags
+	pFlags.Register(fs)
 	var customAPI, keyFlag, keyEnvFlag string
 
-	fs.BoolVar(&stPreset, "st", false, "Use Straitly preset")
-	fs.BoolVar(&orPreset, "or", false, "Use OpenRouter preset")
-	fs.BoolVar(&dsPreset, "ds", false, "Use DeepSeek Direct preset")
 	fs.StringVar(&customAPI, "api", "", "Custom API Base URL")
 	fs.StringVar(&customAPI, "base-url", "", "Custom API Base URL")
 	fs.StringVar(&keyFlag, "k", "", "API key")
@@ -184,13 +270,7 @@ func runModels(ctx context.Context, args []string) {
 	_ = fs.Parse(args)
 	filter := strings.Join(fs.Args(), " ")
 
-	presetName := "st"
-	if orPreset {
-		presetName = "or"
-	} else if dsPreset {
-		presetName = "ds"
-	}
-
+	presetName := pFlags.ResolvePreset()
 	baseURL := config.Presets[presetName].BaseURL
 	if customAPI != "" {
 		baseURL = customAPI
@@ -198,7 +278,7 @@ func runModels(ctx context.Context, args []string) {
 		baseURL = envURL
 	} else if envURL := os.Getenv("STRAITLY_BASE_URL"); envURL != "" && presetName == "st" {
 		baseURL = envURL
-	} else if envURL := os.Getenv("OPENAI_BASE_URL"); envURL != "" && customAPI == "" {
+	} else if envURL := os.Getenv("OPENAI_BASE_URL"); envURL != "" && presetName == "oa" {
 		baseURL = envURL
 	}
 
@@ -223,12 +303,10 @@ func runModels(ctx context.Context, args []string) {
 
 func runInfo(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("info", flag.ExitOnError)
-	var stPreset, orPreset, dsPreset bool
+	var pFlags presetFlags
+	pFlags.Register(fs)
 	var customAPI, keyFlag, keyEnvFlag string
 
-	fs.BoolVar(&stPreset, "st", false, "Use Straitly preset")
-	fs.BoolVar(&orPreset, "or", false, "Use OpenRouter preset")
-	fs.BoolVar(&dsPreset, "ds", false, "Use DeepSeek Direct preset")
 	fs.StringVar(&customAPI, "api", "", "Custom API Base URL")
 	fs.StringVar(&customAPI, "base-url", "", "Custom API Base URL")
 	fs.StringVar(&keyFlag, "k", "", "API key")
@@ -243,13 +321,7 @@ func runInfo(ctx context.Context, args []string) {
 	}
 	modelID := fs.Args()[0]
 
-	presetName := "st"
-	if orPreset {
-		presetName = "or"
-	} else if dsPreset {
-		presetName = "ds"
-	}
-
+	presetName := pFlags.ResolvePreset()
 	baseURL := config.Presets[presetName].BaseURL
 	if customAPI != "" {
 		baseURL = customAPI
@@ -336,18 +408,21 @@ func runChat(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("chat", flag.ContinueOnError)
 
 	var (
-		stPreset      bool
-		orPreset      bool
-		dsPreset      bool
+		pFlags        presetFlags
 		customAPI     string
 		modelFlag     string
 		keyFlag       string
 		keyEnvFlag    string
 		systemPrompt  string
+		effortFlag    string
 		tempVal       float64
 		hasTemp       bool
 		maxTokensVal  int
 		hasMaxTokens  bool
+		maxCompTokens int
+		hasMaxComp    bool
+		thinkingBud   int
+		hasThinking   bool
 		topPVal       float64
 		hasTopP       bool
 		filesFlag     stringSlice
@@ -365,9 +440,8 @@ func runChat(ctx context.Context, args []string) {
 
 	fs.BoolVar(&versionFlag, "v", false, "Show version")
 	fs.BoolVar(&versionFlag, "version", false, "Show version")
-	fs.BoolVar(&stPreset, "st", false, "Use Straitly preset (default)")
-	fs.BoolVar(&orPreset, "or", false, "Use OpenRouter preset")
-	fs.BoolVar(&dsPreset, "ds", false, "Use DeepSeek Direct preset")
+	pFlags.Register(fs)
+
 	fs.StringVar(&customAPI, "api", "", "Custom API base URL")
 	fs.StringVar(&customAPI, "base-url", "", "Custom API base URL")
 	fs.StringVar(&modelFlag, "m", "", "Model ID")
@@ -379,6 +453,8 @@ func runChat(ctx context.Context, args []string) {
 	fs.StringVar(&keyEnvFlag, "api-key-env", "", "Environment variable name containing API key")
 	fs.StringVar(&systemPrompt, "s", "", "System prompt")
 	fs.StringVar(&systemPrompt, "system", "", "System prompt")
+	fs.StringVar(&effortFlag, "effort", "", "Reasoning effort (low, medium, high)")
+	fs.StringVar(&effortFlag, "reasoning-effort", "", "Reasoning effort (low, medium, high)")
 
 	fs.Func("t", "Sampling temperature", func(v string) error {
 		hasTemp = true
@@ -404,6 +480,16 @@ func runChat(ctx context.Context, args []string) {
 	fs.Func("max-tokens", "Max tokens", func(v string) error {
 		hasMaxTokens = true
 		_, err := fmt.Sscanf(v, "%d", &maxTokensVal)
+		return err
+	})
+	fs.Func("max-completion-tokens", "Max completion tokens", func(v string) error {
+		hasMaxComp = true
+		_, err := fmt.Sscanf(v, "%d", &maxCompTokens)
+		return err
+	})
+	fs.Func("thinking-budget", "Thinking token budget", func(v string) error {
+		hasThinking = true
+		_, err := fmt.Sscanf(v, "%d", &thinkingBud)
 		return err
 	})
 
@@ -440,13 +526,7 @@ func runChat(ctx context.Context, args []string) {
 		return
 	}
 
-	presetName := "st"
-	if orPreset {
-		presetName = "or"
-	} else if dsPreset {
-		presetName = "ds"
-	}
-
+	presetName := pFlags.ResolvePreset()
 	baseURL := config.Presets[presetName].BaseURL
 	if customAPI != "" {
 		baseURL = customAPI
@@ -454,18 +534,25 @@ func runChat(ctx context.Context, args []string) {
 		baseURL = envURL
 	} else if envURL := os.Getenv("STRAITLY_BASE_URL"); envURL != "" && presetName == "st" {
 		baseURL = envURL
-	} else if envURL := os.Getenv("OPENAI_BASE_URL"); envURL != "" && customAPI == "" {
+	} else if envURL := os.Getenv("OPENAI_BASE_URL"); envURL != "" && presetName == "oa" {
 		baseURL = envURL
 	}
 
 	model := config.Presets[presetName].DefaultModel
+	if pFlags.claudeFlag {
+		if presetName == "ant" {
+			model = "claude-3-7-sonnet-20250219"
+		} else {
+			model = "anthropic/claude-3.7-sonnet"
+		}
+	}
 	if modelFlag != "" {
 		model = modelFlag
 	} else if envModel := os.Getenv("CALLM_MODEL"); envModel != "" {
 		model = envModel
 	} else if envModel := os.Getenv("STRAITLY_MODEL"); envModel != "" && presetName == "st" {
 		model = envModel
-	} else if envModel := os.Getenv("OPENAI_MODEL"); envModel != "" {
+	} else if envModel := os.Getenv("OPENAI_MODEL"); envModel != "" && presetName == "oa" {
 		model = envModel
 	}
 
@@ -556,14 +643,24 @@ func runChat(ctx context.Context, args []string) {
 	}
 
 	chatReq := client.ChatRequest{
-		Model:    model,
-		Messages: messages,
+		Model:           model,
+		Messages:        messages,
+		ReasoningEffort: effortFlag,
 	}
 	if hasTemp {
 		chatReq.Temperature = &tempVal
 	}
 	if hasMaxTokens {
 		chatReq.MaxTokens = &maxTokensVal
+	}
+	if hasMaxComp {
+		chatReq.MaxCompletionTokens = &maxCompTokens
+	}
+	if hasThinking {
+		chatReq.Thinking = &client.ThinkingConfig{
+			Type:         "enabled",
+			BudgetTokens: thinkingBud,
+		}
 	}
 	if hasTopP {
 		chatReq.TopP = &topPVal

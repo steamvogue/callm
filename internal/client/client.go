@@ -31,8 +31,44 @@ func NewClient(baseURL, apiKey string) *Client {
 	}
 }
 
+func (c *Client) prepareRequest(req *ChatRequest) {
+	isOModel := strings.HasPrefix(req.Model, "o1") || strings.HasPrefix(req.Model, "o3") ||
+		strings.HasPrefix(req.Model, "openai/o1") || strings.HasPrefix(req.Model, "openai/o3")
+
+	if isOModel {
+		// OpenAI o-series models reject max_tokens and require max_completion_tokens
+		if req.MaxTokens != nil && req.MaxCompletionTokens == nil {
+			req.MaxCompletionTokens = req.MaxTokens
+			req.MaxTokens = nil
+		}
+		// OpenAI o-series models reject custom temperature
+		req.Temperature = nil
+	}
+
+	isOpenRouterOrStraitly := strings.Contains(c.BaseURL, "openrouter.ai") || strings.Contains(c.BaseURL, "straitly.ai")
+	if isOpenRouterOrStraitly {
+		if req.ReasoningEffort != "" {
+			req.Reasoning = &ReasoningConfig{
+				Effort: strings.ToLower(req.ReasoningEffort),
+			}
+			req.IncludeReasoning = true
+		}
+		if req.Thinking != nil && req.Reasoning == nil {
+			req.Reasoning = &ReasoningConfig{
+				MaxTokens: req.Thinking.BudgetTokens,
+			}
+			req.IncludeReasoning = true
+		}
+	}
+}
+
 // StreamChat initiates an SSE streaming completion and yields chunks to the callback.
 func (c *Client) StreamChat(ctx context.Context, req ChatRequest, onChunk func(chunk StreamChunk) error) (*Usage, error) {
+	if c.isAnthropicURL() {
+		return c.streamAnthropic(ctx, req, onChunk)
+	}
+
+	c.prepareRequest(&req)
 	req.Stream = true
 	bodyBytes, err := json.Marshal(req)
 	if err != nil {
@@ -111,6 +147,11 @@ func (c *Client) StreamChat(ctx context.Context, req ChatRequest, onChunk func(c
 
 // Chat performs a non-streaming chat completion.
 func (c *Client) Chat(ctx context.Context, req ChatRequest) (*ChatResponse, error) {
+	if c.isAnthropicURL() {
+		return c.chatAnthropic(ctx, req)
+	}
+
+	c.prepareRequest(&req)
 	req.Stream = false
 	bodyBytes, err := json.Marshal(req)
 	if err != nil {
@@ -165,7 +206,12 @@ func (c *Client) ListModels(ctx context.Context) ([]ModelInfo, error) {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	httpReq.Header.Set("Authorization", "Bearer "+c.APIKey)
+	if c.isAnthropicURL() {
+		httpReq.Header.Set("x-api-key", c.APIKey)
+		httpReq.Header.Set("anthropic-version", "2023-06-01")
+	} else {
+		httpReq.Header.Set("Authorization", "Bearer "+c.APIKey)
+	}
 
 	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Do(httpReq)
@@ -207,7 +253,12 @@ func (c *Client) RawRequest(ctx context.Context, endpoint string, body []byte) (
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	httpReq.Header.Set("Authorization", "Bearer "+c.APIKey)
+	if c.isAnthropicURL() {
+		httpReq.Header.Set("x-api-key", c.APIKey)
+		httpReq.Header.Set("anthropic-version", "2023-06-01")
+	} else {
+		httpReq.Header.Set("Authorization", "Bearer "+c.APIKey)
+	}
 	httpReq.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{Timeout: 120 * time.Second}

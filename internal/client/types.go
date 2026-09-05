@@ -24,16 +24,33 @@ type ResponseFormat struct {
 	Type string `json:"type"`
 }
 
+// ReasoningConfig represents provider-specific reasoning options (e.g. OpenRouter).
+type ReasoningConfig struct {
+	Effort    string `json:"effort,omitempty"`
+	MaxTokens int    `json:"max_tokens,omitempty"`
+}
+
+// ThinkingConfig represents Anthropic-style extended thinking parameters.
+type ThinkingConfig struct {
+	Type         string `json:"type"` // "enabled"
+	BudgetTokens int    `json:"budget_tokens"`
+}
+
 // ChatRequest is the payload sent to /v1/chat/completions.
 type ChatRequest struct {
-	Model          string          `json:"model"`
-	Messages       []Message       `json:"messages"`
-	Stream         bool            `json:"stream,omitempty"`
-	Temperature    *float64        `json:"temperature,omitempty"`
-	MaxTokens      *int            `json:"max_tokens,omitempty"`
-	TopP           *float64        `json:"top_p,omitempty"`
-	ResponseFormat *ResponseFormat `json:"response_format,omitempty"`
-	Stop           []string        `json:"stop,omitempty"`
+	Model               string           `json:"model"`
+	Messages            []Message        `json:"messages"`
+	Stream              bool             `json:"stream,omitempty"`
+	Temperature         *float64         `json:"temperature,omitempty"`
+	MaxTokens           *int             `json:"max_tokens,omitempty"`
+	MaxCompletionTokens *int             `json:"max_completion_tokens,omitempty"`
+	ReasoningEffort     string           `json:"reasoning_effort,omitempty"`
+	Reasoning           *ReasoningConfig `json:"reasoning,omitempty"`
+	IncludeReasoning    bool             `json:"include_reasoning,omitempty"`
+	Thinking            *ThinkingConfig  `json:"thinking,omitempty"`
+	TopP                *float64         `json:"top_p,omitempty"`
+	ResponseFormat      *ResponseFormat  `json:"response_format,omitempty"`
+	Stop                []string         `json:"stop,omitempty"`
 }
 
 // Usage holds token count and cost metadata.
@@ -73,6 +90,7 @@ type RespMsg struct {
 	Content          string `json:"content"`
 	Reasoning        string `json:"reasoning,omitempty"`
 	ReasoningContent string `json:"reasoning_content,omitempty"`
+	Thought          string `json:"thought,omitempty"`
 }
 
 // ChatResponse is the response from non-streaming /v1/chat/completions.
@@ -92,6 +110,7 @@ type StreamDelta struct {
 	Content          string `json:"content,omitempty"`
 	Reasoning        string `json:"reasoning,omitempty"`
 	ReasoningContent string `json:"reasoning_content,omitempty"`
+	Thought          string `json:"thought,omitempty"`
 }
 
 // StreamChoice is a chunk choice.

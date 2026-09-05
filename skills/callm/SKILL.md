@@ -29,20 +29,33 @@ callm --no-reasoning "What are the edge cases of binary search?"
 callm --reasoning "Explain why 9.11 is smaller than 9.9"
 ```
 
-### 2. Provider Presets
+### 2. Provider Presets & Reasoning
 
 ```bash
 # Straitly gateway (default):
 callm "Your prompt here"
 
+# Claude 3.7 Sonnet shortcut (via Straitly/OpenRouter gateway):
+callm --claude "Refactor this SQL query"
+
+# Direct Anthropic API with extended thinking:
+callm --ant --effort=high "Prove the Riemann hypothesis"
+
 # Direct DeepSeek API:
 callm --ds "Write an optimized LRU cache in Go"
 
-# OpenRouter with specific model:
-callm --or -m anthropic/claude-3.5-sonnet "Refactor this SQL query"
+# Moonshot AI (Kimi) & Alibaba Cloud (Qwen):
+callm --ms "Summarize recent developments in AI"
+callm --qw -m qwq-32b "Solve this math problem"
 
-# Custom endpoint (e.g. local Ollama or vLLM):
-callm --api=http://localhost:11434/v1 -m llama3 "Hello"
+# OpenAI o3-mini reasoning model:
+callm --oa -m o3-mini --effort=medium "Solve this competitive programming problem"
+
+# OpenRouter with specific model:
+callm --or -m anthropic/claude-3.5-sonnet "Refactor this query"
+
+# Local Ollama or vLLM (auto-detects inline <think> tags):
+callm --ollama "Solve 17 * 23 step by step"
 ```
 
 ### 3. Piping Code or Stdin

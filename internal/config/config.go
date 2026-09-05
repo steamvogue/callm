@@ -35,23 +35,69 @@ var Presets = map[string]ProviderPreset{
 		DefaultModel: "deepseek-chat",
 		KeyEnv:       "DEEPSEEK_API_KEY",
 	},
+	"ant": {
+		Name:         "Anthropic Direct",
+		BaseURL:      "https://api.anthropic.com/v1",
+		DefaultModel: "claude-3-7-sonnet-20250219",
+		KeyEnv:       "ANTHROPIC_API_KEY",
+	},
+	"ms": {
+		Name:         "Moonshot Kimi",
+		BaseURL:      "https://api.moonshot.cn/v1",
+		DefaultModel: "moonshot-v1-auto",
+		KeyEnv:       "MOONSHOT_API_KEY",
+	},
+	"zai": {
+		Name:         "Zhipu AI (GLM)",
+		BaseURL:      "https://open.bigmodel.cn/api/paas/v4",
+		DefaultModel: "glm-4-flash",
+		KeyEnv:       "ZAI_API_KEY",
+	},
+	"qw": {
+		Name:         "Alibaba DashScope (Qwen)",
+		BaseURL:      "https://dashscope.aliyuncs.com/compatible-mode/v1",
+		DefaultModel: "qwen-plus",
+		KeyEnv:       "DASHSCOPE_API_KEY",
+	},
+	"oa": {
+		Name:         "OpenAI Direct",
+		BaseURL:      "https://api.openai.com/v1",
+		DefaultModel: "gpt-4o",
+		KeyEnv:       "OPENAI_API_KEY",
+	},
+	"groq": {
+		Name:         "Groq OSS",
+		BaseURL:      "https://api.groq.com/openai/v1",
+		DefaultModel: "llama-3.3-70b-versatile",
+		KeyEnv:       "GROQ_API_KEY",
+	},
+	"ollama": {
+		Name:         "Ollama Local",
+		BaseURL:      "http://localhost:11434/v1",
+		DefaultModel: "deepseek-r1",
+		KeyEnv:       "OLLAMA_API_KEY",
+	},
 }
 
 // Config represents runtime configuration.
 type Config struct {
-	Preset       string
-	BaseURL      string
-	Model        string
-	APIKey       string
-	Temperature  *float64
-	MaxTokens    *int
-	Stream       bool
-	ShowStats    bool
-	ShowReasoning bool
-	JSONOutput   bool
-	SystemPrompt string
-	Files        []string
-	ImagePaths   []string
+	Preset              string
+	BaseURL             string
+	Model               string
+	APIKey              string
+	Temperature         *float64
+	MaxTokens           *int
+	MaxCompletionTokens *int
+	ReasoningEffort     string
+	ThinkingBudget      *int
+	Stream              bool
+	ShowStats           bool
+	ShowReasoning       bool
+	OnlyReasoning       bool
+	JSONOutput          bool
+	SystemPrompt        string
+	Files               []string
+	ImagePaths          []string
 }
 
 // LoadEnvFiles loads environment variables from .env and ~/.config/straitly/config without overwriting existing vars.
@@ -111,8 +157,8 @@ func loadEnvFile(path string) {
 // 1. Explicit direct key value via flagKey (--api-key or --key)
 // 2. Explicit environment variable name via flagKeyEnv (--api-key-env)
 // 3. CALLM_API_KEY
-// 4. Preset-specific default key (STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)
-// 5. Fallback keys (STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, OPENAI_API_KEY)
+// 4. Preset-specific default key (and aliases)
+// 5. Fallback keys
 func ResolveAPIKey(preset string, flagKey string, flagKeyEnv string) (string, error) {
 	if flagKey != "" {
 		return flagKey, nil
@@ -130,25 +176,44 @@ func ResolveAPIKey(preset string, flagKey string, flagKeyEnv string) (string, er
 		return val, nil
 	}
 
-	// Priority 2: Preset-specific key
-	if p, ok := Presets[preset]; ok {
+	// Priority 2: Preset-specific key & aliases
+	if p, ok := Presets[preset]; ok && p.KeyEnv != "" {
 		if val := os.Getenv(p.KeyEnv); val != "" {
 			return val, nil
 		}
 	}
+	if preset == "zai" {
+		if val := os.Getenv("ZHIPU_API_KEY"); val != "" {
+			return val, nil
+		}
+	} else if preset == "qw" {
+		if val := os.Getenv("QWEN_API_KEY"); val != "" {
+			return val, nil
+		}
+	} else if preset == "ollama" {
+		// Ollama runs locally and does not require an API key
+		return "ollama", nil
+	}
 
-	// Priority 3: Fallbacks
-	if val := os.Getenv("STRAITLY_API_KEY"); val != "" {
-		return val, nil
+	// Priority 3: Fallbacks across known keys
+	fallbacks := []string{
+		"STRAITLY_API_KEY",
+		"OPENROUTER_API_KEY",
+		"DEEPSEEK_API_KEY",
+		"ANTHROPIC_API_KEY",
+		"OPENAI_API_KEY",
+		"MOONSHOT_API_KEY",
+		"ZAI_API_KEY",
+		"ZHIPU_API_KEY",
+		"DASHSCOPE_API_KEY",
+		"QWEN_API_KEY",
+		"GROQ_API_KEY",
 	}
-	if val := os.Getenv("OPENROUTER_API_KEY"); val != "" {
-		return val, nil
+	for _, env := range fallbacks {
+		if val := os.Getenv(env); val != "" {
+			return val, nil
+		}
 	}
-	if val := os.Getenv("DEEPSEEK_API_KEY"); val != "" {
-		return val, nil
-	}
-	if val := os.Getenv("OPENAI_API_KEY"); val != "" {
-		return val, nil
-	}
+
 	return "", nil
 }
