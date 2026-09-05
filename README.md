@@ -48,20 +48,35 @@ make test     # Sanity check with deepseek/deepseek-v4-flash-0731
 
 ### 2. Configure API Keys
 
-Export the key for your provider:
+Keys can be configured in multiple ways:
 
-```bash
-export STRAITLY_API_KEY="your-straitly-key"      # for --st (default)
-export OPENROUTER_API_KEY="your-openrouter-key"  # for --or
-export DEEPSEEK_API_KEY="your-deepseek-key"      # for --ds
-export OPENAI_API_KEY="your-openai-key"          # generic fallback
-```
+1. **Environment Variables (Default per preset)**:
 
-Or create a `.env` file in the project directory:
+   ```bash
+   export STRAITLY_API_KEY="your-straitly-key"      # for --st (default)
+   export OPENROUTER_API_KEY="your-openrouter-key"  # for --or
+   export DEEPSEEK_API_KEY="your-deepseek-key"      # for --ds
+   export CALLM_API_KEY="your-callm-key"            # global callm override
+   export OPENAI_API_KEY="your-openai-key"          # generic fallback
+   ```
 
-```bash
-STRAITLY_API_KEY=your-key-here
-```
+2. **Custom Environment Variable Name via `--api-key-env`**:
+
+   ```bash
+   callm --api-key-env=TEAM_SECRET_KEY "Summarize codebase"
+   ```
+
+3. **Explicit Key via `--api-key`**:
+
+   ```bash
+   callm --api-key="sk-..." "Hello from explicit key"
+   ```
+
+4. **Local `.env` or `~/.config/callm/config`**:
+
+   ```bash
+   echo "STRAITLY_API_KEY=your-key-here" > .env
+   ```
 
 ---
 
@@ -146,7 +161,8 @@ Provider Presets:
 
 Chat Options:
   -m, --model MODEL                Model ID override (default: deepseek/deepseek-v4-flash-0731)
-  -k, --key KEY                    API key override
+  -k, --key, --api-key KEY         API key value override
+      --key-env, --api-key-env ENV Custom environment variable name containing API key
   -s, --system SYSTEM              System prompt instruction
   -t, --temp TEMPERATURE           Sampling temperature (e.g. 0.7, 0.0)
   -n, --max-tokens N               Maximum tokens to generate

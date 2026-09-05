@@ -2,6 +2,7 @@ package config
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -105,36 +106,49 @@ func loadEnvFile(path string) {
 	}
 }
 
-// ResolveAPIKey discovers the appropriate API key for a given preset and explicit flag.
-func ResolveAPIKey(preset string, flagKey string) string {
+// ResolveAPIKey discovers the appropriate API key.
+// Precedence:
+// 1. Explicit direct key value via flagKey (--api-key or --key)
+// 2. Explicit environment variable name via flagKeyEnv (--api-key-env)
+// 3. CALLM_API_KEY
+// 4. Preset-specific default key (STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)
+// 5. Fallback keys (STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, OPENAI_API_KEY)
+func ResolveAPIKey(preset string, flagKey string, flagKeyEnv string) (string, error) {
 	if flagKey != "" {
-		return flagKey
+		return flagKey, nil
+	}
+	if flagKeyEnv != "" {
+		val := os.Getenv(flagKeyEnv)
+		if val == "" {
+			return "", fmt.Errorf("environment variable '%s' specified by --api-key-env is not set or empty", flagKeyEnv)
+		}
+		return val, nil
 	}
 
 	// Priority 1: Generic CALLM key if set
 	if val := os.Getenv("CALLM_API_KEY"); val != "" {
-		return val
+		return val, nil
 	}
 
 	// Priority 2: Preset-specific key
 	if p, ok := Presets[preset]; ok {
 		if val := os.Getenv(p.KeyEnv); val != "" {
-			return val
+			return val, nil
 		}
 	}
 
 	// Priority 3: Fallbacks
 	if val := os.Getenv("STRAITLY_API_KEY"); val != "" {
-		return val
+		return val, nil
 	}
 	if val := os.Getenv("OPENROUTER_API_KEY"); val != "" {
-		return val
+		return val, nil
 	}
 	if val := os.Getenv("DEEPSEEK_API_KEY"); val != "" {
-		return val
+		return val, nil
 	}
 	if val := os.Getenv("OPENAI_API_KEY"); val != "" {
-		return val
+		return val, nil
 	}
-	return ""
+	return "", nil
 }

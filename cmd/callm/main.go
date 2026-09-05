@@ -53,7 +53,8 @@ Provider Presets:
 
 Options:
   -m, --model MODEL                Model ID override
-  -k, --key KEY                    API key override
+  -k, --key, --api-key KEY         API key value override
+      --key-env, --api-key-env ENV Custom environment variable name containing API key
   -s, --system SYSTEM              System prompt instruction
   -t, --temp TEMPERATURE           Sampling temperature (e.g. 0.7, 0.0)
   -n, --max-tokens N               Maximum tokens to generate
@@ -77,6 +78,12 @@ Environment Variables:
 Examples:
   # Quick query using default model (deepseek/deepseek-v4-flash-0731):
   callm "Explain quantum entanglement in 2 sentences"
+
+  # Use custom environment variable name for API key:
+  callm --api-key-env=MY_SPECIAL_TOKEN "Summarize current news"
+
+  # Pass explicit bearer API key:
+  callm --api-key="sk-..." "Hello from custom key"
 
   # Switch to DeepSeek direct or OpenRouter presets:
   callm --ds "Write a binary search in Go"
@@ -139,7 +146,7 @@ func main() {
 func runModels(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("models", flag.ExitOnError)
 	var stPreset, orPreset, dsPreset bool
-	var customAPI, keyFlag string
+	var customAPI, keyFlag, keyEnvFlag string
 
 	fs.BoolVar(&stPreset, "st", false, "Use Straitly preset")
 	fs.BoolVar(&orPreset, "or", false, "Use OpenRouter preset")
@@ -148,6 +155,9 @@ func runModels(ctx context.Context, args []string) {
 	fs.StringVar(&customAPI, "base-url", "", "Custom API Base URL")
 	fs.StringVar(&keyFlag, "k", "", "API key")
 	fs.StringVar(&keyFlag, "key", "", "API key")
+	fs.StringVar(&keyFlag, "api-key", "", "API key")
+	fs.StringVar(&keyEnvFlag, "key-env", "", "Environment variable name containing API key")
+	fs.StringVar(&keyEnvFlag, "api-key-env", "", "Environment variable name containing API key")
 
 	fs.Usage = func() {
 		fmt.Println("Usage: callm models [PRESET_OPTIONS] [FILTER]")
@@ -175,9 +185,12 @@ func runModels(ctx context.Context, args []string) {
 		baseURL = envURL
 	}
 
-	apiKey := config.ResolveAPIKey(presetName, keyFlag)
+	apiKey, err := config.ResolveAPIKey(presetName, keyFlag, keyEnvFlag)
+	if err != nil {
+		die(err)
+	}
 	if apiKey == "" {
-		die(fmt.Errorf("API key required. Export %s or pass --key", config.Presets[presetName].KeyEnv))
+		die(fmt.Errorf("API key required. Export %s or pass --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
 	}
 
 	apiClient := client.NewClient(baseURL, apiKey)
@@ -194,7 +207,7 @@ func runModels(ctx context.Context, args []string) {
 func runInfo(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("info", flag.ExitOnError)
 	var stPreset, orPreset, dsPreset bool
-	var customAPI, keyFlag string
+	var customAPI, keyFlag, keyEnvFlag string
 
 	fs.BoolVar(&stPreset, "st", false, "Use Straitly preset")
 	fs.BoolVar(&orPreset, "or", false, "Use OpenRouter preset")
@@ -203,6 +216,9 @@ func runInfo(ctx context.Context, args []string) {
 	fs.StringVar(&customAPI, "base-url", "", "Custom API Base URL")
 	fs.StringVar(&keyFlag, "k", "", "API key")
 	fs.StringVar(&keyFlag, "key", "", "API key")
+	fs.StringVar(&keyFlag, "api-key", "", "API key")
+	fs.StringVar(&keyEnvFlag, "key-env", "", "Environment variable name containing API key")
+	fs.StringVar(&keyEnvFlag, "api-key-env", "", "Environment variable name containing API key")
 
 	_ = fs.Parse(args)
 	if len(fs.Args()) == 0 {
@@ -224,9 +240,12 @@ func runInfo(ctx context.Context, args []string) {
 		baseURL = envURL
 	}
 
-	apiKey := config.ResolveAPIKey(presetName, keyFlag)
+	apiKey, err := config.ResolveAPIKey(presetName, keyFlag, keyEnvFlag)
+	if err != nil {
+		die(err)
+	}
 	if apiKey == "" {
-		die(fmt.Errorf("API key required. Export %s or pass --key", config.Presets[presetName].KeyEnv))
+		die(fmt.Errorf("API key required. Export %s or pass --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
 	}
 
 	apiClient := client.NewClient(baseURL, apiKey)
@@ -245,18 +264,35 @@ func runInfo(ctx context.Context, args []string) {
 }
 
 func runRaw(ctx context.Context, args []string) {
-	if len(args) < 2 {
+	fs := flag.NewFlagSet("raw", flag.ContinueOnError)
+	var keyFlag, keyEnvFlag, customAPI string
+	fs.StringVar(&keyFlag, "k", "", "API key")
+	fs.StringVar(&keyFlag, "key", "", "API key")
+	fs.StringVar(&keyFlag, "api-key", "", "API key")
+	fs.StringVar(&keyEnvFlag, "key-env", "", "Environment variable name containing API key")
+	fs.StringVar(&keyEnvFlag, "api-key-env", "", "Environment variable name containing API key")
+	fs.StringVar(&customAPI, "api", "", "Custom API base URL")
+	fs.StringVar(&customAPI, "base-url", "", "Custom API base URL")
+
+	_ = fs.Parse(args)
+	rem := fs.Args()
+	if len(rem) < 2 {
 		die(errors.New("raw requires <ENDPOINT> and '<JSON>' arguments (e.g. callm raw /chat/completions '{\"model\": \"...\"}')"))
 	}
-	endpoint := args[0]
-	rawJSON := args[1]
+	endpoint := rem[0]
+	rawJSON := rem[1]
 
-	apiKey := config.ResolveAPIKey("st", "")
+	apiKey, err := config.ResolveAPIKey("st", keyFlag, keyEnvFlag)
+	if err != nil {
+		die(err)
+	}
 	if apiKey == "" {
-		die(errors.New("API key required"))
+		die(errors.New("API key required. Set STRAITLY_API_KEY or use --api-key / --api-key-env"))
 	}
 	baseURL := "https://api.straitly.ai/v1"
-	if envURL := os.Getenv("CALLM_BASE_URL"); envURL != "" {
+	if customAPI != "" {
+		baseURL = customAPI
+	} else if envURL := os.Getenv("CALLM_BASE_URL"); envURL != "" {
 		baseURL = envURL
 	} else if envURL := os.Getenv("STRAITLY_BASE_URL"); envURL != "" {
 		baseURL = envURL
@@ -289,6 +325,7 @@ func runChat(ctx context.Context, args []string) {
 		customAPI     string
 		modelFlag     string
 		keyFlag       string
+		keyEnvFlag    string
 		systemPrompt  string
 		tempVal       float64
 		hasTemp       bool
@@ -317,6 +354,9 @@ func runChat(ctx context.Context, args []string) {
 	fs.StringVar(&modelFlag, "model", "", "Model ID")
 	fs.StringVar(&keyFlag, "k", "", "API key")
 	fs.StringVar(&keyFlag, "key", "", "API key")
+	fs.StringVar(&keyFlag, "api-key", "", "API key")
+	fs.StringVar(&keyEnvFlag, "key-env", "", "Environment variable name containing API key")
+	fs.StringVar(&keyEnvFlag, "api-key-env", "", "Environment variable name containing API key")
 	fs.StringVar(&systemPrompt, "s", "", "System prompt")
 	fs.StringVar(&systemPrompt, "system", "", "System prompt")
 
@@ -404,9 +444,12 @@ func runChat(ctx context.Context, args []string) {
 		model = envModel
 	}
 
-	apiKey := config.ResolveAPIKey(presetName, keyFlag)
+	apiKey, err := config.ResolveAPIKey(presetName, keyFlag, keyEnvFlag)
+	if err != nil {
+		die(err)
+	}
 	if apiKey == "" {
-		die(fmt.Errorf("API key not found. Set %s or export OPENAI_API_KEY or use --key", config.Presets[presetName].KeyEnv))
+		die(fmt.Errorf("API key not found. Set %s or export OPENAI_API_KEY or use --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
 	}
 
 	// Read file contents
