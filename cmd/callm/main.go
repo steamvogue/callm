@@ -87,12 +87,13 @@ Provider Presets:
   --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)
 
 Options (chat unless stated otherwise):
-  Provider, URL, key, --timeout and --header-timeout flags apply to all API commands.
+  Provider, URL, key, --user-agent, --timeout and --header-timeout apply to all API commands.
   Flags must precede positional arguments; use COMMAND --help for command-specific help.
 
   -m, --model MODEL                Model ID override
   -k, --key, --api-key KEY         API key value override
       --key-env, --api-key-env ENV Custom environment variable name containing API key
+      --user-agent TEXT           HTTP User-Agent override (empty string omits header)
   -s, --system SYSTEM              System prompt instruction
   -t, --temp, --temperature T      Sampling temperature (omitted by default)
   -n, --max-tokens N               Maximum tokens to generate
@@ -121,10 +122,13 @@ Environment Variables:
   DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
   OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
   DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, OLLAMA_API_KEY (optional)
+  CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
   CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
 
 Defaults and precedence:
+  User-Agent: --user-agent > nonempty CALLM_USER_AGENT > project default:
+    CallM (Call-LLM; +https://github.com/steamvogue/callm)
   --timeout defaults to 300 seconds (5m). Header/idle limits inherit that value.
   --stdin-timeout independently defaults to 300 seconds. Each limit accepts 0 to disable.
   Temperature, top-p, effort and token caps are omitted unless set, except Anthropic
@@ -328,10 +332,21 @@ func registerDuration(fs *flag.FlagSet, name string, defaultValue time.Duration)
 	return &timeout
 }
 
+// An empty environment value keeps the project default; an explicit empty flag
+// suppresses the header, including net/http's built-in user agent.
+func registerUserAgent(fs *flag.FlagSet) *string {
+	value := os.Getenv("CALLM_USER_AGENT")
+	if value == "" {
+		value = client.DefaultUserAgent
+	}
+	return fs.String("user-agent", value, "HTTP User-Agent (CALLM_USER_AGENT; empty flag omits header)")
+}
+
 func runModels(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("models", flag.ExitOnError)
 	timeout := registerTimeout(fs)
 	headerTimeout := registerDuration(fs, "header-timeout", client.DefaultTimeout)
+	userAgent := registerUserAgent(fs)
 	var pFlags presetFlags
 	pFlags.Register(fs)
 	var customAPI, keyFlag, keyEnvFlag string
@@ -364,6 +379,7 @@ func runModels(ctx context.Context, args []string) {
 	}
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
+	apiClient.UserAgent = *userAgent
 	apiClient.HTTPClient.Timeout = *timeout
 	if !flagWasSet(fs, "header-timeout") {
 		*headerTimeout = *timeout
@@ -385,6 +401,7 @@ func runInfo(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("info", flag.ExitOnError)
 	timeout := registerTimeout(fs)
 	headerTimeout := registerDuration(fs, "header-timeout", client.DefaultTimeout)
+	userAgent := registerUserAgent(fs)
 	var pFlags presetFlags
 	pFlags.Register(fs)
 	var customAPI, keyFlag, keyEnvFlag string
@@ -420,6 +437,7 @@ func runInfo(ctx context.Context, args []string) {
 	}
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
+	apiClient.UserAgent = *userAgent
 	apiClient.HTTPClient.Timeout = *timeout
 	if !flagWasSet(fs, "header-timeout") {
 		*headerTimeout = *timeout
@@ -445,6 +463,7 @@ func runRaw(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("raw", flag.ContinueOnError)
 	timeout := registerTimeout(fs)
 	headerTimeout := registerDuration(fs, "header-timeout", client.DefaultTimeout)
+	userAgent := registerUserAgent(fs)
 	var keyFlag, keyEnvFlag, customAPI string
 	var pFlags presetFlags
 	pFlags.Register(fs)
@@ -485,6 +504,7 @@ func runRaw(ctx context.Context, args []string) {
 	baseURL := config.ResolveBaseURL(presetName, customAPI)
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
+	apiClient.UserAgent = *userAgent
 	apiClient.HTTPClient.Timeout = *timeout
 	if !flagWasSet(fs, "header-timeout") {
 		*headerTimeout = *timeout
@@ -509,6 +529,7 @@ func runChat(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("chat", flag.ContinueOnError)
 	timeout := registerTimeout(fs)
 	headerTimeout := registerDuration(fs, "header-timeout", client.DefaultTimeout)
+	userAgent := registerUserAgent(fs)
 	idleTimeout := registerDuration(fs, "idle-timeout", client.DefaultTimeout)
 
 	stdinTimeout := registerDuration(fs, "stdin-timeout", client.DefaultTimeout)
@@ -789,6 +810,7 @@ func runChat(ctx context.Context, args []string) {
 	}
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
+	apiClient.UserAgent = *userAgent
 	apiClient.HTTPClient.Timeout = *timeout
 	if !flagWasSet(fs, "header-timeout") {
 		*headerTimeout = *timeout

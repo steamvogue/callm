@@ -6,7 +6,7 @@ description: Use the fast, zero-dependency `callm` CLI tool to query external LL
 # callm (call - llm) Agent Skill
 
 `callm` is a fast standalone CLI utility installed at `/usr/local/bin/callm` (and in `$PATH`).
-It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.4.0+; check `callm --version` and `callm --help` when using an older installation.
+It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.5.0+; check `callm --version` and `callm --help` when using an older installation.
 
 Default model: **`deepseek/deepseek-v4-flash-0731`**.
 
@@ -142,3 +142,8 @@ URL is `https://api.orcarouter.ai/v1`. `--effort` sends `reasoning_effort` for t
 gateway to translate; support depends on the model. `--thinking-budget` is
 rejected on this preset. `--stats` opts into `usage.cost_usd` using the
 `X-OrcaRouter-Include-Cost` header, including final usage on streams.
+
+All API requests default to `User-Agent: CallM (Call-LLM; +https://github.com/steamvogue/callm)`.
+Override with `--user-agent "MyApp/1.0"` or `CALLM_USER_AGENT`; explicit flags win
+and an empty environment value keeps the default. `--user-agent ""` omits the
+header. This applies to every provider and API command; control characters fail.

@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.5.0 — 2026-09-06
+
+- All API requests now identify the project with the default User-Agent
+  `CallM (Call-LLM; +https://github.com/steamvogue/callm)`.
+- Added `--user-agent` to chat, models, info, and raw commands, with
+  `CALLM_USER_AGENT` as the environment/configuration-file default override.
+  Explicit flags win; an empty environment value keeps the project default.
+  `--user-agent ""` omits the header; control characters are rejected.
+- Updated CLI help, README examples, and agent skills.
+
 ## v0.4.0 — 2026-09-06
 
 - Added OrcaRouter with `--orca`, `ORCA_API_KEY`, base URL

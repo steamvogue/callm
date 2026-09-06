@@ -170,6 +170,21 @@ callm --groq -m llama-3.3-70b-versatile "Explain Rust lifetimes"
 callm --ollama "Solve 17 * 23 step by step"
 ```
 
+### HTTP User-Agent
+
+Every API request sends `User-Agent: CallM (Call-LLM; +https://github.com/steamvogue/callm)`
+by default, including streaming, Anthropic, catalog pagination, and raw requests.
+Set `CALLM_USER_AGENT` for a persistent override (also supported in configuration
+files), or use `--user-agent` for one command. Precedence is explicit flag,
+nonempty environment value, then the project default. An explicit empty flag
+omits the header; control characters are rejected before sending a request.
+
+```bash
+callm --user-agent "MyApp/1.0" "Hello"
+CALLM_USER_AGENT="MyApp/1.0" callm --orca models
+callm --user-agent "" --orca "Hello"
+```
+
 ### OrcaRouter
 
 `--orca` uses `ORCA_API_KEY`, base URL `https://api.orcarouter.ai/v1`, and
@@ -275,12 +290,13 @@ Provider Presets:
   --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)
 
 Options (chat unless stated otherwise):
-  Provider, URL, key, --timeout and --header-timeout flags apply to all API commands.
+  Provider, URL, key, --user-agent, --timeout and --header-timeout apply to all API commands.
   Flags must precede positional arguments; use COMMAND --help for command-specific help.
 
   -m, --model MODEL                Model ID override
   -k, --key, --api-key KEY         API key value override
       --key-env, --api-key-env ENV Custom environment variable name containing API key
+      --user-agent TEXT           HTTP User-Agent override (empty string omits header)
   -s, --system SYSTEM              System prompt instruction
   -t, --temp, --temperature T      Sampling temperature (omitted by default)
   -n, --max-tokens N               Maximum tokens to generate
@@ -309,10 +325,13 @@ Environment Variables:
   DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
   OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
   DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, OLLAMA_API_KEY (optional)
+  CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
   CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
 
 Defaults and precedence:
+  User-Agent: --user-agent > nonempty CALLM_USER_AGENT > project default:
+    CallM (Call-LLM; +https://github.com/steamvogue/callm)
   --timeout defaults to 300 seconds (5m). Header/idle limits inherit that value.
   --stdin-timeout independently defaults to 300 seconds. Each limit accepts 0 to disable.
   Temperature, top-p, effort and token caps are omitted unless set, except Anthropic

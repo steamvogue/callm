@@ -21,9 +21,11 @@ type Client struct {
 	HTTPClient        *http.Client
 	StreamIdleTimeout time.Duration
 	IncludeCost       bool
+	UserAgent         string
 }
 
 const DefaultTimeout = 300 * time.Second
+const DefaultUserAgent = "CallM (Call-LLM; +https://github.com/steamvogue/callm)"
 const maxResponseBytes = 64 << 20
 
 // NewClient accepts an explicit provider; otherwise only exact known hostnames are detected.
@@ -52,6 +54,7 @@ func NewClient(baseURL, apiKey string, provider ...string) *Client {
 		transport = clone
 	}
 	return &Client{BaseURL: strings.TrimRight(baseURL, "/"), APIKey: apiKey, Provider: selected,
+		UserAgent:         DefaultUserAgent,
 		StreamIdleTimeout: DefaultTimeout,
 		HTTPClient: &http.Client{Timeout: DefaultTimeout, Transport: transport, CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			if len(via) >= 10 {
@@ -145,10 +148,17 @@ func (c *Client) prepareRequest(req *ChatRequest) error {
 }
 
 func (c *Client) request(ctx context.Context, method, endpoint string, body []byte) (*http.Request, error) {
+	for _, ch := range c.UserAgent {
+		if ch < 32 || ch == 127 {
+			return nil, fmt.Errorf("user-agent must not contain control characters")
+		}
+	}
 	req, err := http.NewRequestWithContext(ctx, method, c.BaseURL+endpoint, bytes.NewReader(body))
 	if err != nil {
 		return nil, err
 	}
+	// An explicit empty value suppresses net/http's automatic Go user agent.
+	req.Header.Set("User-Agent", c.UserAgent)
 	if c.isAnthropicURL() {
 		req.Header.Set("x-api-key", c.APIKey)
 		req.Header.Set("anthropic-version", "2023-06-01")
