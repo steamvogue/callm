@@ -42,3 +42,31 @@ func TestBaseURLPrecedence(t *testing.T) {
 		t.Fatal("URL precedence")
 	}
 }
+
+func TestOrcaConfiguration(t *testing.T) {
+	t.Setenv("CALLM_API_KEY", "")
+	t.Setenv("ORCA_API_KEY", "")
+	t.Setenv("OPENROUTER_API_KEY", "other-provider")
+	if key, _ := ResolveAPIKey("orca", "", ""); key != "" {
+		t.Fatal("OpenRouter key leaked to OrcaRouter")
+	}
+	t.Setenv("ORCA_API_KEY", "orca-dummy")
+	for _, tc := range []struct{ direct, env, global, want string }{
+		{"", "", "", "orca-dummy"}, {"", "", "global", "global"},
+		{"", "ORCA_API_KEY", "global", "orca-dummy"}, {"explicit", "ORCA_API_KEY", "global", "explicit"},
+	} {
+		t.Setenv("CALLM_API_KEY", tc.global)
+		if got, err := ResolveAPIKey("orca", tc.direct, tc.env); err != nil || got != tc.want {
+			t.Fatalf("key=%q err=%v", got, err)
+		}
+	}
+	t.Setenv("CALLM_BASE_URL", "")
+	t.Setenv("OPENAI_BASE_URL", "http://unrelated.invalid")
+	if got := ResolveBaseURL("orca", ""); got != "https://api.orcarouter.ai/v1" {
+		t.Fatal(got)
+	}
+	t.Setenv("CALLM_BASE_URL", "http://proxy.invalid/v1")
+	if ResolveBaseURL("orca", "") != "http://proxy.invalid/v1" || ResolveBaseURL("orca", "http://explicit.invalid") != "http://explicit.invalid" {
+		t.Fatal("endpoint overrides")
+	}
+}

@@ -69,7 +69,8 @@ type Usage struct {
 	PromptTokens         int         `json:"prompt_tokens"`
 	CompletionTokens     int         `json:"completion_tokens"`
 	TotalTokens          int         `json:"total_tokens"`
-	Cost                 interface{} `json:"cost,omitempty"` // float64 or string or nil
+	Cost                 interface{} `json:"cost,omitempty"`     // float64 or string or nil
+	CostUSD              interface{} `json:"cost_usd,omitempty"` // OrcaRouter's opt-in billed cost
 	CacheReadInputTokens int         `json:"cache_read_input_tokens,omitempty"`
 }
 
@@ -78,11 +79,15 @@ func (u *Usage) GetCostFloat() float64 { value, _ := u.CostValue(); return value
 
 // CostValue distinguishes a reported zero cost from missing or invalid metadata.
 func (u *Usage) CostValue() (float64, bool) {
-	if u == nil || u.Cost == nil {
+	if u == nil {
 		return 0, false
 	}
+	cost := u.Cost
+	if cost == nil {
+		cost = u.CostUSD
+	}
 	var value float64
-	switch v := u.Cost.(type) {
+	switch v := cost.(type) {
 	case float64:
 		value = v
 	case float32:

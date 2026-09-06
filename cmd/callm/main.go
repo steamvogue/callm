@@ -48,7 +48,7 @@ func printVersion() {
 }
 
 func printUsage() {
-	fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, DeepSeek, Anthropic, Moonshot, Zhipu, Qwen, OpenAI, Groq, and Ollama.
+	fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, OrcaRouter, DeepSeek, Anthropic, Moonshot, Zhipu, Qwen, OpenAI, Groq, and Ollama.
 
 Usage:
   callm [chat] [OPTIONS] ["PROMPT"...]
@@ -65,6 +65,8 @@ Provider Presets:
                                    URL: https://api.straitly.ai/v1 | Model: deepseek/deepseek-v4-flash-0731
   --or                             OpenRouter Gateway
                                    URL: https://openrouter.ai/api/v1 | Model: deepseek/deepseek-v4-flash-0731
+  --orca                           OrcaRouter Gateway (ORCA_API_KEY)
+                                   URL: https://api.orcarouter.ai/v1 | Model: orcarouter/auto
   --ds                             DeepSeek Direct API
                                    URL: https://api.deepseek.com | Model: deepseek-chat
   --ant, --anthropic               Anthropic Direct API (/v1/messages)
@@ -115,7 +117,8 @@ Options (chat unless stated otherwise):
       --timeout DURATION           Total API timeout (default 300s; seconds or 5m; 0 disables)
 
 Environment Variables:
-  CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
+  CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, ORCA_API_KEY,
+  DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
   OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
   DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, OLLAMA_API_KEY (optional)
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
@@ -132,6 +135,8 @@ Defaults and precedence:
   Without an explicit provider, --claude selects Anthropic if only its key is present
   among ANTHROPIC_API_KEY, STRAITLY_API_KEY and OPENROUTER_API_KEY.
   Streaming/reasoning display default on only when stdout is a terminal.
+  OrcaRouter: --effort sends reasoning_effort; --thinking-budget is unsupported.
+  OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
   Reasoning display flags do not enable model reasoning; --effort/--thinking-budget request it.
 
 Examples:
@@ -143,6 +148,9 @@ Examples:
 
   # Direct Anthropic Claude with extended thinking:
   callm --ant --effort=high "Prove the Riemann hypothesis"
+
+  # OrcaRouter automatic routing (uses ORCA_API_KEY):
+  callm --orca --stats "Explain this error"
 
   # Moonshot Kimi or Alibaba Qwen:
   callm --ms "Search and summarize 2026 AI developments"
@@ -207,6 +215,7 @@ func main() {
 type presetFlags struct {
 	stPreset   bool
 	orPreset   bool
+	orcaPreset bool
 	dsPreset   bool
 	antPreset  bool
 	msPreset   bool
@@ -221,6 +230,7 @@ type presetFlags struct {
 func (p *presetFlags) Register(fs *flag.FlagSet) {
 	fs.BoolVar(&p.stPreset, "st", false, "Use Straitly preset (default)")
 	fs.BoolVar(&p.orPreset, "or", false, "Use OpenRouter preset")
+	fs.BoolVar(&p.orcaPreset, "orca", false, "Use OrcaRouter preset (ORCA_API_KEY)")
 	fs.BoolVar(&p.dsPreset, "ds", false, "Use DeepSeek Direct preset")
 	fs.BoolVar(&p.antPreset, "ant", false, "Use Anthropic Direct API preset")
 	fs.BoolVar(&p.antPreset, "anthropic", false, "Use Anthropic Direct API preset")
@@ -240,7 +250,7 @@ func (p *presetFlags) Register(fs *flag.FlagSet) {
 
 func (p *presetFlags) ResolvePreset() string {
 	count := 0
-	for _, enabled := range []bool{p.stPreset, p.orPreset, p.dsPreset, p.antPreset, p.msPreset, p.zaiPreset, p.qwPreset, p.oaPreset, p.groqPreset, p.olPreset} {
+	for _, enabled := range []bool{p.stPreset, p.orPreset, p.orcaPreset, p.dsPreset, p.antPreset, p.msPreset, p.zaiPreset, p.qwPreset, p.oaPreset, p.groqPreset, p.olPreset} {
 		if enabled {
 			count++
 		}
@@ -249,11 +259,14 @@ func (p *presetFlags) ResolvePreset() string {
 		die(errors.New("select only one provider preset"))
 	}
 	if p.claudeFlag && (p.dsPreset || p.msPreset || p.zaiPreset || p.qwPreset || p.oaPreset || p.groqPreset || p.olPreset) {
-		die(errors.New("--claude requires Straitly, OpenRouter, or Anthropic"))
+		die(errors.New("--claude requires Straitly, OpenRouter, OrcaRouter, or Anthropic"))
 	}
 
 	if p.orPreset {
 		return "or"
+	}
+	if p.orcaPreset {
+		return "orca"
 	}
 	if p.dsPreset {
 		return "ds"
@@ -783,6 +796,7 @@ func runChat(ctx context.Context, args []string) {
 	if !flagWasSet(fs, "idle-timeout") {
 		*idleTimeout = *timeout
 	}
+	apiClient.IncludeCost = showStats
 	apiClient.StreamIdleTimeout = *idleTimeout
 	if transport, ok := apiClient.HTTPClient.Transport.(*http.Transport); ok {
 		transport.ResponseHeaderTimeout = *headerTimeout

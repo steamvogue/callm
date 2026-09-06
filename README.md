@@ -6,7 +6,7 @@
 
 A blazing-fast, zero-dependency Go CLI utility for calling LLMs across multiple OpenAI-compatible gateways.
 
-Includes ten provider presets, native Anthropic support, and custom OpenAI-compatible endpoints.
+Includes eleven provider presets, native Anthropic support, and custom OpenAI-compatible endpoints.
 
 Default model: **`deepseek/deepseek-v4-flash-0731`**
 
@@ -21,6 +21,7 @@ See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/
 - **Provider Presets**:
   - `--st` *(default)*: Straitly Gateway (`https://api.straitly.ai/v1`)
   - `--or`: OpenRouter Gateway (`https://openrouter.ai/api/v1`)
+  - `--orca`: OrcaRouter Gateway (`https://api.orcarouter.ai/v1`)
   - `--ds`: DeepSeek Direct API (`https://api.deepseek.com`)
   - `--ant`, `--anthropic`: Anthropic Direct API (`https://api.anthropic.com/v1/messages`)
   - `--claude`: Claude Sonnet 4.6 shortcut across gateways
@@ -43,7 +44,7 @@ See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/
   - Context file attachments (`-f schema.sql -f queries.sql`)
   - Multimodal Vision: `--image diagram.png` (auto base64 data-URI encoded)
 - **Observability & Cost Transparency**:
-  - `--stats` displays latency, token counts, tokens/sec, and reported cost in USD when supplied by the gateway (`usage.cost`).
+  - `--stats` displays latency, token counts, tokens/sec, and reported cost in USD when supplied by the gateway (`usage.cost`, or OrcaRouter’s `usage.cost_usd`).
 - **Catalog Explorer**:
   - `callm models [FILTER]`
   - `callm info <MODEL>`
@@ -71,6 +72,7 @@ Keys can be configured in multiple ways:
    ```bash
    export STRAITLY_API_KEY="your-straitly-key"      # for --st (default)
    export OPENROUTER_API_KEY="your-openrouter-key"  # for --or
+   export ORCA_API_KEY="your-orcarouter-key"       # for --orca
    export DEEPSEEK_API_KEY="your-deepseek-key"      # for --ds
    export CALLM_API_KEY="your-callm-key"            # global callm override
    export OPENAI_API_KEY="your-openai-key"          # for --oa
@@ -105,6 +107,7 @@ are never used as fallbacks. Ollama can run without a key.
 | --- | --- | --- |
 | `--st` (default) | `deepseek/deepseek-v4-flash-0731` | `STRAITLY_API_KEY` |
 | `--or` | `deepseek/deepseek-v4-flash-0731` | `OPENROUTER_API_KEY` |
+| `--orca` | `orcarouter/auto` | `ORCA_API_KEY` |
 | `--ds` | `deepseek-chat` | `DEEPSEEK_API_KEY` |
 | `--ant` | `claude-sonnet-4-6` | `ANTHROPIC_API_KEY` |
 | `--ms` | `moonshot-v1-auto` | `MOONSHOT_API_KEY` |
@@ -139,6 +142,11 @@ callm "Explain quantum entanglement in 2 sentences"
 ### Switch Provider Presets
 
 ```bash
+# OrcaRouter automatic routing (ORCA_API_KEY); --or still selects OpenRouter
+callm --orca --stats "Explain this error"
+callm --orca models
+callm --orca --claude --effort high "Review this function"
+
 # Direct DeepSeek API
 callm --ds "Write an LRU cache in Go"
 
@@ -161,6 +169,24 @@ callm --groq -m llama-3.3-70b-versatile "Explain Rust lifetimes"
 # Local Ollama (auto-detects inline <think> tags)
 callm --ollama "Solve 17 * 23 step by step"
 ```
+
+### OrcaRouter
+
+`--orca` uses `ORCA_API_KEY`, base URL `https://api.orcarouter.ai/v1`, and
+`orcarouter/auto` by default. Override the model with `-m`; `--orca --claude`
+selects `anthropic/claude-sonnet-4.6`. `--or` continues to select OpenRouter.
+The same key/URL/model precedence and 300-second timeout apply to chat, streaming,
+model discovery, and raw requests.
+
+`--effort` passes the documented `reasoning_effort` field for OrcaRouter to
+translate; support depends on the selected model. Use it instead of
+`--thinking-budget`, which this preset rejects. `--stats` opts into billed cost
+with `X-OrcaRouter-Include-Cost: true`, reads `usage.cost_usd`, and requests final
+streaming usage. Cost remains unavailable when omitted by the server.
+
+See OrcaRouter’s [API reference](https://docs.orcarouter.ai/api-reference/chat/create-a-chat-completion),
+[reasoning guide](https://docs.orcarouter.ai/advanced/reasoning), and
+[cost reporting](https://docs.orcarouter.ai/operations/per-request-cost).
 
 ### Piped Stdin + Instructions
 
@@ -227,6 +253,8 @@ Provider Presets:
                                    URL: https://api.straitly.ai/v1 | Model: deepseek/deepseek-v4-flash-0731
   --or                             OpenRouter Gateway
                                    URL: https://openrouter.ai/api/v1 | Model: deepseek/deepseek-v4-flash-0731
+  --orca                           OrcaRouter Gateway (ORCA_API_KEY)
+                                   URL: https://api.orcarouter.ai/v1 | Model: orcarouter/auto
   --ds                             DeepSeek Direct API
                                    URL: https://api.deepseek.com | Model: deepseek-chat
   --ant, --anthropic               Anthropic Direct API (/v1/messages)
@@ -277,7 +305,8 @@ Options (chat unless stated otherwise):
       --timeout DURATION           Total API timeout (default 300s; seconds or 5m; 0 disables)
 
 Environment Variables:
-  CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
+  CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, ORCA_API_KEY,
+  DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
   OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
   DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, OLLAMA_API_KEY (optional)
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
@@ -294,6 +323,8 @@ Defaults and precedence:
   Without an explicit provider, --claude selects Anthropic if only its key is present
   among ANTHROPIC_API_KEY, STRAITLY_API_KEY and OPENROUTER_API_KEY.
   Streaming/reasoning display default on only when stdout is a terminal.
+  OrcaRouter: --effort sends reasoning_effort; --thinking-budget is unsupported.
+  OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
   Reasoning display flags do not enable model reasoning; --effort/--thinking-budget request it.
 
 ```

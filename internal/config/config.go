@@ -29,6 +29,12 @@ var Presets = map[string]ProviderPreset{
 		DefaultModel: "deepseek/deepseek-v4-flash-0731",
 		KeyEnv:       "OPENROUTER_API_KEY",
 	},
+	"orca": {
+		Name:         "OrcaRouter",
+		BaseURL:      "https://api.orcarouter.ai/v1",
+		DefaultModel: "orcarouter/auto",
+		KeyEnv:       "ORCA_API_KEY",
+	},
 	"ds": {
 		Name:         "DeepSeek Direct",
 		BaseURL:      "https://api.deepseek.com",

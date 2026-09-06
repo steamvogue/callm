@@ -20,6 +20,7 @@ type Client struct {
 	Provider          string
 	HTTPClient        *http.Client
 	StreamIdleTimeout time.Duration
+	IncludeCost       bool
 }
 
 const DefaultTimeout = 300 * time.Second
@@ -35,6 +36,8 @@ func NewClient(baseURL, apiKey string, provider ...string) *Client {
 			selected = "ant"
 		case "openrouter.ai":
 			selected = "or"
+		case "api.orcarouter.ai":
+			selected = "orca"
 		case "api.straitly.ai":
 			selected = "st"
 		}
@@ -133,6 +136,9 @@ func (c *Client) prepareRequest(req *ChatRequest) error {
 			req.IncludeReasoning = true
 		}
 	} else if req.Thinking != nil {
+		if c.Provider == "orca" {
+			return fmt.Errorf("use --effort for OrcaRouter reasoning; --thinking-budget is not supported by this preset")
+		}
 		return fmt.Errorf("thinking-budget requires an Anthropic, OpenRouter, or Straitly provider")
 	}
 	return nil
@@ -151,6 +157,9 @@ func (c *Client) request(ctx context.Context, method, endpoint string, body []by
 	}
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
+	}
+	if c.Provider == "orca" && c.IncludeCost {
+		req.Header.Set("X-OrcaRouter-Include-Cost", "true")
 	}
 	return req, nil
 }

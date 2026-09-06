@@ -41,6 +41,7 @@ st_key=STRAITLY_API_KEY
 if [[ -z ${STRAITLY_API_KEY:-} && -n ${CALLM_API_KEY:-} ]]; then st_key=CALLM_API_KEY; fi
 check_provider st "$st_key"
 check_provider or OPENROUTER_API_KEY deepseek/deepseek-r1
+check_provider orca ORCA_API_KEY
 check_provider ds DEEPSEEK_API_KEY deepseek-reasoner
 check_provider oa OPENAI_API_KEY
 check_provider ms MOONSHOT_API_KEY

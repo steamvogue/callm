@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.4.0 — 2026-09-06
+
+- Added OrcaRouter with `--orca`, `ORCA_API_KEY`, base URL
+  `https://api.orcarouter.ai/v1`, and default model `orcarouter/auto`.
+  `--or` remains OpenRouter. All existing timeout defaults and overrides apply.
+- Supports chat, SSE streaming, models, info, raw requests, and `--orca --claude`.
+  `--effort` passes OrcaRouter’s `reasoning_effort`; `--thinking-budget` rejects
+  with guidance to use effort instead. Model capabilities remain provider-dependent.
+- OrcaRouter `--stats` requests billed cost through `X-OrcaRouter-Include-Cost`
+  and reads `usage.cost_usd`, including streaming usage.
+- Updated CLI help, README, agent skill, and optional live-test provider list.
+
 ## v0.3.0 — 2026-09-05
 
 This release fixes stalled calls, dropped input, silently ignored options, and
