@@ -5,3 +5,5 @@
 - Keep README's `CLI-HELP` block identical to the reference section of `callm --help`; `TestREADMEHelpReference` enforces this. Check each subcommand's help too.
 - Run `go test ./...`, `go vet ./...`, and relevant behavioral probes after changes. Use `make test-race` on supported hosts. `make test-live` makes billed provider calls; ordinary tests use mocks.
 - Store verified useful local tooling here for reuse: `rg` for search, Go for builds/tests, `gh` for GitHub releases, `actionlint` for workflows, ShellCheck for shell scripts, and `hyperfine` for startup benchmarks. On the reviewed ARM host, Go's race runtime rejects the VMA layout; use Linux amd64 CI for race checks. A writable `GOCACHE=/tmp/callm-audit-go-cache` works in the desktop sandbox.
+
+- Verified public-doc research tool: `/var/www/se/DuckDuckGo/bin/ddg-search` (`search --format=json`, `fetch URL --format=text`); used successfully for Kimi Code API documentation on 2026-09-06.

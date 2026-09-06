@@ -1,12 +1,12 @@
 ---
 name: callm
-description: Use the fast, zero-dependency `callm` CLI tool to query external LLMs (DeepSeek V4, Claude, OpenAI, OpenRouter, OrcaRouter, etc.) for second opinions, complex logic, code review, or specialized model capabilities.
+description: Use the fast, zero-dependency `callm` CLI tool to query external LLMs (DeepSeek V4, Claude, OpenAI, OpenRouter, OrcaRouter, Kimi Code, etc.) for second opinions, complex logic, code review, or specialized model capabilities.
 ---
 
 # callm (call - llm) Agent Skill
 
 `callm` is a fast standalone CLI utility installed at `/usr/local/bin/callm` (and in `$PATH`).
-It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.5.0+; check `callm --version` and `callm --help` when using an older installation.
+It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.6.0+; check `callm --version` and `callm --help` when using an older installation.
 
 Default model: **`deepseek/deepseek-v4-flash-0731`**.
 
@@ -44,7 +44,10 @@ callm --ant --effort=high "Prove the Riemann hypothesis"
 # Direct DeepSeek API:
 callm --ds "Write an optimized LRU cache in Go"
 
-# Moonshot AI (Kimi) & Alibaba Cloud (Qwen):
+# Kimi Code subscription (KIMI_API_KEY), default model kimi-for-coding:
+callm --kimi -f main.go "Review this code for bugs"
+
+# Moonshot AI (pay-as-you-go) & Alibaba Cloud (Qwen):
 callm --ms "Summarize recent developments in AI"
 callm --qw -m qwq-32b "Solve this math problem"
 
@@ -147,3 +150,14 @@ All API requests default to `User-Agent: CallM (Call-LLM; +https://github.com/st
 Override with `--user-agent "MyApp/1.0"` or `CALLM_USER_AGENT`; explicit flags win
 and an empty environment value keeps the default. `--user-agent ""` omits the
 header. This applies to every provider and API command; control characters fail.
+
+Kimi Code subscription support: `--kimi` uses `KIMI_API_KEY`, base URL
+`https://api.kimi.com/coding/v1`, and model `kimi-for-coding` through the
+OpenAI-compatible protocol. Use `-m` for another model available to the
+subscription. This flag previously aliased Moonshot; `--ms`/`--moonshot` still
+use `MOONSHOT_API_KEY` and the separate pay-as-you-go Moonshot endpoint.
+The existing key/URL/model precedence applies. `--stats` reports returned token
+usage and only server-supplied cost, without estimating subscription charges.
+Requests retain callm's default User-Agent identity. See the
+[Kimi Code docs](https://www.kimi.com/code/docs/en/) for membership/model access.
+Check `callm --help` for `--kimi` subscription support before using older binaries.

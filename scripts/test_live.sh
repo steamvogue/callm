@@ -45,6 +45,7 @@ check_provider orca ORCA_API_KEY
 check_provider ds DEEPSEEK_API_KEY deepseek-reasoner
 check_provider oa OPENAI_API_KEY
 check_provider ms MOONSHOT_API_KEY
+check_provider kimi KIMI_API_KEY
 zai_key=ZAI_API_KEY
 if [[ -z ${ZAI_API_KEY:-} ]]; then zai_key=ZHIPU_API_KEY; fi
 check_provider zai "$zai_key"

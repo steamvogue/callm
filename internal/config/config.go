@@ -53,6 +53,12 @@ var Presets = map[string]ProviderPreset{
 		DefaultModel: "moonshot-v1-auto",
 		KeyEnv:       "MOONSHOT_API_KEY",
 	},
+	"kimi": {
+		Name:         "Kimi Code (subscription)",
+		BaseURL:      "https://api.kimi.com/coding/v1",
+		DefaultModel: "kimi-for-coding",
+		KeyEnv:       "KIMI_API_KEY",
+	},
 	"zai": {
 		Name:         "Zhipu AI (GLM)",
 		BaseURL:      "https://open.bigmodel.cn/api/paas/v4",

@@ -34,7 +34,7 @@ func TestSubcommandHelpTimeouts(t *testing.T) {
 			if err != nil {
 				t.Fatalf("help: %v: %s", err, output)
 			}
-			for _, want := range []string{"Usage: callm " + command + " [OPTIONS]", "default 300s", "inherits --timeout", "-orca", "ORCA_API_KEY", "-user-agent", "CALLM_USER_AGENT"} {
+			for _, want := range []string{"Usage: callm " + command + " [OPTIONS]", "default 300s", "inherits --timeout", "-orca", "ORCA_API_KEY", "-kimi", "KIMI_API_KEY", "-user-agent", "CALLM_USER_AGENT"} {
 				if !strings.Contains(string(output), want) {
 					t.Fatalf("help lacks %q: %s", want, output)
 				}

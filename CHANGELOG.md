@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.6.0 — 2026-09-06
+
+- Added Kimi Code subscription support with `--kimi`, `KIMI_API_KEY`, base URL
+  `https://api.kimi.com/coding/v1`, and default model `kimi-for-coding`.
+  Uses the OpenAI-compatible client for chat, streaming, models, info, and raw
+  requests, preserving the usual configuration overrides and callm User-Agent.
+- Changed `--kimi` from a Moonshot alias to the subscription preset. Existing
+  Moonshot users should use `--ms` or `--moonshot` with `MOONSHOT_API_KEY`.
+- Subscription stats use server-returned usage/cost only; no per-call price is
+  inferred. Added local mock coverage, CLI help, examples, agent instructions,
+  and an optional live-test entry.
+
 ## v0.5.0 — 2026-09-06
 
 - All API requests now identify the project with the default User-Agent

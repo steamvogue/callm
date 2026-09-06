@@ -26,6 +26,7 @@ help: ## Show this help message
 	@echo "  ./bin/callm models deepseek"
 	@echo "  ./bin/callm --or \"Use OpenRouter preset\""
 	@echo "  ./bin/callm --orca \"Use OrcaRouter preset\""
+	@echo "  ./bin/callm --kimi \"Review this code with Kimi Code subscription\""
 	@echo "  ./bin/callm --ds \"Use DeepSeek direct preset\""
 	@echo ""
 

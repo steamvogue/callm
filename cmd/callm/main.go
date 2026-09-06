@@ -48,7 +48,7 @@ func printVersion() {
 }
 
 func printUsage() {
-	fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, OrcaRouter, DeepSeek, Anthropic, Moonshot, Zhipu, Qwen, OpenAI, Groq, and Ollama.
+	fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, OrcaRouter, DeepSeek, Anthropic, Moonshot, Kimi Code, Zhipu, Qwen, OpenAI, Groq, and Ollama.
 
 Usage:
   callm [chat] [OPTIONS] ["PROMPT"...]
@@ -72,8 +72,10 @@ Provider Presets:
   --ant, --anthropic               Anthropic Direct API (/v1/messages)
                                    URL: https://api.anthropic.com/v1 | Model: claude-sonnet-4-6
   --claude                         Claude Shortcut (selects Claude Sonnet 4.6 on active gateway)
-  --ms, --moonshot, --kimi         Moonshot AI (Kimi)
+  --ms, --moonshot                 Moonshot AI (pay-as-you-go)
                                    URL: https://api.moonshot.cn/v1 | Model: moonshot-v1-auto
+  --kimi                           Kimi Code subscription (KIMI_API_KEY)
+                                   URL: https://api.kimi.com/coding/v1 | Model: kimi-for-coding
   --zai, --glm                     Zhipu AI (GLM / ZAI)
                                    URL: https://open.bigmodel.cn/api/paas/v4 | Model: glm-4-flash
   --qw, --qwen                     Alibaba Cloud DashScope (Qwen)
@@ -120,7 +122,7 @@ Options (chat unless stated otherwise):
 Environment Variables:
   CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, ORCA_API_KEY,
   DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
-  OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
+  OPENAI_API_KEY, MOONSHOT_API_KEY, KIMI_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
   DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, OLLAMA_API_KEY (optional)
   CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
@@ -141,6 +143,8 @@ Defaults and precedence:
   Streaming/reasoning display default on only when stdout is a terminal.
   OrcaRouter: --effort sends reasoning_effort; --thinking-budget is unsupported.
   OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
+  Kimi Code: --kimi uses subscription quota; --ms/--moonshot use Moonshot billing.
+  --stats reports only server-supplied cost; it does not estimate subscription cost.
   Reasoning display flags do not enable model reasoning; --effort/--thinking-budget request it.
 
 Examples:
@@ -159,6 +163,9 @@ Examples:
   # Moonshot Kimi or Alibaba Qwen:
   callm --ms "Search and summarize 2026 AI developments"
   callm --qw "Explain quantum computing fundamentals"
+
+  # Kimi Code subscription (uses KIMI_API_KEY):
+  callm --kimi -f main.go "Review this code for bugs"
 
   # OpenAI o3-mini with reasoning effort:
   callm --oa -m o3-mini --effort=medium "Solve this competitive programming problem"
@@ -223,6 +230,7 @@ type presetFlags struct {
 	dsPreset   bool
 	antPreset  bool
 	msPreset   bool
+	kimiPreset bool
 	zaiPreset  bool
 	qwPreset   bool
 	oaPreset   bool
@@ -241,7 +249,7 @@ func (p *presetFlags) Register(fs *flag.FlagSet) {
 	fs.BoolVar(&p.claudeFlag, "claude", false, "Claude chat model shortcut; may select Anthropic when only its key is present")
 	fs.BoolVar(&p.msPreset, "ms", false, "Use Moonshot AI (Kimi) preset")
 	fs.BoolVar(&p.msPreset, "moonshot", false, "Use Moonshot AI (Kimi) preset")
-	fs.BoolVar(&p.msPreset, "kimi", false, "Use Moonshot AI (Kimi) preset")
+	fs.BoolVar(&p.kimiPreset, "kimi", false, "Use Kimi Code subscription preset (KIMI_API_KEY)")
 	fs.BoolVar(&p.zaiPreset, "zai", false, "Use Zhipu AI (GLM) preset")
 	fs.BoolVar(&p.zaiPreset, "glm", false, "Use Zhipu AI (GLM) preset")
 	fs.BoolVar(&p.qwPreset, "qw", false, "Use Alibaba DashScope (Qwen) preset")
@@ -254,7 +262,7 @@ func (p *presetFlags) Register(fs *flag.FlagSet) {
 
 func (p *presetFlags) ResolvePreset() string {
 	count := 0
-	for _, enabled := range []bool{p.stPreset, p.orPreset, p.orcaPreset, p.dsPreset, p.antPreset, p.msPreset, p.zaiPreset, p.qwPreset, p.oaPreset, p.groqPreset, p.olPreset} {
+	for _, enabled := range []bool{p.stPreset, p.orPreset, p.orcaPreset, p.dsPreset, p.antPreset, p.msPreset, p.kimiPreset, p.zaiPreset, p.qwPreset, p.oaPreset, p.groqPreset, p.olPreset} {
 		if enabled {
 			count++
 		}
@@ -262,7 +270,7 @@ func (p *presetFlags) ResolvePreset() string {
 	if count > 1 {
 		die(errors.New("select only one provider preset"))
 	}
-	if p.claudeFlag && (p.dsPreset || p.msPreset || p.zaiPreset || p.qwPreset || p.oaPreset || p.groqPreset || p.olPreset) {
+	if p.claudeFlag && (p.dsPreset || p.msPreset || p.kimiPreset || p.zaiPreset || p.qwPreset || p.oaPreset || p.groqPreset || p.olPreset) {
 		die(errors.New("--claude requires Straitly, OpenRouter, OrcaRouter, or Anthropic"))
 	}
 
@@ -280,6 +288,9 @@ func (p *presetFlags) ResolvePreset() string {
 	}
 	if p.msPreset {
 		return "ms"
+	}
+	if p.kimiPreset {
+		return "kimi"
 	}
 	if p.zaiPreset {
 		return "zai"

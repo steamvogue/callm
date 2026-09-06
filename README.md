@@ -6,7 +6,7 @@
 
 A blazing-fast, zero-dependency Go CLI utility for calling LLMs across multiple OpenAI-compatible gateways.
 
-Includes eleven provider presets, native Anthropic support, and custom OpenAI-compatible endpoints.
+Includes twelve provider presets, native Anthropic support, and custom OpenAI-compatible endpoints.
 
 Default model: **`deepseek/deepseek-v4-flash-0731`**
 
@@ -25,7 +25,8 @@ See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/
   - `--ds`: DeepSeek Direct API (`https://api.deepseek.com`)
   - `--ant`, `--anthropic`: Anthropic Direct API (`https://api.anthropic.com/v1/messages`)
   - `--claude`: Claude Sonnet 4.6 shortcut across gateways
-  - `--ms`, `--moonshot`, `--kimi`: Moonshot AI Kimi (`https://api.moonshot.cn/v1`)
+  - `--ms`, `--moonshot`: Moonshot AI (pay-as-you-go) (`https://api.moonshot.cn/v1`)
+  - `--kimi`: Kimi Code subscription (`https://api.kimi.com/coding/v1`)
   - `--zai`, `--glm`: Zhipu AI GLM / ZAI (`https://open.bigmodel.cn/api/paas/v4`)
   - `--qw`, `--qwen`: Alibaba Cloud DashScope Qwen (`https://dashscope.aliyuncs.com/compatible-mode/v1`)
   - `--oa`, `--openai`: OpenAI Direct API (`https://api.openai.com/v1`)
@@ -73,6 +74,7 @@ Keys can be configured in multiple ways:
    export STRAITLY_API_KEY="your-straitly-key"      # for --st (default)
    export OPENROUTER_API_KEY="your-openrouter-key"  # for --or
    export ORCA_API_KEY="your-orcarouter-key"       # for --orca
+   export KIMI_API_KEY="your-kimi-code-key"         # for --kimi (subscription)
    export DEEPSEEK_API_KEY="your-deepseek-key"      # for --ds
    export CALLM_API_KEY="your-callm-key"            # global callm override
    export OPENAI_API_KEY="your-openai-key"          # for --oa
@@ -110,6 +112,7 @@ are never used as fallbacks. Ollama can run without a key.
 | `--orca` | `orcarouter/auto` | `ORCA_API_KEY` |
 | `--ds` | `deepseek-chat` | `DEEPSEEK_API_KEY` |
 | `--ant` | `claude-sonnet-4-6` | `ANTHROPIC_API_KEY` |
+| `--kimi` | `kimi-for-coding` | `KIMI_API_KEY` |
 | `--ms` | `moonshot-v1-auto` | `MOONSHOT_API_KEY` |
 | `--zai` | `glm-4-flash` | `ZAI_API_KEY`, then `ZHIPU_API_KEY` |
 | `--qw` | `qwen-plus` | `DASHSCOPE_API_KEY`, then `QWEN_API_KEY` |
@@ -156,7 +159,10 @@ callm --claude "Explain OKLCH color space"
 # Direct Anthropic API with extended thinking
 callm --ant --effort=high "Prove the Riemann hypothesis"
 
-# Moonshot AI (Kimi) & Alibaba Cloud (Qwen)
+# Kimi Code subscription (KIMI_API_KEY)
+callm --kimi -f main.go "Review this code for bugs"
+
+# Moonshot AI (pay-as-you-go) & Alibaba Cloud (Qwen)
 callm --ms "Summarize recent breakthroughs in quantum computing"
 callm --qw -m qwq-32b "Solve this math problem"
 
@@ -202,6 +208,29 @@ streaming usage. Cost remains unavailable when omitted by the server.
 See OrcaRouter’s [API reference](https://docs.orcarouter.ai/api-reference/chat/create-a-chat-completion),
 [reasoning guide](https://docs.orcarouter.ai/advanced/reasoning), and
 [cost reporting](https://docs.orcarouter.ai/operations/per-request-cost).
+
+### Kimi Code subscription
+
+`--kimi` selects `https://api.kimi.com/coding/v1`, uses `KIMI_API_KEY`, and
+initially selects `kimi-for-coding`. This endpoint uses Kimi Code membership
+quota and the OpenAI-compatible protocol. Normal key, URL, model, and timeout
+overrides apply. Use `-m` to select another model available to your subscription.
+`--stats` displays returned token usage and only displays cost if the server
+reports it; callm does not estimate a per-request subscription price.
+
+**Alias change:** `--kimi` previously selected Moonshot. Use `--ms` or
+`--moonshot` with `MOONSHOT_API_KEY` for the separate pay-as-you-go Moonshot API.
+The two provider keys are never used as fallbacks for one another.
+
+```bash
+export KIMI_API_KEY="your-kimi-code-key"
+callm --kimi -f main.go "Review this code for bugs"
+callm --kimi --stream --reasoning --stats "Explain a safe fix for this Go data race"
+```
+
+See the [Kimi Code API documentation](https://www.kimi.com/code/docs/en/) for
+membership access and supported models. Requests retain callm's default
+User-Agent identity.
 
 ### Piped Stdin + Instructions
 
@@ -275,8 +304,10 @@ Provider Presets:
   --ant, --anthropic               Anthropic Direct API (/v1/messages)
                                    URL: https://api.anthropic.com/v1 | Model: claude-sonnet-4-6
   --claude                         Claude Shortcut (selects Claude Sonnet 4.6 on active gateway)
-  --ms, --moonshot, --kimi         Moonshot AI (Kimi)
+  --ms, --moonshot                 Moonshot AI (pay-as-you-go)
                                    URL: https://api.moonshot.cn/v1 | Model: moonshot-v1-auto
+  --kimi                           Kimi Code subscription (KIMI_API_KEY)
+                                   URL: https://api.kimi.com/coding/v1 | Model: kimi-for-coding
   --zai, --glm                     Zhipu AI (GLM / ZAI)
                                    URL: https://open.bigmodel.cn/api/paas/v4 | Model: glm-4-flash
   --qw, --qwen                     Alibaba Cloud DashScope (Qwen)
@@ -323,7 +354,7 @@ Options (chat unless stated otherwise):
 Environment Variables:
   CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, ORCA_API_KEY,
   DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
-  OPENAI_API_KEY, MOONSHOT_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
+  OPENAI_API_KEY, MOONSHOT_API_KEY, KIMI_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
   DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, OLLAMA_API_KEY (optional)
   CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
@@ -344,6 +375,8 @@ Defaults and precedence:
   Streaming/reasoning display default on only when stdout is a terminal.
   OrcaRouter: --effort sends reasoning_effort; --thinking-budget is unsupported.
   OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
+  Kimi Code: --kimi uses subscription quota; --ms/--moonshot use Moonshot billing.
+  --stats reports only server-supplied cost; it does not estimate subscription cost.
   Reasoning display flags do not enable model reasoning; --effort/--thinking-budget request it.
 
 ```

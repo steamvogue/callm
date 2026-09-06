@@ -70,3 +70,41 @@ func TestOrcaConfiguration(t *testing.T) {
 		t.Fatal("endpoint overrides")
 	}
 }
+
+func TestKimiConfiguration(t *testing.T) {
+	t.Setenv("CALLM_API_KEY", "")
+	t.Setenv("KIMI_API_KEY", "")
+	t.Setenv("MOONSHOT_API_KEY", "moonshot-dummy")
+	if key, _ := ResolveAPIKey("kimi", "", ""); key != "" {
+		t.Fatal("Moonshot key leaked to Kimi Code")
+	}
+	t.Setenv("KIMI_API_KEY", "kimi-dummy")
+	t.Setenv("MOONSHOT_API_KEY", "")
+	if key, _ := ResolveAPIKey("ms", "", ""); key != "" {
+		t.Fatal("Kimi Code key leaked to Moonshot")
+	}
+	for _, tc := range []struct{ direct, env, global, want string }{
+		{"", "", "", "kimi-dummy"}, {"", "", "global", "global"},
+		{"", "KIMI_API_KEY", "global", "kimi-dummy"}, {"explicit", "KIMI_API_KEY", "global", "explicit"},
+	} {
+		t.Setenv("CALLM_API_KEY", tc.global)
+		if got, err := ResolveAPIKey("kimi", tc.direct, tc.env); err != nil || got != tc.want {
+			t.Fatalf("key=%q err=%v", got, err)
+		}
+	}
+	t.Setenv("CALLM_BASE_URL", "")
+	t.Setenv("OPENAI_BASE_URL", "http://unrelated.invalid")
+	if got := ResolveBaseURL("kimi", ""); got != "https://api.kimi.com/coding/v1" {
+		t.Fatal(got)
+	}
+	if Presets["kimi"].DefaultModel != "kimi-for-coding" {
+		t.Fatal("wrong subscription model")
+	}
+	if ResolveBaseURL("ms", "") != "https://api.moonshot.cn/v1" {
+		t.Fatal("Moonshot endpoint changed")
+	}
+	t.Setenv("CALLM_BASE_URL", "http://proxy.invalid/v1")
+	if ResolveBaseURL("kimi", "") != "http://proxy.invalid/v1" || ResolveBaseURL("kimi", "http://explicit.invalid") != "http://explicit.invalid" {
+		t.Fatal("endpoint overrides")
+	}
+}
