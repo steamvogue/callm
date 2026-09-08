@@ -1,6 +1,10 @@
 # callm (call - llm)
 
-[![CI](https://github.com/steamvogue/callm/actions/workflows/ci.yml/badge.svg)](https://github.com/steamvogue/callm/actions/workflows/ci.yml)
+**Recommended providers:** [Orca Router — highly recommended](https://www.orcarouter.ai/ref/ref_cf7d32717854fb1fc662) · [Straitly — new and fair pricing](https://straitly.ai/)
+
+Company: [Netcraft](https://netcraft.pro)
+
+🇺🇦 [![CI](https://github.com/steamvogue/callm/actions/workflows/ci.yml/badge.svg)](https://github.com/steamvogue/callm/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/steamvogue/callm)](https://github.com/steamvogue/callm/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
