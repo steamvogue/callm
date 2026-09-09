@@ -40,9 +40,9 @@ version: build ## Print built binary version
 	@./bin/callm --version
 
 check-env: ## Check for default-provider key or configuration-file hints
-	@if [ -z "$$STRAITLY_API_KEY" ] && [ -z "$$CALLM_API_KEY" ] && [ ! -f .env ] && [ ! -f "$$HOME/.config/callm/config" ] && [ ! -f "$$HOME/.config/straitly/config" ]; then \
+	@if [ -z "$$POOLSIDE_API_KEY" ] && [ -z "$$ORCA_API_KEY" ] && [ -z "$$STRAITLY_API_KEY" ] && [ -z "$$CALLM_API_KEY" ] && [ ! -f .env ] && [ ! -f "$$HOME/.config/callm/config" ] && [ ! -f "$$HOME/.config/straitly/config" ]; then \
 		printf "\033[31mError:\033[0m No default-provider key or configuration file found.\n" >&2; \
-		printf "Export CALLM_API_KEY or STRAITLY_API_KEY, or create .env\n" >&2; \
+		printf "Export CALLM_API_KEY or a provider key (POOLSIDE_API_KEY, ORCA_API_KEY, STRAITLY_API_KEY), or create .env\n" >&2; \
 		exit 1; \
 	else \
 		printf "\033[32mOK:\033[0m Key/config source found; the CLI validates credentials.\n"; \

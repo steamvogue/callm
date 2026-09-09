@@ -8,7 +8,9 @@ description: Use the fast, zero-dependency `callm` CLI tool to query external LL
 `callm` is a fast standalone CLI utility installed at `/usr/local/bin/callm` (and in `$PATH`).
 It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.6.0+; check `callm --version` and `callm --help` when using an older installation.
 
-Default model: **`deepseek/deepseek-v4-flash-0731`**.
+Default provider: **Poolside** (`poolside/laguna-s-2.1`). Without a preset flag,
+callm uses the first provider whose key is set, checked in order Poolside,
+OrcaRouter, Straitly, DeepSeek, OpenRouter, Kimi Code; if none is set, Poolside.
 
 ## When to Use This Skill
 
@@ -32,7 +34,7 @@ callm --reasoning "Explain why 9.11 is smaller than 9.9"
 ### 2. Provider Presets & Reasoning
 
 ```bash
-# Straitly gateway (default):
+# Straitly gateway:
 callm "Your prompt here"
 
 # Claude Sonnet 4.6 shortcut (via Straitly/OpenRouter gateway):

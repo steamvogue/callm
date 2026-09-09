@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.7.1 — 2026-09-09
+
+- Changed the default provider from Straitly to Poolside. Without an explicit
+  preset flag, callm selects the first provider whose key is set, checked in
+  order Poolside, OrcaRouter, Straitly, DeepSeek, OpenRouter, Kimi Code; if none
+  is set, Poolside is used. `--st` still selects Straitly explicitly.
+- Updated CLI help, README, agent skill, and Makefile key checks.
+
 ## v0.7.0 — 2026-09-09
 
 - Added Poolside support with `--pool`, `POOLSIDE_API_KEY`, base URL

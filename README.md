@@ -12,7 +12,9 @@ A blazing-fast, zero-dependency Go CLI utility for calling LLMs across multiple 
 
 Includes thirteen provider presets, native Anthropic support, and custom OpenAI-compatible endpoints.
 
-Default model: **`deepseek/deepseek-v4-flash-0731`**
+Default provider: **Poolside** (`poolside/laguna-s-2.1`). Without a preset flag,
+callm uses the first provider whose key is set, checked in order Poolside,
+OrcaRouter, Straitly, DeepSeek, OpenRouter, Kimi Code; if none is set, Poolside.
 
 See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/SKILL.md).
 
@@ -23,7 +25,7 @@ See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/
 - **Zero Runtime Dependencies**: Compiled into a single static binary (`callm`). Eliminates external dependencies on `curl`, `jq`, or Python runtimes.
 - **Millisecond Startup**: Low process startup overhead for Unix pipelines and automated scripts.
 - **Provider Presets**:
-  - `--st` *(default)*: Straitly Gateway (`https://api.straitly.ai/v1`)
+  - `--st`: Straitly Gateway (`https://api.straitly.ai/v1`)
   - `--or`: OpenRouter Gateway (`https://openrouter.ai/api/v1`)
   - `--orca`: OrcaRouter Gateway (`https://api.orcarouter.ai/v1`)
   - `--ds`: DeepSeek Direct API (`https://api.deepseek.com`)
@@ -76,7 +78,7 @@ Keys can be configured in multiple ways:
 1. **Environment Variables (Default per preset)**:
 
    ```bash
-   export STRAITLY_API_KEY="your-straitly-key"      # for --st (default)
+   export STRAITLY_API_KEY="your-straitly-key"      # for --st
    export OPENROUTER_API_KEY="your-openrouter-key"  # for --or
    export ORCA_API_KEY="your-orcarouter-key"       # for --orca
    export KIMI_API_KEY="your-kimi-code-key"         # for --kimi (subscription)
@@ -113,7 +115,7 @@ are never used as fallbacks. Ollama can run without a key.
 
 | Preset | Default chat model | Key environment variable |
 | --- | --- | --- |
-| `--st` (default) | `deepseek/deepseek-v4-flash-0731` | `STRAITLY_API_KEY` |
+| `--st` | `deepseek/deepseek-v4-flash-0731` | `STRAITLY_API_KEY` |
 | `--or` | `deepseek/deepseek-v4-flash-0731` | `OPENROUTER_API_KEY` |
 | `--orca` | `orcarouter/auto` | `ORCA_API_KEY` |
 | `--ds` | `deepseek-chat` | `DEEPSEEK_API_KEY` |
@@ -133,6 +135,10 @@ for `--st` or `OPENAI_BASE_URL` for `--oa`, then the preset URL. Model precedenc
 `--oa`, then the preset model (or the `--claude` shortcut). The models above are
 CLI defaults; availability is controlled by each provider.
 
+Without a preset flag, the provider is the first in this order whose key variable
+is set — `POOLSIDE_API_KEY`, `ORCA_API_KEY`, `STRAITLY_API_KEY`,
+`DEEPSEEK_API_KEY`, `OPENROUTER_API_KEY`, `KIMI_API_KEY` — otherwise Poolside.
+
 Nonempty environment variables take precedence over files. Files fill missing or
 empty variables in order: current-directory `.env`, `.env` one directory above the
 executable's directory, `~/.config/callm/config`, then legacy
@@ -143,7 +149,7 @@ optional surrounding quotes; shell expansion is not performed.
 
 ## Usage Examples
 
-### Quick Query (Default Model)
+### Quick Query (Default Provider)
 
 ```bash
 callm "Explain quantum entanglement in 2 sentences"
@@ -303,7 +309,7 @@ Usage:
   callm -h | --help                Show this help message.
 
 Provider Presets:
-  --st                             Straitly Gateway (default)
+  --st                             Straitly Gateway
                                    URL: https://api.straitly.ai/v1 | Model: deepseek/deepseek-v4-flash-0731
   --or                             OpenRouter Gateway
                                    URL: https://openrouter.ai/api/v1 | Model: deepseek/deepseek-v4-flash-0731
@@ -384,6 +390,9 @@ Defaults and precedence:
   --claude replaces the preset model; explicit/model environment overrides still win.
   Without an explicit provider, --claude selects Anthropic if only its key is present
   among ANTHROPIC_API_KEY, STRAITLY_API_KEY and OPENROUTER_API_KEY.
+  Default provider: Poolside. Without a preset flag, the first provider whose key
+  is set wins, checked in order Poolside, OrcaRouter, Straitly, DeepSeek,
+  OpenRouter, Kimi Code.
   Streaming/reasoning display default on only when stdout is a terminal.
   OrcaRouter: --effort sends reasoning_effort; --thinking-budget is unsupported.
   OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.

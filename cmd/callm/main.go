@@ -61,7 +61,7 @@ Usage:
   callm -h | --help                Show this help message.
 
 Provider Presets:
-  --st                             Straitly Gateway (default)
+  --st                             Straitly Gateway
                                    URL: https://api.straitly.ai/v1 | Model: deepseek/deepseek-v4-flash-0731
   --or                             OpenRouter Gateway
                                    URL: https://openrouter.ai/api/v1 | Model: deepseek/deepseek-v4-flash-0731
@@ -142,6 +142,9 @@ Defaults and precedence:
   --claude replaces the preset model; explicit/model environment overrides still win.
   Without an explicit provider, --claude selects Anthropic if only its key is present
   among ANTHROPIC_API_KEY, STRAITLY_API_KEY and OPENROUTER_API_KEY.
+  Default provider: Poolside. Without a preset flag, the first provider whose key
+  is set wins, checked in order Poolside, OrcaRouter, Straitly, DeepSeek,
+  OpenRouter, Kimi Code.
   Streaming/reasoning display default on only when stdout is a terminal.
   OrcaRouter: --effort sends reasoning_effort; --thinking-budget is unsupported.
   OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
@@ -150,7 +153,7 @@ Defaults and precedence:
   Reasoning display flags do not enable model reasoning; --effort/--thinking-budget request it.
 
 Examples:
-  # Quick query using default model (deepseek/deepseek-v4-flash-0731):
+  # Quick query using the default provider (first configured key; Poolside otherwise):
   callm "Explain quantum entanglement in 2 sentences"
 
   # Quick query to Claude Sonnet 4.6 (via Straitly/OpenRouter):
@@ -246,7 +249,7 @@ type presetFlags struct {
 }
 
 func (p *presetFlags) Register(fs *flag.FlagSet) {
-	fs.BoolVar(&p.stPreset, "st", false, "Use Straitly preset (default)")
+	fs.BoolVar(&p.stPreset, "st", false, "Use Straitly preset")
 	fs.BoolVar(&p.orPreset, "or", false, "Use OpenRouter preset")
 	fs.BoolVar(&p.orcaPreset, "orca", false, "Use OrcaRouter preset (ORCA_API_KEY)")
 	fs.BoolVar(&p.dsPreset, "ds", false, "Use DeepSeek Direct preset")
@@ -325,7 +328,18 @@ func (p *presetFlags) ResolvePreset() string {
 			return "ant"
 		}
 	}
-	return "st"
+	return detectDefaultPreset()
+}
+
+// detectDefaultPreset returns the first provider whose key is set, checked in
+// the documented priority order; otherwise Poolside, the default provider.
+func detectDefaultPreset() string {
+	for _, name := range []string{"pool", "orca", "st", "ds", "or", "kimi"} {
+		if os.Getenv(config.Presets[name].KeyEnv) != "" {
+			return name
+		}
+	}
+	return "pool"
 }
 
 // registerTimeout accepts either seconds or a duration such as "5m" or "500ms".
