@@ -62,6 +62,9 @@ callm --orca --stats "Explain this error"
 callm --orca models
 callm --orca --claude --effort high "Review this function"
 
+# Poolside (POOLSIDE_API_KEY), default model poolside/laguna-s-2.1:
+callm --pool "What are channels in Go?"
+
 # Local Ollama or vLLM (auto-detects inline <think> tags):
 callm --ollama "Solve 17 * 23 step by step"
 ```
@@ -161,3 +164,8 @@ usage and only server-supplied cost, without estimating subscription charges.
 Requests retain callm's default User-Agent identity. See the
 [Kimi Code docs](https://www.kimi.com/code/docs/en/) for membership/model access.
 Check `callm --help` for `--kimi` subscription support before using older binaries.
+
+Poolside uses `--pool` and `POOLSIDE_API_KEY`, base URL
+`https://inference.poolside.ai/v1`, and default model `poolside/laguna-s-2.1`
+through the OpenAI-compatible protocol. Use `-m` for another Poolside model.
+The usual key/URL/model precedence and User-Agent identity apply.

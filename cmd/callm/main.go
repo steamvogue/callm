@@ -48,7 +48,7 @@ func printVersion() {
 }
 
 func printUsage() {
-	fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, OrcaRouter, DeepSeek, Anthropic, Moonshot, Kimi Code, Zhipu, Qwen, OpenAI, Groq, and Ollama.
+	fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, OrcaRouter, DeepSeek, Anthropic, Moonshot, Kimi Code, Zhipu, Qwen, OpenAI, Groq, Poolside, and Ollama.
 
 Usage:
   callm [chat] [OPTIONS] ["PROMPT"...]
@@ -84,6 +84,8 @@ Provider Presets:
                                    URL: https://api.openai.com/v1 | Model: gpt-4o
   --groq                           Groq Ultra-Fast OSS
                                    URL: https://api.groq.com/openai/v1 | Model: llama-3.3-70b-versatile
+  --pool                           Poolside (POOLSIDE_API_KEY)
+                                   URL: https://inference.poolside.ai/v1 | Model: poolside/laguna-s-2.1
   --ollama                         Ollama Local Gateway
                                    URL: http://localhost:11434/v1 | Model: deepseek-r1
   --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)
@@ -123,7 +125,7 @@ Environment Variables:
   CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, ORCA_API_KEY,
   DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
   OPENAI_API_KEY, MOONSHOT_API_KEY, KIMI_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
-  DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, OLLAMA_API_KEY (optional)
+  DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, POOLSIDE_API_KEY, OLLAMA_API_KEY (optional)
   CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
   CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
@@ -166,6 +168,9 @@ Examples:
 
   # Kimi Code subscription (uses KIMI_API_KEY):
   callm --kimi -f main.go "Review this code for bugs"
+
+  # Poolside (uses POOLSIDE_API_KEY):
+  callm --pool "What are channels in Go?"
 
   # OpenAI o3-mini with reasoning effort:
   callm --oa -m o3-mini --effort=medium "Solve this competitive programming problem"
@@ -235,6 +240,7 @@ type presetFlags struct {
 	qwPreset   bool
 	oaPreset   bool
 	groqPreset bool
+	poolPreset bool
 	olPreset   bool
 	claudeFlag bool
 }
@@ -257,12 +263,13 @@ func (p *presetFlags) Register(fs *flag.FlagSet) {
 	fs.BoolVar(&p.oaPreset, "oa", false, "Use OpenAI Direct preset")
 	fs.BoolVar(&p.oaPreset, "openai", false, "Use OpenAI Direct preset")
 	fs.BoolVar(&p.groqPreset, "groq", false, "Use Groq OSS preset")
+	fs.BoolVar(&p.poolPreset, "pool", false, "Use Poolside preset (POOLSIDE_API_KEY)")
 	fs.BoolVar(&p.olPreset, "ollama", false, "Use Ollama Local preset")
 }
 
 func (p *presetFlags) ResolvePreset() string {
 	count := 0
-	for _, enabled := range []bool{p.stPreset, p.orPreset, p.orcaPreset, p.dsPreset, p.antPreset, p.msPreset, p.kimiPreset, p.zaiPreset, p.qwPreset, p.oaPreset, p.groqPreset, p.olPreset} {
+	for _, enabled := range []bool{p.stPreset, p.orPreset, p.orcaPreset, p.dsPreset, p.antPreset, p.msPreset, p.kimiPreset, p.zaiPreset, p.qwPreset, p.oaPreset, p.groqPreset, p.poolPreset, p.olPreset} {
 		if enabled {
 			count++
 		}
@@ -270,7 +277,7 @@ func (p *presetFlags) ResolvePreset() string {
 	if count > 1 {
 		die(errors.New("select only one provider preset"))
 	}
-	if p.claudeFlag && (p.dsPreset || p.msPreset || p.kimiPreset || p.zaiPreset || p.qwPreset || p.oaPreset || p.groqPreset || p.olPreset) {
+	if p.claudeFlag && (p.dsPreset || p.msPreset || p.kimiPreset || p.zaiPreset || p.qwPreset || p.oaPreset || p.groqPreset || p.poolPreset || p.olPreset) {
 		die(errors.New("--claude requires Straitly, OpenRouter, OrcaRouter, or Anthropic"))
 	}
 
@@ -303,6 +310,9 @@ func (p *presetFlags) ResolvePreset() string {
 	}
 	if p.groqPreset {
 		return "groq"
+	}
+	if p.poolPreset {
+		return "pool"
 	}
 	if p.olPreset {
 		return "ollama"

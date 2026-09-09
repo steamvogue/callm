@@ -10,7 +10,7 @@ Company: [Netcraft](https://netcraft.pro)
 
 A blazing-fast, zero-dependency Go CLI utility for calling LLMs across multiple OpenAI-compatible gateways.
 
-Includes twelve provider presets, native Anthropic support, and custom OpenAI-compatible endpoints.
+Includes thirteen provider presets, native Anthropic support, and custom OpenAI-compatible endpoints.
 
 Default model: **`deepseek/deepseek-v4-flash-0731`**
 
@@ -35,6 +35,7 @@ See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/
   - `--qw`, `--qwen`: Alibaba Cloud DashScope Qwen (`https://dashscope.aliyuncs.com/compatible-mode/v1`)
   - `--oa`, `--openai`: OpenAI Direct API (`https://api.openai.com/v1`)
   - `--groq`: Groq Ultra-Fast OSS (`https://api.groq.com/openai/v1`)
+  - `--pool`: Poolside (`https://inference.poolside.ai/v1`)
   - `--ollama`: Ollama Local Gateway (`http://localhost:11434/v1`)
   - `--api=URL` / `--base-url=URL`: Custom OpenAI-compatible endpoint (vLLM, SGLang, etc.)
 - **Real-Time SSE Streaming**: Native streaming with instant token delivery and graceful `Ctrl+C` handling.
@@ -82,6 +83,7 @@ Keys can be configured in multiple ways:
    export DEEPSEEK_API_KEY="your-deepseek-key"      # for --ds
    export CALLM_API_KEY="your-callm-key"            # global callm override
    export OPENAI_API_KEY="your-openai-key"          # for --oa
+   export POOLSIDE_API_KEY="your-poolside-key"      # for --pool
    ```
 
 2. **Custom Environment Variable Name via `--api-key-env`**:
@@ -122,6 +124,7 @@ are never used as fallbacks. Ollama can run without a key.
 | `--qw` | `qwen-plus` | `DASHSCOPE_API_KEY`, then `QWEN_API_KEY` |
 | `--oa` | `gpt-4o` | `OPENAI_API_KEY` |
 | `--groq` | `llama-3.3-70b-versatile` | `GROQ_API_KEY` |
+| `--pool` | `poolside/laguna-s-2.1` | `POOLSIDE_API_KEY` |
 | `--ollama` | `deepseek-r1` | `OLLAMA_API_KEY` (optional) |
 
 URL precedence is `--api`/`--base-url`, `CALLM_BASE_URL`, then `STRAITLY_BASE_URL`
@@ -175,6 +178,9 @@ callm --oa -m o3-mini --effort=medium "Implement an A* pathfinding algorithm"
 
 # Fast open-source models via Groq
 callm --groq -m llama-3.3-70b-versatile "Explain Rust lifetimes"
+
+# Poolside (POOLSIDE_API_KEY)
+callm --pool "What are channels in Go?"
 
 # Local Ollama (auto-detects inline <think> tags)
 callm --ollama "Solve 17 * 23 step by step"
@@ -320,6 +326,8 @@ Provider Presets:
                                    URL: https://api.openai.com/v1 | Model: gpt-4o
   --groq                           Groq Ultra-Fast OSS
                                    URL: https://api.groq.com/openai/v1 | Model: llama-3.3-70b-versatile
+  --pool                           Poolside (POOLSIDE_API_KEY)
+                                   URL: https://inference.poolside.ai/v1 | Model: poolside/laguna-s-2.1
   --ollama                         Ollama Local Gateway
                                    URL: http://localhost:11434/v1 | Model: deepseek-r1
   --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)
@@ -359,7 +367,7 @@ Environment Variables:
   CALLM_API_KEY, STRAITLY_API_KEY, OPENROUTER_API_KEY, ORCA_API_KEY,
   DEEPSEEK_API_KEY, ANTHROPIC_API_KEY,
   OPENAI_API_KEY, MOONSHOT_API_KEY, KIMI_API_KEY, ZAI_API_KEY (alias ZHIPU_API_KEY),
-  DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, OLLAMA_API_KEY (optional)
+  DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, POOLSIDE_API_KEY, OLLAMA_API_KEY (optional)
   CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
   CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL

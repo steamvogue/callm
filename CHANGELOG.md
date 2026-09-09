@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.7.0 — 2026-09-09
+
+- Added Poolside support with `--pool`, `POOLSIDE_API_KEY`, base URL
+  `https://inference.poolside.ai/v1`, and default model `poolside/laguna-s-2.1`.
+  Uses the OpenAI-compatible client for chat, streaming, models, info, and raw
+  requests, preserving the usual configuration overrides and callm User-Agent.
+- Updated CLI help, README, agent skill, and optional live-test provider list.
+
 ## v0.6.0 — 2026-09-06
 
 - Added Kimi Code subscription support with `--kimi`, `KIMI_API_KEY`, base URL

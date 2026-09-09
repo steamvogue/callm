@@ -3,7 +3,7 @@ package config
 import "testing"
 
 func TestKeyIsolationAndPrecedence(t *testing.T) {
-	for _, key := range []string{"CALLM_API_KEY", "STRAITLY_API_KEY", "OPENAI_API_KEY", "DEEPSEEK_API_KEY", "ZAI_API_KEY", "ZHIPU_API_KEY", "DASHSCOPE_API_KEY", "QWEN_API_KEY", "OLLAMA_API_KEY"} {
+	for _, key := range []string{"CALLM_API_KEY", "STRAITLY_API_KEY", "OPENAI_API_KEY", "DEEPSEEK_API_KEY", "ZAI_API_KEY", "ZHIPU_API_KEY", "DASHSCOPE_API_KEY", "QWEN_API_KEY", "OLLAMA_API_KEY", "POOLSIDE_API_KEY"} {
 		t.Setenv(key, "")
 	}
 	t.Setenv("DEEPSEEK_API_KEY", "deepseek-dummy")
@@ -67,6 +67,36 @@ func TestOrcaConfiguration(t *testing.T) {
 	}
 	t.Setenv("CALLM_BASE_URL", "http://proxy.invalid/v1")
 	if ResolveBaseURL("orca", "") != "http://proxy.invalid/v1" || ResolveBaseURL("orca", "http://explicit.invalid") != "http://explicit.invalid" {
+		t.Fatal("endpoint overrides")
+	}
+}
+
+func TestPoolsideConfiguration(t *testing.T) {
+	t.Setenv("CALLM_API_KEY", "")
+	t.Setenv("POOLSIDE_API_KEY", "")
+	t.Setenv("GROQ_API_KEY", "other-provider")
+	if key, _ := ResolveAPIKey("pool", "", ""); key != "" {
+		t.Fatal("Groq key leaked to Poolside")
+	}
+	t.Setenv("POOLSIDE_API_KEY", "poolside-dummy")
+	for _, tc := range []struct{ direct, env, global, want string }{
+		{"", "", "", "poolside-dummy"}, {"", "", "global", "global"},
+		{"", "POOLSIDE_API_KEY", "global", "poolside-dummy"}, {"explicit", "POOLSIDE_API_KEY", "global", "explicit"},
+	} {
+		t.Setenv("CALLM_API_KEY", tc.global)
+		if got, err := ResolveAPIKey("pool", tc.direct, tc.env); err != nil || got != tc.want {
+			t.Fatalf("key=%q err=%v", got, err)
+		}
+	}
+	t.Setenv("CALLM_BASE_URL", "")
+	if got := ResolveBaseURL("pool", ""); got != "https://inference.poolside.ai/v1" {
+		t.Fatal(got)
+	}
+	if Presets["pool"].DefaultModel != "poolside/laguna-s-2.1" {
+		t.Fatal("wrong Poolside default model")
+	}
+	t.Setenv("CALLM_BASE_URL", "http://proxy.invalid/v1")
+	if ResolveBaseURL("pool", "") != "http://proxy.invalid/v1" || ResolveBaseURL("pool", "http://explicit.invalid") != "http://explicit.invalid" {
 		t.Fatal("endpoint overrides")
 	}
 }

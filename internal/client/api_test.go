@@ -24,6 +24,7 @@ func TestProviderAPICallMinimal(t *testing.T) {
 		{"zhipu", "glm-4-flash", "/chat/completions"},
 		{"qwen", "qwen-plus", "/chat/completions"},
 		{"groq", "llama-3.3-70b-versatile", "/chat/completions"},
+		{"poolside", "poolside/laguna-s-2.1", "/chat/completions"},
 		{"ollama", "deepseek-r1", "/chat/completions"},
 	}
 

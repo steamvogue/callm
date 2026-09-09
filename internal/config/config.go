@@ -83,6 +83,12 @@ var Presets = map[string]ProviderPreset{
 		DefaultModel: "llama-3.3-70b-versatile",
 		KeyEnv:       "GROQ_API_KEY",
 	},
+	"pool": {
+		Name:         "Poolside",
+		BaseURL:      "https://inference.poolside.ai/v1",
+		DefaultModel: "poolside/laguna-s-2.1",
+		KeyEnv:       "POOLSIDE_API_KEY",
+	},
 	"ollama": {
 		Name:         "Ollama Local",
 		BaseURL:      "http://localhost:11434/v1",

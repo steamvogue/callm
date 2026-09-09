@@ -42,6 +42,8 @@ func NewClient(baseURL, apiKey string, provider ...string) *Client {
 			selected = "orca"
 		case "api.straitly.ai":
 			selected = "st"
+		case "inference.poolside.ai":
+			selected = "pool"
 		}
 	}
 	if len(provider) > 0 && provider[0] != "" {

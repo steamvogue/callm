@@ -53,6 +53,7 @@ qw_key=DASHSCOPE_API_KEY
 if [[ -z ${DASHSCOPE_API_KEY:-} ]]; then qw_key=QWEN_API_KEY; fi
 check_provider qw "$qw_key"
 check_provider groq GROQ_API_KEY
+check_provider pool POOLSIDE_API_KEY
 check_provider ant ANTHROPIC_API_KEY claude-sonnet-4-6
 if [[ $passed -eq 0 ]]; then
   printf 'No live tests ran; %d providers skipped.\n' "$skipped" >&2
