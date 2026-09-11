@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.8.0 — 2026-09-11
+
+- Added `callm models` catalog export. `--format=json` (alias `--json`) saves the
+  filtered raw provider catalog losslessly, preserving provider-specific fields;
+  `--format=zed`, `--format=kilo`, and `--format=continue` (`vscode` alias) print
+  paste-ready provider configuration fragments for those tools.
+- Added `--filter` to `callm models`: comma-separated, case-insensitive substring
+  terms with separator folding, so `z.ai` matches `z-ai`. Terms are OR-combined and
+  AND-combined with the existing positional regex filter.
+- Added `--provider-name` to override the provider id used by `zed`/`kilo` output.
+  Exports never include API keys; models missing a context length are exported
+  without Zed's required `max_tokens` and warn on stderr.
+- Updated CLI help, README, agent skill, and installed skill copies.
+
 ## v0.7.1 — 2026-09-09
 
 - Changed the default provider from Straitly to Poolside. Without an explicit

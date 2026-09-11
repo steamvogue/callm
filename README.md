@@ -54,7 +54,7 @@ See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/
 - **Observability & Cost Transparency**:
   - `--stats` displays latency, token counts, tokens/sec, and reported cost in USD when supplied by the gateway (`usage.cost`, or OrcaRouter’s `usage.cost_usd`).
 - **Catalog Explorer**:
-  - `callm models [FILTER]`
+  - `callm models [FILTER]` with `--filter` substring terms, `--format=json` export, and paste-ready `--format=zed|kilo|continue` provider configs
   - `callm info <MODEL>`
 - **Raw API Access**:
   - `callm raw <ENDPOINT> '<JSON>'`
@@ -288,9 +288,38 @@ callm models deepseek
 callm models claude
 callm --oa models gpt
 
+# Substring filter terms (case-insensitive; z.ai matches z-ai)
+callm models --filter="deepseek,z.ai,qwen"
+
+# Save the filtered catalog as provider JSON (lossless; unknown fields kept)
+callm models --format=json --filter="deepseek" > models.json
+
+# Export paste-ready provider config for an editor or agent
+callm models --format=zed       # Zed settings.json: language_models.openai_compatible
+callm models --format=kilo      # kilo.json: provider block (@ai-sdk/openai-compatible)
+callm models --format=continue  # Continue (VS Code/JetBrains) config.json: models list
+callm models --format=kilo --provider-name "My Gateway"  # override the provider id
+
 # Inspect technical specs, context length, and pricing
 callm info deepseek/deepseek-v4-flash-0731
 ```
+
+Export notes:
+- `--format` values are `table` (default), `json`, `zed`, `kilo`, and `continue`
+  (`vscode` is an alias for `continue`). `--json` is an alias for `--format=json`;
+  combining it with a different `--format` is an error.
+- `--filter` terms are OR-combined, and a positional `FILTER` regex (applied to
+  model IDs and canonical slugs) is AND-combined with them.
+- Snippets are fragments, not full files: Zed nests under
+  `language_models.openai_compatible.<id>`, Kilo under `provider.<id>`, Continue
+  wraps the listed models in `"models": [...]`.
+- No API keys are written. Zed and Kilo read the key from the generated
+  environment variable (`<PROVIDER_ID>_API_KEY`); Continue uses its own
+  `apiKey` setting.
+- Continue's `config.json` is deprecated upstream in favor of `config.yaml`;
+  the exported fields map directly to the YAML `models:` entries.
+- Models without a context length export without Zed's required `max_tokens`
+  and print a warning on stderr.
 
 ---
 
@@ -301,7 +330,7 @@ callm info deepseek/deepseek-v4-flash-0731
 Usage:
   callm [chat] [OPTIONS] ["PROMPT"...]
                                     Chat completion. Reads PROMPT from arguments, files, or stdin.
-  callm models [OPTIONS] [FILTER]  List available models with context length, pricing, and modalities.
+  callm models [OPTIONS] [FILTER]  List, filter, or export models (--format json|zed|kilo|continue).
   callm info [OPTIONS] <MODEL>     Inspect full technical specs, pricing, and parameters for a model.
   callm raw [OPTIONS] <ENDPOINT> '<JSON>'
                                     POST raw JSON body to any endpoint (e.g. /chat/completions).

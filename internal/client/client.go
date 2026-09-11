@@ -304,7 +304,12 @@ func (c *Client) ListModels(ctx context.Context) ([]ModelInfo, error) {
 		if err := json.Unmarshal(b, &page); err != nil {
 			return nil, fmt.Errorf("invalid model catalog: %w", err)
 		}
-		for _, model := range page.Data {
+		for _, raw := range page.Data {
+			var model ModelInfo
+			if err := json.Unmarshal(raw, &model); err != nil {
+				return nil, fmt.Errorf("invalid model catalog entry: %w", err)
+			}
+			model.Raw = append(json.RawMessage(nil), raw...)
 			if model.Name == "" {
 				model.Name = model.DisplayName
 			}

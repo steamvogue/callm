@@ -170,11 +170,12 @@ type APIError struct {
 }
 
 // ModelListResponse represents the list of models from /v1/models.
+// Entries stay raw so catalog exports preserve provider-specific fields.
 type ModelListResponse struct {
-	Data    []ModelInfo `json:"data"`
-	Error   *APIError   `json:"error,omitempty"`
-	HasMore bool        `json:"has_more"`
-	LastID  string      `json:"last_id"`
+	Data    []json.RawMessage `json:"data"`
+	Error   *APIError         `json:"error,omitempty"`
+	HasMore bool              `json:"has_more"`
+	LastID  string            `json:"last_id"`
 }
 
 // ModelInfo contains model catalog information.
@@ -189,6 +190,10 @@ type ModelInfo struct {
 	SupportedParameters []string      `json:"supported_parameters,omitempty"`
 	DisplayName         string        `json:"display_name,omitempty"`
 	MaxInputTokens      int64         `json:"max_input_tokens,omitempty"`
+
+	// Raw is the original provider JSON for this model, excluded from marshaling
+	// so lossless exports can replay it verbatim.
+	Raw json.RawMessage `json:"-"`
 }
 
 // Architecture details modalities and tokenizer.

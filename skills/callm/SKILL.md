@@ -101,12 +101,28 @@ callm --api-key-env=CUSTOM_TOKEN "Prompt"
 callm --api-key="sk-..." "Prompt"
 ```
 
-### 6. Model Discovery & Specs
+### 6. Model Discovery, Specs & Exports
 
 ```bash
 callm models deepseek
 callm info deepseek/deepseek-v4-flash-0731
+
+# Substring filter terms (comma-separated, case-insensitive; z.ai matches z-ai):
+callm models --filter="deepseek,z.ai,qwen"
+
+# Lossless JSON catalog (unknown provider fields preserved):
+callm models --format=json --filter="deepseek" > models.json
+
+# Paste-ready provider configs: zed (default target), kilo, continue
+callm models --format=zed
+callm models --format=kilo --provider-name "My Gateway"
+callm models --format=continue
 ```
+
+`--json` aliases `--format=json`; `vscode` aliases `--format=continue`. Exports
+never include API keys: Zed/Kilo read `<PROVIDER_ID>_API_KEY`, Continue uses its
+own `apiKey` setting. Zed output omits `max_tokens` (with a stderr warning) for
+models that do not report a context length.
 
 ### 7. Timeouts and output defaults
 

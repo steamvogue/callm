@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -20,6 +21,7 @@ import (
 
 	"callm/internal/client"
 	"callm/internal/config"
+	"callm/internal/export"
 	"callm/internal/ui"
 )
 
@@ -53,7 +55,7 @@ func printUsage() {
 Usage:
   callm [chat] [OPTIONS] ["PROMPT"...]
                                     Chat completion. Reads PROMPT from arguments, files, or stdin.
-  callm models [OPTIONS] [FILTER]  List available models with context length, pricing, and modalities.
+  callm models [OPTIONS] [FILTER]  List, filter, or export models (--format json|zed|kilo|continue).
   callm info [OPTIONS] <MODEL>     Inspect full technical specs, pricing, and parameters for a model.
   callm raw [OPTIONS] <ENDPOINT> '<JSON>'
                                     POST raw JSON body to any endpoint (e.g. /chat/completions).
@@ -186,6 +188,11 @@ Examples:
 
   # Local Ollama model with inline <think> tags:
   callm --ollama "Solve 17 * 23 step by step"
+
+  # Save the model catalog or paste-ready editor configs:
+  callm models --format=json --filter="deepseek,z.ai,qwen" > models.json
+  callm models --format=zed deepseek
+  callm models --format=kilo
 `, Version)
 }
 
@@ -385,7 +392,14 @@ func runModels(ctx context.Context, args []string) {
 	var pFlags presetFlags
 	pFlags.Register(fs)
 	var customAPI, keyFlag, keyEnvFlag string
+	var formatFlag, providerName string
+	var jsonFlag bool
+	var filterValues stringSlice
 
+	fs.StringVar(&formatFlag, "format", "table", "Output format: table, json, zed, kilo, continue (vscode is an alias for continue)")
+	fs.BoolVar(&jsonFlag, "json", false, "Alias for --format=json")
+	fs.Var(&filterValues, "filter", "Comma-separated case-insensitive substring filters (repeatable)")
+	fs.StringVar(&providerName, "provider-name", "", "Provider id/section name used by zed and kilo output")
 	fs.StringVar(&customAPI, "api", "", "Custom API Base URL")
 	fs.StringVar(&customAPI, "base-url", "", "Custom API Base URL")
 	fs.StringVar(&keyFlag, "k", "", "API key")
@@ -396,11 +410,28 @@ func runModels(ctx context.Context, args []string) {
 
 	fs.Usage = func() {
 		fmt.Fprintln(fs.Output(), "Usage: callm models [OPTIONS] [FILTER]")
+		fmt.Fprintln(fs.Output(), "  FILTER is a case-insensitive regex over model IDs and canonical slugs.")
+		fmt.Fprintln(fs.Output(), "  --filter terms are comma-separated normalized substrings (z.ai matches z-ai).")
 		fs.PrintDefaults()
 	}
 
 	_ = fs.Parse(args)
 	filter := strings.Join(fs.Args(), " ")
+
+	format := export.FormatTable
+	if flagWasSet(fs, "format") {
+		normalized, err := export.NormalizeFormat(formatFlag)
+		if err != nil {
+			die(err)
+		}
+		format = normalized
+	}
+	if jsonFlag {
+		if format != export.FormatTable && format != export.FormatJSON {
+			die(fmt.Errorf("--json conflicts with --format=%s", format))
+		}
+		format = export.FormatJSON
+	}
 
 	presetName := pFlags.ResolvePreset()
 	baseURL := config.ResolveBaseURL(presetName, customAPI)
@@ -427,9 +458,59 @@ func runModels(ctx context.Context, args []string) {
 		die(err)
 	}
 
-	if err := ui.PrintModelsTable(os.Stdout, models, filter); err != nil {
+	filtered, err := ui.FilterModels(models, filter, filterValues)
+	if err != nil {
 		die(err)
 	}
+	if format == export.FormatTable {
+		if err := ui.PrintModelsTable(os.Stdout, filtered, ""); err != nil {
+			die(err)
+		}
+		return
+	}
+
+	providerNameRaw := providerName
+	if providerNameRaw == "" {
+		providerNameRaw = defaultProviderName(presetName, customAPI, baseURL)
+	}
+	providerID := export.Slug(providerNameRaw)
+	if providerID == "" {
+		providerID = "callm"
+	}
+	meta := export.Meta{
+		BaseURL:      baseURL,
+		ProviderID:   providerID,
+		ProviderName: providerNameRaw,
+		KeyEnv:       config.Presets[presetName].KeyEnv,
+	}
+
+	data, warnings, err := export.Render(format, filtered, meta)
+	if err != nil {
+		die(err)
+	}
+	for _, warning := range warnings {
+		fmt.Fprintln(os.Stderr, "warning: "+warning)
+	}
+	if _, err := os.Stdout.Write(data); err != nil {
+		die(err)
+	}
+	if format == export.FormatContinue {
+		fmt.Fprintf(os.Stderr, "hint: set the Continue API key (\"apiKey\") or export %s in your shell\n", meta.KeyEnv)
+	}
+}
+
+// defaultProviderName prefers the selected preset name and falls back to the
+// endpoint host for custom base URLs.
+func defaultProviderName(presetName, customAPI, baseURL string) string {
+	if customAPI == "" {
+		if preset, ok := config.Presets[presetName]; ok && preset.Name != "" {
+			return preset.Name
+		}
+	}
+	if parsed, err := url.Parse(baseURL); err == nil && parsed.Hostname() != "" {
+		return parsed.Hostname()
+	}
+	return "callm"
 }
 
 func runInfo(ctx context.Context, args []string) {

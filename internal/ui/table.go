@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"math"
-	"regexp"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -43,23 +42,15 @@ func parsePricePerMillion(priceVal interface{}) string {
 
 // PrintModelsTable prints a formatted table of models matching the filter.
 func PrintModelsTable(out io.Writer, models []client.ModelInfo, filter string) error {
-	var re *regexp.Regexp
-	var err error
-	if filter != "" {
-		re, err = regexp.Compile("(?i)" + filter)
-		if err != nil {
-			return fmt.Errorf("invalid filter regex '%s': %w", filter, err)
-		}
+	models, err := FilterModels(models, filter, nil)
+	if err != nil {
+		return err
 	}
 
 	w := tabwriter.NewWriter(out, 0, 0, 3, ' ', 0)
 	fmt.Fprintln(w, "MODEL\tCONTEXT\t$/Mtok-IN\t$/Mtok-OUT\tMODALITIES")
 
 	for _, m := range models {
-		if re != nil && !re.MatchString(m.ID) && !re.MatchString(m.CanonicalSlug) {
-			continue
-		}
-
 		priceIn := "unknown"
 		priceOut := "unknown"
 		if m.Pricing != nil {
