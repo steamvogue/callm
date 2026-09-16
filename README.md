@@ -100,11 +100,15 @@ Keys can be configured in multiple ways:
    callm --api-key="sk-..." "Hello from explicit key"
    ```
 
-4. **Local `.env` or `~/.config/callm/config`**:
+4. **Configuration file `~/.config/callm/config`**:
 
    ```bash
-   echo "STRAITLY_API_KEY=your-key-here" > .env
+   mkdir -p ~/.config/callm
+   echo "STRAITLY_API_KEY=your-key-here" >> ~/.config/callm/config
    ```
+
+   A `.env` in the current directory is ignored unless you opt in with
+   `CALLM_LOAD_DOTENV=1`; see the configuration precedence below.
 
 ### Configuration precedence and provider defaults
 
@@ -140,10 +144,22 @@ is set — `POOLSIDE_API_KEY`, `ORCA_API_KEY`, `STRAITLY_API_KEY`,
 `DEEPSEEK_API_KEY`, `OPENROUTER_API_KEY`, `KIMI_API_KEY` — otherwise Poolside.
 
 Nonempty environment variables take precedence over files. Files fill missing or
-empty variables in order: current-directory `.env`, `.env` one directory above the
-executable's directory, `~/.config/callm/config`, then legacy
-`~/.config/straitly/config`. Files accept `KEY=value` or `export KEY=value` and
-optional surrounding quotes; shell expansion is not performed.
+empty variables in order: `.env` one directory above the executable's directory,
+`~/.config/callm/config`, then legacy `~/.config/straitly/config`. Files accept
+`KEY=value` or `export KEY=value` and optional surrounding quotes; shell expansion
+is not performed.
+
+A `.env` in the current directory is not loaded by default. A checked-out
+repository could otherwise use it (for example with `CALLM_BASE_URL`) to send the
+API key callm resolves from your environment or configuration files to another
+endpoint. To load it, set `CALLM_LOAD_DOTENV=1` in the environment or one of the
+files above; it then fills variables first, as in earlier releases. The current
+directory's `.env` cannot enable itself, and a setting in a configuration file
+applies in every directory, so enable it only where you trust the files. When
+callm skips a current-directory `.env` that defines callm variables, it prints a
+notice on stderr; `CALLM_LOAD_DOTENV=0` hides it. Values other than `1`, `true`,
+`0`, or `false` fail before any request. Special files such as named pipes are
+skipped.
 
 ---
 
@@ -428,6 +444,7 @@ Environment Variables:
   CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
   CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
+  CALLM_LOAD_DOTENV
 
 Defaults and precedence:
   User-Agent: --user-agent > nonempty CALLM_USER_AGENT > project default:
@@ -438,6 +455,10 @@ Defaults and precedence:
   max_tokens defaults to 4096 (increased if needed for an implicit thinking cap).
   Key: explicit key > named key-env > CALLM_API_KEY > selected provider key/alias.
   URL/model: explicit flag > CALLM_* > selected provider STRAITLY_*/OPENAI_* > preset.
+  Unset variables are filled from .env one directory above the executable, then
+  ~/.config/callm/config (legacy ~/.config/straitly/config last). A .env in the
+  current directory could redirect API keys, so it loads first only when
+  CALLM_LOAD_DOTENV=1 is set in the environment or those files; 0 hides the notice.
   --claude replaces the preset model; explicit/model environment overrides still win.
   Without an explicit provider, --claude selects Anthropic if only its key is present
   among ANTHROPIC_API_KEY, STRAITLY_API_KEY and OPENROUTER_API_KEY.

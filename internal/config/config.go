@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -118,31 +119,85 @@ type Config struct {
 	ImagePaths          []string
 }
 
-// LoadEnvFiles fills missing or empty variables from local .env files and user configs.
-func LoadEnvFiles() {
-	// Try current directory .env
-	loadEnvFile(".env")
+// dotenvVar opts in to loading .env from the current directory.
+const dotenvVar = "CALLM_LOAD_DOTENV"
 
-	// Try executable directory's parent .env (e.g. /var/www/straitly/.env when binary is in bin/)
+const dotenvNotice = "ignoring ./.env (it could redirect API keys); " + dotenvVar + "=1 loads it, " + dotenvVar + "=0 hides this notice"
+
+// LoadEnvFiles fills missing or empty variables from trusted files: the .env one
+// directory above the executable's directory, ~/.config/callm/config, and legacy
+// ~/.config/straitly/config. A current-directory .env may belong to an untrusted
+// checkout that redirects credentials, so it loads first only when CALLM_LOAD_DOTENV
+// is true in the environment or a trusted file. The returned notice is for stderr.
+func LoadEnvFiles() (string, error) {
+	var trusted []string
+	// Executable directory's parent .env (e.g. /var/www/straitly/.env when binary is in bin/)
 	if execPath, err := os.Executable(); err == nil {
-		parentEnv := filepath.Join(filepath.Dir(filepath.Dir(execPath)), ".env")
-		loadEnvFile(parentEnv)
+		trusted = append(trusted, filepath.Join(filepath.Dir(filepath.Dir(execPath)), ".env"))
 	}
-
-	// Try ~/.config/callm/config and ~/.config/straitly/config
 	if home, err := os.UserHomeDir(); err == nil {
-		loadEnvFile(filepath.Join(home, ".config", "callm", "config"))
-		loadEnvFile(filepath.Join(home, ".config", "straitly", "config"))
+		trusted = append(trusted, filepath.Join(home, ".config", "callm", "config"), filepath.Join(home, ".config", "straitly", "config"))
 	}
+	return loadEnvFiles(".env", trusted)
 }
 
-func loadEnvFile(path string) {
+type envEntry struct{ key, value string }
+
+func loadEnvFiles(workspacePath string, trustedPaths []string) (string, error) {
+	trusted := make([][]envEntry, len(trustedPaths))
+	for i, path := range trustedPaths {
+		trusted[i] = readEnvFile(path)
+	}
+	// The workspace file never takes part in its own opt-in decision.
+	setting := os.Getenv(dotenvVar)
+	for _, entries := range trusted {
+		for _, entry := range entries {
+			if setting == "" && entry.key == dotenvVar {
+				setting = entry.value
+			}
+		}
+	}
+	load := false
+	if setting != "" {
+		var err error
+		if load, err = strconv.ParseBool(setting); err != nil {
+			return "", fmt.Errorf("%s must be 1, true, 0, or false; got %q", dotenvVar, setting)
+		}
+	}
+	var workspace []envEntry
+	if setting == "" || load {
+		workspace = readEnvFile(workspacePath)
+	}
+	if load {
+		applyEnv(workspace)
+	}
+	for _, entries := range trusted {
+		applyEnv(entries)
+	}
+	if setting == "" {
+		for _, entry := range workspace {
+			if entry.value != "" && os.Getenv(entry.key) == "" && isCallmVariable(entry.key) {
+				return dotenvNotice, nil
+			}
+		}
+	}
+	return "", nil
+}
+
+// readEnvFile parses KEY=value lines from a regular file; special files such as
+// named pipes are skipped because opening them can block startup.
+func readEnvFile(path string) []envEntry {
+	info, err := os.Stat(path)
+	if err != nil || !info.Mode().IsRegular() {
+		return nil
+	}
 	file, err := os.Open(path)
 	if err != nil {
-		return
+		return nil
 	}
 	defer file.Close()
 
+	var entries []envEntry
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -164,10 +219,32 @@ func loadEnvFile(path string) {
 				v = v[1 : len(v)-1]
 			}
 		}
-		if os.Getenv(k) == "" {
-			_ = os.Setenv(k, v)
+		entries = append(entries, envEntry{k, v})
+	}
+	return entries
+}
+
+// applyEnv fills only missing or empty variables, so earlier sources keep precedence.
+func applyEnv(entries []envEntry) {
+	for _, entry := range entries {
+		if os.Getenv(entry.key) == "" {
+			_ = os.Setenv(entry.key, entry.value)
 		}
 	}
+}
+
+// isCallmVariable reports names that select callm credentials, endpoints, or models.
+func isCallmVariable(key string) bool {
+	switch key {
+	case "ZHIPU_API_KEY", "QWEN_API_KEY", "STRAITLY_BASE_URL", "STRAITLY_MODEL", "OPENAI_BASE_URL", "OPENAI_MODEL":
+		return true
+	}
+	for _, preset := range Presets {
+		if preset.KeyEnv == key {
+			return true
+		}
+	}
+	return strings.HasPrefix(key, "CALLM_")
 }
 
 // ResolveAPIKey discovers the appropriate API key.

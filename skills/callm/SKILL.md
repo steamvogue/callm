@@ -161,6 +161,13 @@ provider it selects Anthropic if `ANTHROPIC_API_KEY` is present and both
 `STRAITLY_API_KEY` and `OPENROUTER_API_KEY` are absent. See `callm --help` and the
 [root README](https://github.com/steamvogue/callm/blob/main/README.md) for all presets, aliases and configuration files.
 
+callm ignores a `.env` in the current directory unless `CALLM_LOAD_DOTENV=1` is set
+in the environment or `~/.config/callm/config`, because a checkout's `.env` could
+redirect API keys (for example with `CALLM_BASE_URL`). Do not enable it inside
+untrusted repositories; export keys or use `~/.config/callm/config` instead.
+`CALLM_LOAD_DOTENV=0` hides the stderr notice printed when such a file is skipped.
+Releases before v0.9.0 load the current-directory `.env` automatically.
+
 OrcaRouter uses `--orca` and `ORCA_API_KEY`; `--or` remains OpenRouter. Its base
 URL is `https://api.orcarouter.ai/v1`. `--effort` sends `reasoning_effort` for the
 gateway to translate; support depends on the model. `--thinking-budget` is

@@ -2,6 +2,19 @@
 
 ## v0.9.0 — 2026-09-16
 
+### Security
+
+- A `.env` in the current directory is no longer loaded by default. Previously a
+  checked-out repository could set `CALLM_BASE_URL` (or any other variable) in its
+  `.env` and receive the API key callm resolved from your environment or
+  configuration files. Set `CALLM_LOAD_DOTENV=1` in the environment,
+  `~/.config/callm/config`, or the executable-relative `.env` to load it again; it
+  keeps its previous precedence and cannot enable itself.
+- callm prints a stderr notice when it skips a current-directory `.env` that
+  defines callm variables; `CALLM_LOAD_DOTENV=0` hides it. Invalid values fail
+  before any request. Special files such as named pipes are skipped instead of
+  blocking startup.
+
 ### DeepSeek
 
 - Changed the DeepSeek Direct (`--ds`) default model from `deepseek-chat` to
@@ -14,9 +27,17 @@
   `"thinking": {"type": "disabled"}` through `raw` for a non-thinking request.
 - The optional live DeepSeek checks use `deepseek-flash`, and the minimal check
   allows 1024 tokens instead of 64 so default thinking has room to finish.
-- Added local mock coverage for the DeepSeek default model, model override,
-  effort, and raw thinking switch. Updated CLI help, README, agent skill, and
-  installed skill copies.
+
+### Compatibility and validation
+
+- Projects that kept keys or endpoints in a current-directory `.env` must export
+  them, move them to `~/.config/callm/config`, or opt in with
+  `CALLM_LOAD_DOTENV=1`. The `.env` one directory above the executable (such as a
+  repository checkout's `bin/callm`) still loads.
+- Added local mock coverage for current-directory `.env` isolation, opt-in and
+  opt-out, invalid values, and named pipes, plus the DeepSeek default model, model
+  override, effort, and raw thinking switch. Updated CLI help, README, agent
+  skill, and installed skill copies.
 
 ## v0.8.0 — 2026-09-11
 

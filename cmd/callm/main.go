@@ -131,6 +131,7 @@ Environment Variables:
   CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
   CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
+  CALLM_LOAD_DOTENV
 
 Defaults and precedence:
   User-Agent: --user-agent > nonempty CALLM_USER_AGENT > project default:
@@ -141,6 +142,10 @@ Defaults and precedence:
   max_tokens defaults to 4096 (increased if needed for an implicit thinking cap).
   Key: explicit key > named key-env > CALLM_API_KEY > selected provider key/alias.
   URL/model: explicit flag > CALLM_* > selected provider STRAITLY_*/OPENAI_* > preset.
+  Unset variables are filled from .env one directory above the executable, then
+  ~/.config/callm/config (legacy ~/.config/straitly/config last). A .env in the
+  current directory could redirect API keys, so it loads first only when
+  CALLM_LOAD_DOTENV=1 is set in the environment or those files; 0 hides the notice.
   --claude replaces the preset model; explicit/model environment overrides still win.
   Without an explicit provider, --claude selects Anthropic if only its key is present
   among ANTHROPIC_API_KEY, STRAITLY_API_KEY and OPENROUTER_API_KEY.
@@ -199,7 +204,13 @@ Examples:
 }
 
 func main() {
-	config.LoadEnvFiles()
+	notice, err := config.LoadEnvFiles()
+	if notice != "" {
+		fmt.Fprintln(os.Stderr, "callm: "+notice)
+	}
+	if err != nil {
+		die(err)
+	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
