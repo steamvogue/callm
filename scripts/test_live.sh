@@ -18,7 +18,10 @@ check_provider() {
     return
   fi
   marker="OK_${preset}_MINIMAL"
-  out=$("$CALLM" "--$preset" --api-key-env "$key_env" --no-stdin --no-stream --no-reasoning --max-tokens 64 "Reply exactly: $marker")
+  local minimal_tokens=64
+  # deepseek-flash thinks by default; leave room for reasoning within max_tokens.
+  if [[ $preset == ds ]]; then minimal_tokens=1024; fi
+  out=$("$CALLM" "--$preset" --api-key-env "$key_env" --no-stdin --no-stream --no-reasoning --max-tokens "$minimal_tokens" "Reply exactly: $marker")
   if [[ $out != *"$marker"* ]]; then
     printf '%s: minimal response did not contain the expected marker\n' "$preset" >&2
     return 1
@@ -42,7 +45,7 @@ if [[ -z ${STRAITLY_API_KEY:-} && -n ${CALLM_API_KEY:-} ]]; then st_key=CALLM_AP
 check_provider st "$st_key"
 check_provider or OPENROUTER_API_KEY deepseek/deepseek-r1
 check_provider orca ORCA_API_KEY
-check_provider ds DEEPSEEK_API_KEY deepseek-reasoner
+check_provider ds DEEPSEEK_API_KEY deepseek-flash
 check_provider oa OPENAI_API_KEY
 check_provider ms MOONSHOT_API_KEY
 check_provider kimi KIMI_API_KEY

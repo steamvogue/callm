@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.9.0 — 2026-09-16
+
+### DeepSeek
+
+- Changed the DeepSeek Direct (`--ds`) default model from `deepseek-chat` to
+  `deepseek-flash` (DeepSeek V4.1 Flash). DeepSeek retired the legacy
+  `deepseek-chat` and `deepseek-reasoner` model names after 2026-07-24; earlier
+  callm releases need `-m deepseek-flash`.
+- `deepseek-flash` thinks by default, unlike the former non-thinking
+  `deepseek-chat`, so `--ds` responses now include `reasoning_content` under the
+  usual display rules. `--effort` still sends `reasoning_effort`; send
+  `"thinking": {"type": "disabled"}` through `raw` for a non-thinking request.
+- The optional live DeepSeek checks use `deepseek-flash`, and the minimal check
+  allows 1024 tokens instead of 64 so default thinking has room to finish.
+- Added local mock coverage for the DeepSeek default model, model override,
+  effort, and raw thinking switch. Updated CLI help, README, agent skill, and
+  installed skill copies.
+
 ## v0.8.0 — 2026-09-11
 
 - Added `callm models` catalog export. `--format=json` (alias `--json`) saves the

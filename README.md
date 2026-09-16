@@ -118,7 +118,7 @@ are never used as fallbacks. Ollama can run without a key.
 | `--st` | `deepseek/deepseek-v4-flash-0731` | `STRAITLY_API_KEY` |
 | `--or` | `deepseek/deepseek-v4-flash-0731` | `OPENROUTER_API_KEY` |
 | `--orca` | `orcarouter/auto` | `ORCA_API_KEY` |
-| `--ds` | `deepseek-chat` | `DEEPSEEK_API_KEY` |
+| `--ds` | `deepseek-flash` | `DEEPSEEK_API_KEY` |
 | `--ant` | `claude-sonnet-4-6` | `ANTHROPIC_API_KEY` |
 | `--kimi` | `kimi-for-coding` | `KIMI_API_KEY` |
 | `--ms` | `moonshot-v1-auto` | `MOONSHOT_API_KEY` |
@@ -248,6 +248,28 @@ See the [Kimi Code API documentation](https://www.kimi.com/code/docs/en/) for
 membership access and supported models. Requests retain callm's default
 User-Agent identity.
 
+### DeepSeek Direct
+
+`--ds` uses `DEEPSEEK_API_KEY`, base URL `https://api.deepseek.com`, and
+`deepseek-flash` (DeepSeek V4.1 Flash) by default; `-m deepseek-v4-pro` selects
+V4 Pro. DeepSeek retired the legacy `deepseek-chat` and `deepseek-reasoner` model
+names after 2026-07-24, so releases before v0.9.0 need `-m deepseek-flash`.
+
+Unlike the former non-thinking `deepseek-chat` default, `deepseek-flash` thinks by
+default. Reasoning arrives as `reasoning_content` and follows the usual display
+rules (stderr; `--reasoning`/`--no-reasoning`). `--effort` sends `reasoning_effort`
+(DeepSeek maps `medium` to `high`); `--thinking-budget` is not supported. For a
+non-thinking request, send DeepSeek's `thinking` switch with `raw`:
+
+```bash
+callm --ds "Write an LRU cache in Go"
+callm --ds -m deepseek-v4-pro --effort low "Explain Go generics briefly"
+callm --ds raw /chat/completions '{"model":"deepseek-flash","thinking":{"type":"disabled"},"messages":[{"role":"user","content":"Hello"}]}'
+```
+
+See DeepSeek's [models and pricing](https://api-docs.deepseek.com/quick_start/pricing)
+and [thinking mode guide](https://api-docs.deepseek.com/guides/thinking_mode).
+
 ### Piped Stdin + Instructions
 
 ```bash
@@ -345,7 +367,7 @@ Provider Presets:
   --orca                           OrcaRouter Gateway (ORCA_API_KEY)
                                    URL: https://api.orcarouter.ai/v1 | Model: orcarouter/auto
   --ds                             DeepSeek Direct API
-                                   URL: https://api.deepseek.com | Model: deepseek-chat
+                                   URL: https://api.deepseek.com | Model: deepseek-flash
   --ant, --anthropic               Anthropic Direct API (/v1/messages)
                                    URL: https://api.anthropic.com/v1 | Model: claude-sonnet-4-6
   --claude                         Claude Shortcut (selects Claude Sonnet 4.6 on active gateway)
@@ -427,6 +449,8 @@ Defaults and precedence:
   OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
   Kimi Code: --kimi uses subscription quota; --ms/--moonshot use Moonshot billing.
   --stats reports only server-supplied cost; it does not estimate subscription cost.
+  DeepSeek: --ds defaults to deepseek-flash, which thinks unless disabled; deepseek-chat
+  and deepseek-reasoner are retired. raw can send "thinking":{"type":"disabled"}.
   Reasoning display flags do not enable model reasoning; --effort/--thinking-budget request it.
 
 ```

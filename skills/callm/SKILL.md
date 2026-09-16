@@ -15,7 +15,7 @@ OrcaRouter, Straitly, DeepSeek, OpenRouter, Kimi Code; if none is set, Poolside.
 ## When to Use This Skill
 
 - When you need a second opinion on a complex architectural decision, bug, or algorithm.
-- When you want to delegate a reasoning task to DeepSeek V4 / R1 (`--reasoning` or `--ds`).
+- When you want to delegate a reasoning task to DeepSeek (`--ds`; `deepseek-flash` thinks by default, displayed with `--reasoning`).
 - When you need access to models from Anthropic, Meta, or OpenAI via OpenRouter (`--or`).
 - When analyzing large files or diffs with piped input.
 
@@ -187,3 +187,13 @@ Poolside uses `--pool` and `POOLSIDE_API_KEY`, base URL
 `https://inference.poolside.ai/v1`, and default model `poolside/laguna-s-2.1`
 through the OpenAI-compatible protocol. Use `-m` for another Poolside model.
 The usual key/URL/model precedence and User-Agent identity apply.
+
+DeepSeek Direct uses `--ds` and `DEEPSEEK_API_KEY`, base URL
+`https://api.deepseek.com`, and default model `deepseek-flash` (DeepSeek V4.1
+Flash); use `-m deepseek-v4-pro` for V4 Pro. DeepSeek retired `deepseek-chat` and
+`deepseek-reasoner` after 2026-07-24, and callm v0.8.0 and earlier still default
+`--ds` to `deepseek-chat`, so pass `-m deepseek-flash` with older binaries.
+`deepseek-flash` thinks by default: reasoning returns as `reasoning_content`,
+`--effort` sends `reasoning_effort` (DeepSeek maps `medium` to `high`), and
+`--thinking-budget` is rejected. For a non-thinking request, use
+`callm --ds raw /chat/completions` with `"thinking": {"type": "disabled"}` in the body.

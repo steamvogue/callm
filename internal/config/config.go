@@ -38,7 +38,7 @@ var Presets = map[string]ProviderPreset{
 	"ds": {
 		Name:         "DeepSeek Direct",
 		BaseURL:      "https://api.deepseek.com",
-		DefaultModel: "deepseek-chat",
+		DefaultModel: "deepseek-flash",
 		KeyEnv:       "DEEPSEEK_API_KEY",
 	},
 	"ant": {

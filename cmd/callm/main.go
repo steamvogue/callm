@@ -70,7 +70,7 @@ Provider Presets:
   --orca                           OrcaRouter Gateway (ORCA_API_KEY)
                                    URL: https://api.orcarouter.ai/v1 | Model: orcarouter/auto
   --ds                             DeepSeek Direct API
-                                   URL: https://api.deepseek.com | Model: deepseek-chat
+                                   URL: https://api.deepseek.com | Model: deepseek-flash
   --ant, --anthropic               Anthropic Direct API (/v1/messages)
                                    URL: https://api.anthropic.com/v1 | Model: claude-sonnet-4-6
   --claude                         Claude Shortcut (selects Claude Sonnet 4.6 on active gateway)
@@ -152,6 +152,8 @@ Defaults and precedence:
   OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
   Kimi Code: --kimi uses subscription quota; --ms/--moonshot use Moonshot billing.
   --stats reports only server-supplied cost; it does not estimate subscription cost.
+  DeepSeek: --ds defaults to deepseek-flash, which thinks unless disabled; deepseek-chat
+  and deepseek-reasoner are retired. raw can send "thinking":{"type":"disabled"}.
   Reasoning display flags do not enable model reasoning; --effort/--thinking-budget request it.
 
 Examples:

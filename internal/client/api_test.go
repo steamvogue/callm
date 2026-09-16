@@ -18,7 +18,7 @@ func TestProviderAPICallMinimal(t *testing.T) {
 	}{
 		{"straitly", "deepseek/deepseek-v4-flash-0731", "/chat/completions"},
 		{"openrouter", "deepseek/deepseek-v4-flash-0731", "/chat/completions"},
-		{"deepseek", "deepseek-chat", "/chat/completions"},
+		{"deepseek", "deepseek-flash", "/chat/completions"},
 		{"openai", "gpt-4o", "/chat/completions"},
 		{"moonshot", "moonshot-v1-auto", "/chat/completions"},
 		{"zhipu", "glm-4-flash", "/chat/completions"},
@@ -91,8 +91,8 @@ func TestProviderAPICallReasoning(t *testing.T) {
 		checkPayload    func(t *testing.T, req ChatRequest)
 	}{
 		{
-			name:            "deepseek_reasoner",
-			model:           "deepseek-reasoner",
+			name:            "deepseek_flash_thinking",
+			model:           "deepseek-flash",
 			simulatedDelta:  "data: {\"choices\":[{\"delta\":{\"reasoning_content\":\"Comparing 9.11 vs 9.9...\"}}]}\n\ndata: {\"choices\":[{\"delta\":{\"content\":\"9.9 is larger.\"}}]}\n\n",
 			expectReasoning: "Comparing 9.11 vs 9.9...",
 		},
