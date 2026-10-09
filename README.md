@@ -42,10 +42,10 @@ See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/
   - `--api=URL` / `--base-url=URL`: Custom OpenAI-compatible endpoint (vLLM, SGLang, etc.)
 - **Real-Time SSE Streaming**: Native streaming with instant token delivery and graceful `Ctrl+C` handling.
 - **Universal Chain-of-Thought (Reasoning)**:
-  - Render provider-returned reasoning fields and inline thinking tags. Availability depends on the provider and model; OpenAI o-series does not expose private reasoning text.
-  - **Inline `<think>` Stream Parsing**: Automatically extracts and styles reasoning tokens from open-source models (Ollama, vLLM) that stream thinking tags inline.
+  - Render provider-returned reasoning fields and explicitly opted-in inline thinking tags. Availability depends on the provider and model; OpenAI o-series does not expose private reasoning text.
+  - **Inline `<think>` Stream Parsing**: `--parse-think` explicitly extracts and styles reasoning tokens from open-source models (Ollama, vLLM) that stream thinking tags inline.
   - Granular control via `--reasoning`, `--no-reasoning`, and `--only-reasoning`.
-  - Configurable reasoning effort: `--effort=low|medium|high` and `--thinking-budget=N`.
+  - Configurable reasoning effort: model-specific `--effort` levels and legacy `--thinking-budget=N`.
 - **Flexible Context Ingestion**:
   - Positional prompt arguments
   - Piped stdin with cancellation and an EOF deadline (`cat log.txt | callm "Extract errors"`)
@@ -204,8 +204,8 @@ callm --groq -m llama-3.3-70b-versatile "Explain Rust lifetimes"
 # Poolside (POOLSIDE_API_KEY)
 callm --pool "What are channels in Go?"
 
-# Local Ollama (auto-detects inline <think> tags)
-callm --ollama "Solve 17 * 23 step by step"
+# Local Ollama (explicitly parse inline <think> tags)
+callm --ollama --parse-think "Solve 17 * 23 step by step"
 ```
 
 ### HTTP User-Agent
@@ -339,7 +339,7 @@ callm models --format=continue  # Continue (VS Code/JetBrains) config.json: mode
 callm models --format=kilo --provider-name "My Gateway"  # override the provider id
 
 # Inspect technical specs, context length, and pricing
-callm info deepseek/deepseek-v4-flash-0731
+callm --or info deepseek/deepseek-v4-flash-0731
 ```
 
 Export notes:
@@ -416,9 +416,9 @@ Options (chat unless stated otherwise):
   -s, --system SYSTEM              System prompt instruction
   -t, --temp, --temperature T      Sampling temperature (omitted by default)
   -n, --max-tokens N               Maximum tokens to generate
-      --max-completion-tokens N    Maximum completion tokens (for OpenAI o1/o3/o4 reasoning models)
-      --effort, --reasoning-effort E   Reasoning effort: low, medium, high (omitted by default)
-      --thinking-budget N          Extended thinking token budget (Claude / OpenRouter)
+      --max-completion-tokens N    Maximum completion tokens (OpenAI reasoning models, including known GPT-6 IDs)
+      --effort, --reasoning-effort E   Reasoning effort (model-dependent; low, medium, high, xhigh, max, none)
+      --thinking-budget N          Manual thinking budget (older Claude / OpenRouter; new Claude uses --effort)
       --top-p P                    Top-p nucleus sampling
   -f, --file FILE                  Include contents of FILE in prompt context (can repeat)
       --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)
@@ -426,10 +426,13 @@ Options (chat unless stated otherwise):
       --stream                     Force streaming response (default when stdout is terminal)
       --no-stream                  Disable streaming response
       --reasoning                  Display returned reasoning on stderr (default when stdout is terminal)
-      --no-reasoning               Hide reasoning tokens
+      --no-reasoning               Hide reasoning fields (literal content is preserved)
+      --parse-think                Interpret inline <think> tags as reasoning (explicit opt-in)
       --only-reasoning             Only output reasoning tokens (suppress final answer)
       --stats                      Print token usage, latency, tok/s, and cost to stderr
-      --json                       Output original JSON response (non-streaming)
+      --json                       Output original JSON response (non-streaming; transport success)
+      --strict                     Require usable output and a terminal reason (also with --json)
+      --allow-empty                Permit intentionally empty output (still rejects failed completions)
       --header-timeout DURATION    Wait for response headers (inherits --timeout; 0 disables)
       --idle-timeout DURATION      Wait for streamed bytes (inherits --timeout; 0 disables)
       --stdin-timeout DURATION     Wait for piped input EOF (default 300s; 0 disables)
@@ -464,15 +467,22 @@ Defaults and precedence:
   among ANTHROPIC_API_KEY, STRAITLY_API_KEY and OPENROUTER_API_KEY.
   Default provider: Poolside. Without a preset flag, the first provider whose key
   is set wins, checked in order Poolside, OrcaRouter, Straitly, DeepSeek,
-  OpenRouter, Kimi Code.
+  OpenRouter, Kimi Code. Other configured keys require an explicit preset (e.g. --oa).
   Streaming/reasoning display default on only when stdout is a terminal.
+  Text output rejects truncation, refusal, tools and empty answers; --allow-empty permits empty.
+  --strict also requires a terminal reason; --json alone preserves diagnostic envelopes.
   OrcaRouter: --effort sends reasoning_effort; --thinking-budget is unsupported.
   OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
   Kimi Code: --kimi uses subscription quota; --ms/--moonshot use Moonshot billing.
+  Native Anthropic catalogs support table/JSON; editor exports require OpenAI-compatible endpoints.
   --stats reports only server-supplied cost; it does not estimate subscription cost.
   DeepSeek: --ds defaults to deepseek-flash, which thinks unless disabled; deepseek-chat
   and deepseek-reasoner are retired. raw can send "thinking":{"type":"disabled"}.
   Reasoning display flags do not enable model reasoning; --effort/--thinking-budget request it.
+  Native Claude 4.6 and known newer models use adaptive thinking with --effort.
+  New Claude models reject manual budgets/sampling; returned thinking may be omitted.
+  Known GPT-6 IDs normalize token caps; sampling requires --effort none on Sol/Luna.
+  Astra/6.1 Sol reject none; unknown/custom models retain low/medium/high effort.
 
 ```
 <!-- CLI-HELP:END -->
@@ -489,7 +499,7 @@ The separate stdin limit defaults to 300 seconds. Zero disables the selected lim
 ```bash
 callm --timeout 10m "Solve this problem"
 callm models --timeout 60s deepseek
-callm info --timeout 60s deepseek/deepseek-v4-flash-0731
+callm --or info --timeout 60s deepseek/deepseek-v4-flash-0731
 callm raw --timeout 300 /chat/completions '{"model":"example","messages":[]}'
 ```
 
@@ -566,3 +576,56 @@ callm --version
   It reports passed assertions and skipped providers, includes Anthropic, and exits
   2 if no tests ran. `make test-race` requires a host supported by ThreadSanitizer;
   CI runs race detection on Linux amd64.
+
+## Build toolchain
+
+CI tests the latest patches of Go 1.26 and 1.27 on Linux amd64, including the race detector. Release and cross-compilation jobs use Go 1.27.2. The module language minimum remains Go 1.22; use a supported patched compiler when building releases.
+
+## Unreleased result and model behavior
+
+Text output fails on truncation, refusal/filtering, unsupported tool or continuation
+requests, and empty answers. `--allow-empty` permits an intentionally empty answer;
+it never permits truncation or refusal. Missing completion/content arrays are
+malformed. A nonempty legacy reply without a finish reason remains accepted;
+`--strict` additionally requires a recognized terminal reason. `--json` alone
+preserves diagnostic envelopes with transport success; use `--json --strict` in
+pipelines. Buffered invalid results are rejected before stdout. Streaming can
+expose partial bytes before failure, so stage output before publishing it.
+
+Literal `<think>` content is preserved by default, including JSON strings. Use
+`--parse-think` for a model known to embed inline reasoning; it intentionally
+interprets those tags. Direct reasoning fields retain their display controls.
+`--parse-think` conflicts with full `--json`. Output, statistics and flush errors
+return nonzero status. See [the guarded JSON example](examples/README.md) for
+validation and publication of a pipeline artifact.
+
+Anthropic statistics include uncached input, cached reads and cache creation once.
+The displayed cache categories are already included in input. OpenAI-compatible
+prompt totals keep provider accounting. Raw JSON retains the original fields;
+reported cost remains separate and missing cost remains unknown.
+
+| Model profile | Effort and request behavior |
+|---|---|
+| Native Claude Sonnet/Opus 4.6 | `--effort` uses adaptive thinking and `output_config.effort`; low/medium/high/max. Manual `--thinking-budget` remains available; sampling is restricted while thinking is on. |
+| Native recognized Claude 5.x / Opus 4.7–4.8 | Adaptive effort: low/medium/high/xhigh/max. Manual budgets and sampling flags are rejected locally. |
+| GPT-6 Astra / 6.1 Sol | low/medium/high/xhigh/max; token caps normalize to `max_completion_tokens`; sampling flags are rejected. |
+| GPT-6 Sol / Luna | Adds `none`; sampling is accepted only with explicit `--effort none`. Caps normalize as above. |
+| o1/o3/o4 | low/medium/high; completion caps; omit temperature/top-p. |
+| Unknown/custom models | Existing low/medium/high effort and explicit caps; use `raw` for other provider-specific settings. |
+
+Profiles recognize known dated snapshots. Explicit caps are preserved; adaptive
+effort does not create a manual thinking budget. Returning reasoning text is
+provider-dependent: newer Claude models may omit it while still generating and
+billing reasoning. `--reasoning` displays only returned text. No model-default
+upgrade or live-generation benchmark accompanies these repairs.
+
+Native Anthropic catalogs support tables and lossless JSON. Zed/Kilo/Continue
+exports fail locally for that protocol, including explicit proxies; configure the
+editor's native adapter. Compatible gateways still export Claude models. Missing-key
+errors name the selected preset and configured variable names/flags without
+showing credentials. Provider priority remains documented; OpenAI-only credentials
+require `--oa`.
+
+The paid live script requires jq and validates actual answer/usage/reasoning
+metadata. Its assertion logic was checked with fake responses. Development records,
+limitations and next actions are in [the repair log](audit/2026-10-09/PROGRESS.md).

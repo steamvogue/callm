@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -27,12 +28,15 @@ type StreamRenderer struct {
 	Err            io.Writer
 	IsTTY          bool
 	ShowReasoning  bool
+	ParseThinking  bool
 	OnlyReasoning  bool
 	InReasoning    bool
 	HasReasoned    bool
 	ContentStarted bool
+	HasContent     bool
 	inThinkBlock   bool
 	tagBuf         string
+	writeErr       error
 }
 
 // NewStreamRenderer creates a renderer for streaming output.
@@ -46,18 +50,33 @@ func NewStreamRenderer(out, err io.Writer, showReasoning, onlyReasoning bool) *S
 	}
 }
 
+// writeText detects both ordinary errors and invalid short writes.
+func writeText(w io.Writer, text string) error {
+	n, err := io.WriteString(w, text)
+	if err == nil && n != len(text) {
+		err = io.ErrShortWrite
+	}
+	return err
+}
+
+func (r *StreamRenderer) write(w io.Writer, text string) {
+	if r.writeErr == nil {
+		r.writeErr = writeText(w, text)
+	}
+}
+
 func (r *StreamRenderer) emitReasoning(text string) {
 	if text == "" || !r.ShowReasoning {
 		return
 	}
+	r.HasReasoned = r.HasReasoned || strings.TrimSpace(text) != ""
 	if !r.InReasoning {
 		r.InReasoning = true
-		r.HasReasoned = true
 		if r.IsTTY {
-			fmt.Fprint(r.Err, "\033[2m\033[36m[Thinking...]\n")
+			r.write(r.Err, "\033[2m\033[36m[Thinking...]\n")
 		}
 	}
-	fmt.Fprint(r.Err, text)
+	r.write(r.Err, text)
 }
 
 func (r *StreamRenderer) emitContent(text string) {
@@ -67,13 +86,14 @@ func (r *StreamRenderer) emitContent(text string) {
 	if r.InReasoning {
 		r.InReasoning = false
 		if r.IsTTY {
-			fmt.Fprint(r.Err, "\033[0m\n\n")
+			r.write(r.Err, "\033[0m\n\n")
 		} else {
-			fmt.Fprint(r.Err, "\n\n")
+			r.write(r.Err, "\n\n")
 		}
 	}
 	r.ContentStarted = true
-	fmt.Fprint(r.Out, text)
+	r.HasContent = r.HasContent || strings.TrimSpace(text) != ""
+	r.write(r.Out, text)
 }
 
 func findPartialPrefixSuffix(s, target string) int {
@@ -91,7 +111,10 @@ func findPartialPrefixSuffix(s, target string) int {
 }
 
 // HandleDelta renders reasoning and content tokens cleanly.
-func (r *StreamRenderer) HandleDelta(delta client.StreamDelta) {
+func (r *StreamRenderer) HandleDelta(delta client.StreamDelta) error {
+	if r.writeErr != nil {
+		return r.writeErr
+	}
 	// 1. Check direct JSON delta reasoning fields (DeepSeek, OpenRouter, Anthropic, Qwen, Gemini)
 	reasoning := delta.Reasoning
 	if reasoning == "" {
@@ -105,7 +128,12 @@ func (r *StreamRenderer) HandleDelta(delta client.StreamDelta) {
 		r.emitReasoning(reasoning)
 	}
 
-	// 2. Process delta.Content for inline <think>...</think> tags (Ollama, local vLLM, QwQ)
+	// Interpret inline thinking tags only when explicitly requested.
+	if !r.ParseThinking {
+		r.emitContent(delta.Content)
+		return r.writeErr
+	}
+	// Process opted-in inline <think>...</think> tags.
 	if delta.Content != "" {
 		r.tagBuf += delta.Content
 
@@ -149,10 +177,11 @@ func (r *StreamRenderer) HandleDelta(delta client.StreamDelta) {
 			}
 		}
 	}
+	return r.writeErr
 }
 
 // Finish ensures all styles are reset and newlines flushed.
-func (r *StreamRenderer) Finish() {
+func (r *StreamRenderer) Finish() error {
 	if r.tagBuf != "" {
 		if r.inThinkBlock {
 			r.emitReasoning(r.tagBuf)
@@ -163,18 +192,24 @@ func (r *StreamRenderer) Finish() {
 	}
 	if r.InReasoning {
 		if r.IsTTY {
-			fmt.Fprint(r.Err, "\033[0m\n")
+			r.write(r.Err, "\033[0m\n")
 		} else {
-			fmt.Fprintln(r.Err)
+			r.write(r.Err, "\n")
 		}
 	}
 	if r.ContentStarted {
-		fmt.Fprintln(r.Out)
+		r.write(r.Out, "\n")
 	}
+	for _, w := range []io.Writer{r.Out, r.Err} {
+		if f, ok := w.(interface{ Flush() error }); ok {
+			r.writeErr = errors.Join(r.writeErr, f.Flush())
+		}
+	}
+	return r.writeErr
 }
 
 // PrintStats prints performance and cost metrics to stderr.
-func PrintStats(err io.Writer, duration time.Duration, usage *client.Usage, model string) {
+func PrintStats(err io.Writer, duration time.Duration, usage *client.Usage, model string) error {
 	isTTY := IsTerminal(err)
 	var promptTok, compTok, totalTok int
 	var costStr string
@@ -198,12 +233,15 @@ func PrintStats(err io.Writer, duration time.Duration, usage *client.Usage, mode
 	tokens := "usage unavailable"
 	if usage != nil {
 		tokens = fmt.Sprintf("%d tokens (%d in / %d out)", totalTok, promptTok, compTok)
+		if usage.CacheReadInputTokens > 0 || usage.CacheCreationInputTokens > 0 {
+			tokens += fmt.Sprintf(" [cache read: %d / cache write: %d; included in input]", usage.CacheReadInputTokens, usage.CacheCreationInputTokens)
+		}
 	}
 	statsText := fmt.Sprintf("[stats: %v | %s%s%s | model: %s]", duration.Round(time.Millisecond), tokens, speedStr, costStr, model)
 
 	if isTTY {
-		fmt.Fprintf(err, "\033[90m%s\033[0m\n", statsText)
+		return writeText(err, "\033[90m"+statsText+"\033[0m\n")
 	} else {
-		fmt.Fprintln(err, statsText)
+		return writeText(err, statsText+"\n")
 	}
 }

@@ -1,0 +1,5 @@
+ok  	callm/cmd/callm	1.513s
+ok  	callm/internal/client	0.693s
+ok  	callm/internal/config	0.016s
+ok  	callm/internal/export	0.015s
+ok  	callm/internal/ui	0.009s

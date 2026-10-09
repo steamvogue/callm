@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 // The default provider is Poolside; without an explicit preset, the first
 // provider whose key is set wins, in the documented priority order.
@@ -49,5 +52,25 @@ func TestDefaultPresetDetection(t *testing.T) {
 				t.Fatalf("default preset = %q, want %q", got, tc.want)
 			}
 		})
+	}
+}
+
+func TestMissingKeyDiagnostic(t *testing.T) {
+	for _, key := range []string{"POOLSIDE_API_KEY", "ORCA_API_KEY", "STRAITLY_API_KEY", "DEEPSEEK_API_KEY", "OPENROUTER_API_KEY", "KIMI_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY", "MOONSHOT_API_KEY", "ZAI_API_KEY", "ZHIPU_API_KEY", "DASHSCOPE_API_KEY", "QWEN_API_KEY", "GROQ_API_KEY", "OLLAMA_API_KEY"} {
+		t.Setenv(key, "")
+	}
+	t.Setenv("OPENAI_API_KEY", "must-not-leak")
+	t.Setenv("QWEN_API_KEY", "also-secret")
+	text := missingKeyError("pool").Error()
+	for _, want := range []string{"Poolside (--pool)", "POOLSIDE_API_KEY", "OPENAI_API_KEY: --oa", "QWEN_API_KEY: --qw"} {
+		if !strings.Contains(text, want) {
+			t.Fatalf("missing %s: %s", want, text)
+		}
+	}
+	if strings.Contains(text, "must-not-leak") || strings.Contains(text, "also-secret") {
+		t.Fatal("credential leaked")
+	}
+	if detectDefaultPreset() != "pool" {
+		t.Fatal("diagnostic changed provider priority")
 	}
 }

@@ -75,7 +75,7 @@ func TestCLIOutputAndValidation(t *testing.T) {
 		want  string
 	}{
 		{"json stats", []string{"--json", "--stats"}, true, `"extension":42`},
-		{"inline hidden", []string{"--no-stream", "--no-reasoning"}, true, "answer"},
+		{"inline hidden", []string{"--no-stream", "--no-reasoning", "--parse-think"}, true, "answer"},
 		{"invalid temperature", []string{"--temp", "0.7junk"}, false, ""},
 		{"invalid top-p", []string{"--top-p", "2"}, false, ""},
 		{"conflicting providers", []string{"--or", "--st"}, false, ""},

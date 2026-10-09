@@ -1,0 +1,44 @@
+[
+  {
+    "case": "native-omitted-thinking",
+    "passed": true,
+    "exit": 0,
+    "stdout": "st: skipped (STRAITLY_API_KEY unavailable)\nor: skipped (OPENROUTER_API_KEY unavailable)\norca: skipped (ORCA_API_KEY unavailable)\nds: skipped (DEEPSEEK_API_KEY unavailable)\noa: skipped (OPENAI_API_KEY unavailable)\nms: skipped (MOONSHOT_API_KEY unavailable)\nkimi: skipped (KIMI_API_KEY unavailable)\nzai: skipped (ZHIPU_API_KEY unavailable)\nqw: skipped (QWEN_API_KEY unavailable)\ngroq: skipped (GROQ_API_KEY unavailable)\npool: skipped (POOLSIDE_API_KEY unavailable)\nant: passed\n2 live assertions passed; 11 providers skipped.\n",
+    "stderr": "callm: synthetic dotenv notice\ncallm: synthetic dotenv notice\n"
+  },
+  {
+    "case": "native-text-only-with-notice",
+    "passed": true,
+    "exit": 1,
+    "stdout": "st: skipped (STRAITLY_API_KEY unavailable)\nor: skipped (OPENROUTER_API_KEY unavailable)\norca: skipped (ORCA_API_KEY unavailable)\nds: skipped (DEEPSEEK_API_KEY unavailable)\noa: skipped (OPENAI_API_KEY unavailable)\nms: skipped (MOONSHOT_API_KEY unavailable)\nkimi: skipped (KIMI_API_KEY unavailable)\nzai: skipped (ZHIPU_API_KEY unavailable)\nqw: skipped (QWEN_API_KEY unavailable)\ngroq: skipped (GROQ_API_KEY unavailable)\npool: skipped (POOLSIDE_API_KEY unavailable)\n",
+    "stderr": "callm: synthetic dotenv notice\ncallm: synthetic dotenv notice\nant: answer/usage/reasoning metadata assertion failed\n"
+  },
+  {
+    "case": "native-zero-usage",
+    "passed": true,
+    "exit": 1,
+    "stdout": "st: skipped (STRAITLY_API_KEY unavailable)\nor: skipped (OPENROUTER_API_KEY unavailable)\norca: skipped (ORCA_API_KEY unavailable)\nds: skipped (DEEPSEEK_API_KEY unavailable)\noa: skipped (OPENAI_API_KEY unavailable)\nms: skipped (MOONSHOT_API_KEY unavailable)\nkimi: skipped (KIMI_API_KEY unavailable)\nzai: skipped (ZHIPU_API_KEY unavailable)\nqw: skipped (QWEN_API_KEY unavailable)\ngroq: skipped (GROQ_API_KEY unavailable)\npool: skipped (POOLSIDE_API_KEY unavailable)\n",
+    "stderr": "callm: synthetic dotenv notice\ncallm: synthetic dotenv notice\nant: answer/usage/reasoning metadata assertion failed\n"
+  },
+  {
+    "case": "compatible-reasoning-field",
+    "passed": true,
+    "exit": 0,
+    "stdout": "st: skipped (STRAITLY_API_KEY unavailable)\nor: skipped (OPENROUTER_API_KEY unavailable)\norca: skipped (ORCA_API_KEY unavailable)\nds: passed\noa: skipped (OPENAI_API_KEY unavailable)\nms: skipped (MOONSHOT_API_KEY unavailable)\nkimi: skipped (KIMI_API_KEY unavailable)\nzai: skipped (ZHIPU_API_KEY unavailable)\nqw: skipped (QWEN_API_KEY unavailable)\ngroq: skipped (GROQ_API_KEY unavailable)\npool: skipped (POOLSIDE_API_KEY unavailable)\nant: skipped (ANTHROPIC_API_KEY unavailable)\n2 live assertions passed; 11 providers skipped.\n",
+    "stderr": "callm: synthetic dotenv notice\ncallm: synthetic dotenv notice\n"
+  },
+  {
+    "case": "compatible-reasoning-usage",
+    "passed": true,
+    "exit": 0,
+    "stdout": "st: skipped (STRAITLY_API_KEY unavailable)\nor: skipped (OPENROUTER_API_KEY unavailable)\norca: skipped (ORCA_API_KEY unavailable)\nds: passed\noa: skipped (OPENAI_API_KEY unavailable)\nms: skipped (MOONSHOT_API_KEY unavailable)\nkimi: skipped (KIMI_API_KEY unavailable)\nzai: skipped (ZHIPU_API_KEY unavailable)\nqw: skipped (QWEN_API_KEY unavailable)\ngroq: skipped (GROQ_API_KEY unavailable)\npool: skipped (POOLSIDE_API_KEY unavailable)\nant: skipped (ANTHROPIC_API_KEY unavailable)\n2 live assertions passed; 11 providers skipped.\n",
+    "stderr": "callm: synthetic dotenv notice\ncallm: synthetic dotenv notice\n"
+  },
+  {
+    "case": "compatible-notice-only",
+    "passed": true,
+    "exit": 1,
+    "stdout": "st: skipped (STRAITLY_API_KEY unavailable)\nor: skipped (OPENROUTER_API_KEY unavailable)\norca: skipped (ORCA_API_KEY unavailable)\n",
+    "stderr": "callm: synthetic dotenv notice\ncallm: synthetic dotenv notice\nds: answer/usage/reasoning metadata assertion failed\n"
+  }
+]

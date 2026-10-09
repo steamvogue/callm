@@ -25,12 +25,13 @@ func TestConvertToAnthropicReq(t *testing.T) {
 	if len(areq.Messages) != 1 || areq.Messages[0].Role != "user" {
 		t.Fatalf("expected 1 user message, got: %v", areq.Messages)
 	}
-	if areq.Thinking == nil || areq.Thinking.BudgetTokens != 4096 {
-		t.Fatalf("expected thinking budget 4096, got: %v", areq.Thinking)
+	if areq.Thinking == nil || areq.Thinking.Type != "adaptive" || areq.Thinking.BudgetTokens != 0 || areq.OutputConfig == nil || areq.OutputConfig.Effort != "high" {
+		t.Fatalf("adaptive effort lost: %+v", areq)
 	}
-	if areq.MaxTokens <= areq.Thinking.BudgetTokens {
-		t.Fatalf("max_tokens must be greater than thinking budget: %d <= %d", areq.MaxTokens, areq.Thinking.BudgetTokens)
+	if areq.MaxTokens != 4096 {
+		t.Fatalf("implicit adaptive cap changed: %d", areq.MaxTokens)
 	}
+
 }
 
 func TestPrepareRequestOpenAIO1(t *testing.T) {

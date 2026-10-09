@@ -54,10 +54,10 @@ func TestUserAgentCLI(t *testing.T) {
 						io.WriteString(w, `{"content":[{"type":"text","text":"answer"}]}`)
 					case "anthropic stream":
 						w.Header().Set("Content-Type", "text/event-stream")
-						io.WriteString(w, "data: {\"type\":\"message_stop\"}\n\n")
+						io.WriteString(w, "data: {\"type\":\"content_block_delta\",\"delta\":{\"text\":\"answer\"}}\n\ndata: {\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"end_turn\"}}\n\ndata: {\"type\":\"message_stop\"}\n\n")
 					case "stream":
 						w.Header().Set("Content-Type", "text/event-stream")
-						io.WriteString(w, "data: [DONE]\n\n")
+						io.WriteString(w, "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n")
 					default:
 						io.WriteString(w, `{"choices":[{"message":{"content":"answer"}}]}`)
 					}

@@ -1,0 +1,143 @@
+{
+  "starting_revision": "c27c9b8",
+  "date": "2026-10-09",
+  "native_host": "linux/arm64",
+  "test_compilers": [
+    "go1.27.2",
+    "go1.26.9"
+  ],
+  "checks": [
+    {
+      "check": "Go 1.27.2 full tests/coverage",
+      "observed_exit": 0,
+      "artifact": "repair-go127-final-test.txt",
+      "artifact_sha256": "a9ab25426575b3ad508fff3b530db55b46e93c7146eeac52b7f4417b9964af27"
+    },
+    {
+      "check": "Go 1.26.9 full tests",
+      "observed_exit": 0,
+      "artifact": "repair-go1269-test.txt",
+      "artifact_sha256": "bafb9654ca12617549cd480fc55193c4a410a9bd206f05deef10ad8156838793"
+    },
+    {
+      "check": "Go 1.27.2 vet",
+      "observed_exit": 0,
+      "artifact": "repair-vet.txt",
+      "artifact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "legacy local CLI audit",
+      "observed_exit": 0,
+      "cases": 91,
+      "artifact": "repair-legacy-probes.json",
+      "artifact_sha256": "9ecbb653bbf97c0a7c0c2fd3eea8115f5b68517e6e3cc9e5f90226fb138adf03"
+    },
+    {
+      "check": "repair localhost probes",
+      "observed_exit": 0,
+      "cases": 31,
+      "artifact": "repair-probes.json",
+      "artifact_sha256": "651e7f215188ecdcdf3878b64c9966b368878feabac70261f5f824eafe862eda"
+    },
+    {
+      "check": "guarded example fixtures",
+      "observed_exit": 0,
+      "cases": 10,
+      "artifact": "repair-example-checks.json",
+      "artifact_sha256": "9349a57a6e2bbcbcfe1d88dde009a125cbd0378bd2d77eff6ec0b564fad09b49"
+    },
+    {
+      "check": "live-script fake CLI fixtures",
+      "observed_exit": 0,
+      "cases": 6,
+      "artifact": "repair-live-script-checks.json",
+      "artifact_sha256": "d46140aaaf1a693d4c11030fe48eb700af9427a87deba516779918378f2664c1"
+    },
+    {
+      "check": "five help surfaces",
+      "observed_exit": 0,
+      "artifact": "repair-help-checks.json",
+      "artifact_sha256": "8e27c6fad08de2798752a65ca1f4e30ec1d3c51066cbd370336f9e421e3d5a15"
+    },
+    {
+      "check": "five cross-compilation targets",
+      "observed_exit": 0,
+      "artifact": "repair-crossbuild.json",
+      "native_execution": false,
+      "artifact_sha256": "aade24575234696f18ea9ddefb76c21d53d6d312280e33664a09595ef5e517e5"
+    },
+    {
+      "check": "actionlint",
+      "observed_exit": 0,
+      "artifact": "repair-actionlint.txt",
+      "artifact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "ShellCheck",
+      "observed_exit": 0,
+      "artifact": "repair-shellcheck.txt",
+      "artifact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "limits": [
+    "race not executed on incompatible ARM host",
+    "remote CI not executed",
+    "macOS/Windows binaries not executed",
+    "no paid provider generation",
+    "no model quality evaluation",
+    "no editor imports",
+    "no vulnerability database scan",
+    "no release publication",
+    "no system binary installation"
+  ],
+  "source_sha256": {
+    ".github/workflows/ci.yml": "65c9e1e83031713876e3354216c65fb2736828015470567005d3785adb127bac",
+    ".github/workflows/release.yml": "2d141390ba8c0d3b0c37da4000409fcf7658743838dab79193ca32555a769291",
+    "CHANGELOG.md": "6ce3cc72417e9fdce3535baa2053863f8fcba5f73251aa7e62b30fd2d273087a",
+    "Makefile": "46a35ce68477b68b5e2a011f73887a1a165cebddf9c9cfa242ae545989109f7b",
+    "README.md": "8471ec1239723019d6111695651a0ec857e22bcfaf916c4dd06ef35cb0988530",
+    "cmd/callm/completion_test.go": "e11972923c6a98a552b3db7517faf619717635ef7d4dabe4b1e95f3498f19a40",
+    "cmd/callm/deepseek_test.go": "e13f20992f6b7e6f264e963e44f96dd6433fbf0907d51126b8fac01fecb9d991",
+    "cmd/callm/default_test.go": "f05de806e95e8c12efe7a95f0d0df84def34d37eb4dcc2493967a814f7088b25",
+    "cmd/callm/dotenv_test.go": "f8f620b5c1c482e204c8f25bfc6ec4b9b3f0ddda66d7cdb4c3d6680901da15d9",
+    "cmd/callm/help_test.go": "e4dc1cb29ad70a9b73dc607ee39c67f29605da1daa1f4b85c95c8998c1846a9c",
+    "cmd/callm/kimi_test.go": "def35b4b98e7313af4ea20ef6869c4e800cb7bfdcacb9307cc963274fb3f2456",
+    "cmd/callm/main.go": "b3ccc8032935a73d84b3e6f81e04262f146e4a1b5192cf5a881d36e5b2a4e49e",
+    "cmd/callm/models_test.go": "b9d4d9c4e0f9055d140d883076548179955eb13bb0303efd517166b31bc3a58e",
+    "cmd/callm/orca_test.go": "94ddcc8d500a953b82f07f4fa0a793f598c975fdd13f8c90b7fd23c6b3baf46f",
+    "cmd/callm/regression_test.go": "af2523bb4547b899ac67bf2c087e4d9a08b3d61a75d511900921642ea45d9604",
+    "cmd/callm/timeout_test.go": "8fee62a6782f459aaa7d64b6f09517b981bf6be0f041525864c3d6703bdf756a",
+    "cmd/callm/user_agent_test.go": "22cec3d0c595e14d05ead1a96e93627d949cdd7b89c13cda077588dbd8d0a0a5",
+    "examples/README.md": "4324cff1153db94e24d79a1c2908b533adaabc9a50247f0e59cfb8d299921502",
+    "examples/guarded-json.sh": "11f5b1ca61ec9631344275a901fe7ff14b0cdb95a8342fdcad7e14bac85a295c",
+    "internal/client/anthropic.go": "a9908e6a21dd10a8307e0b784fc57d4621fb4bfaad16967d204214cf591284a9",
+    "internal/client/anthropic_test.go": "4278e5dc1e7485b1f8a2593634f5cc643922452bbc2a28449aab73f23a8562a6",
+    "internal/client/api_test.go": "034fe31c89d2a835df7b99c6be04c3936462e988758792af52935ae49b82600f",
+    "internal/client/capabilities.go": "c712d3ce16d9409687b68cb2767a4e58e5c2590d5eb1f411813af8307f8b17b9",
+    "internal/client/capabilities_test.go": "5a2ccc83d9f1801036c081ab524ab2d05d98dc73a702945a3000d034d438c31b",
+    "internal/client/client.go": "9436e87e16bda3e8909074bef73d1d1e74852c7180a4d57028fd01c5e186a33d",
+    "internal/client/completion.go": "9191e754bf47ed6d8e4fb5fb4690f9a4caeaa4f2eb932627566c523a378cf4e1",
+    "internal/client/orca_test.go": "788f0a25ed27b0ebe35e7175f1387cc516b99dc4ce41014904111c6500c933cb",
+    "internal/client/regression_test.go": "516a3717d54b144b357088b46981fc654e3cf9e7235c8bb46b16cc765ce2aeed",
+    "internal/client/sse.go": "cc72b26d806b373f03109a2bbdcf5823840fd73b07ca3b502d79202deac9b962",
+    "internal/client/timeout_test.go": "12eddb999016636ca0e468d18caed1ef7cdcd5a894d4488f9fa437536ff24292",
+    "internal/client/types.go": "320afd5b845b856a835765f41b7baf0dded8f496c24da5222c1d5bc567d9c22f",
+    "internal/client/usage_test.go": "56c9b21d2cfb425dc7568bb42ede7591eccfd2bd395961b8a5af4db4e808463a",
+    "internal/client/user_agent_test.go": "9f7f827e51f2a6ea6492ffad1e52812f354c3344dee09dae91a7ec348c355d8a",
+    "internal/config/config.go": "03c10ec329c734ab4a581f2e495281cf30fce2dd75a83b760fed4eec3fc47739",
+    "internal/config/config_test.go": "65ba17feb5aed7b04278d7a87d171f1250c895bf8d2a6a22a5f9e0fedd1b915a",
+    "internal/config/dotenv_fifo_test.go": "67d8b944c2974640d7b6ea85d362af2c926f80ec33afc18cd2f1adef1284d4fc",
+    "internal/config/dotenv_test.go": "3fc91897a45dc471781172e1c24d5cc554485e1c02942f961850268ddb2f345f",
+    "internal/export/export.go": "1543bd01a5b6c5711f69efbc47293b2142a86f6e8e54cfee9a86c115165ead88",
+    "internal/export/export_test.go": "71fdd87308023036d3549a8d4252993b312f992283e661bd64700933a8582799",
+    "internal/ui/filter.go": "2f3654742cc698936a30de890dfc6d1a69f98cdfb08e287e07861e17fa4575fc",
+    "internal/ui/filter_test.go": "8aecb64a4ebd618df03ef355771ad7ed080896f51663d19f3877f88e9ed49347",
+    "internal/ui/format.go": "63b601508d5209b2eb2fd2f59c5ca873ea69b1454535799a982b85eacff638c2",
+    "internal/ui/format_test.go": "4aab6365fbc6e8a0f9cbb9f140d70c1d5512e312f65b18dfdde712a838126616",
+    "internal/ui/stats_test.go": "0bf2375d981b9f63db0e27c80b24d9884fc779cccd5a68c605d57e87e09c3d45",
+    "internal/ui/table.go": "836df2e504d0b106bedae29cea332fa26afaf3e02db2ef290cfc7dfc6f1ffaa8",
+    "internal/ui/write_test.go": "de15fe5a6a7d67e68e8e6bb17ce7acd5c765058e95fc3c994b63cb41aa31fc1a",
+    "scripts/test_live.sh": "b31052fcfd8b22045675b9ee83bb6f453b312f541e591ffd73f161dc4a604ad7",
+    "skills/callm/SKILL.md": "3578ae78b9cff4f134899445fa608be34af1c15f21498b9687332bd446a7f03e"
+  }
+}

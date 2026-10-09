@@ -62,8 +62,8 @@ test-live: build ## Run live minimal and reasoning tests across all configured p
 models: build check-env ## List DeepSeek models available on the gateway
 	@./bin/callm models deepseek
 
-info: build check-env ## Inspect specifications and pricing for default model
-	@./bin/callm info deepseek/deepseek-v4-flash-0731
+info: build ## Inspect the OpenRouter default model (OPENROUTER_API_KEY required)
+	@./bin/callm --or info deepseek/deepseek-v4-flash-0731
 
 lint: ## Run go vet on all packages
 	@go vet ./... && printf "\033[32mOK:\033[0m Go code passes vet checks.\n"

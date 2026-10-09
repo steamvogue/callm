@@ -7,3 +7,7 @@
 - Store verified useful local tooling here for reuse: `rg` for search, Go for builds/tests, `gh` for GitHub releases, `actionlint` for workflows, ShellCheck for shell scripts, and `hyperfine` for startup benchmarks. On the reviewed ARM host, Go's race runtime rejects the VMA layout; use Linux amd64 CI for race checks. A writable `GOCACHE=/tmp/callm-audit-go-cache` works in the desktop sandbox.
 
 - Verified public-doc research tool: `/var/www/se/DuckDuckGo/bin/ddg-search` (`search --format=json`, `fetch URL --format=text`); used successfully for Kimi Code API documentation on 2026-09-06.
+
+- Verified pipeline tooling, 2026-10-09: `/home/lordtime/.local/bin/htmlmd` successfully extracts local HTML with `--profile plain-text --extract-selector main`; `/usr/bin/jq` validates response envelopes and model catalogs; `/usr/local/bin/qsv` is host-native 21.1.0. Prefer `/home/lordtime/.cargo/bin/ast-grep` (0.45.0); the `sg` alias now prints a deprecation notice. Reusable local-only audit probes and the evaluation report are in `audit/2026-10-09/`.
+
+- Verified repair tooling, 2026-10-09: official `GOTOOLCHAIN=go1.27.2` and `go1.26.9` execute natively on this Linux ARM64 host with `GOMODCACHE=/tmp/callm-repair-toolchains` and separate writable GOCACHE directories. Reusable after-repair localhost probes are `audit/2026-10-09/repair_probe.py`; fake-only live-script and guarded-example checks are in the same directory. Temporary caches may be removed by host cleanup.

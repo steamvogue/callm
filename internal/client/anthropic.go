@@ -15,14 +15,18 @@ type anthropicMessage struct {
 	Content interface{} `json:"content"`
 }
 type anthropicReq struct {
-	Model       string             `json:"model"`
-	Messages    []anthropicMessage `json:"messages"`
-	System      string             `json:"system,omitempty"`
-	MaxTokens   int                `json:"max_tokens"`
-	Temperature *float64           `json:"temperature,omitempty"`
-	TopP        *float64           `json:"top_p,omitempty"`
-	Stream      bool               `json:"stream,omitempty"`
-	Thinking    *ThinkingConfig    `json:"thinking,omitempty"`
+	Model        string                 `json:"model"`
+	Messages     []anthropicMessage     `json:"messages"`
+	System       string                 `json:"system,omitempty"`
+	MaxTokens    int                    `json:"max_tokens"`
+	Temperature  *float64               `json:"temperature,omitempty"`
+	TopP         *float64               `json:"top_p,omitempty"`
+	Stream       bool                   `json:"stream,omitempty"`
+	Thinking     *ThinkingConfig        `json:"thinking,omitempty"`
+	OutputConfig *anthropicOutputConfig `json:"output_config,omitempty"`
+}
+type anthropicOutputConfig struct {
+	Effort string `json:"effort"`
 }
 type anthropicContentBlock struct {
 	Type     string `json:"type"`
@@ -30,14 +34,16 @@ type anthropicContentBlock struct {
 	Thinking string `json:"thinking,omitempty"`
 }
 type anthropicDelta struct {
-	Type     string `json:"type"`
-	Text     string `json:"text,omitempty"`
-	Thinking string `json:"thinking,omitempty"`
+	StopReason string `json:"stop_reason"`
+	Type       string `json:"type"`
+	Text       string `json:"text,omitempty"`
+	Thinking   string `json:"thinking,omitempty"`
 }
 type anthropicUsage struct {
-	InputTokens          int `json:"input_tokens"`
-	OutputTokens         int `json:"output_tokens"`
-	CacheReadInputTokens int `json:"cache_read_input_tokens"`
+	InputTokens              int `json:"input_tokens"`
+	OutputTokens             int `json:"output_tokens"`
+	CacheReadInputTokens     int `json:"cache_read_input_tokens"`
+	CacheCreationInputTokens int `json:"cache_creation_input_tokens"`
 }
 type anthropicEvent struct {
 	Type         string                 `json:"type"`
@@ -80,7 +86,7 @@ func (c *Client) streamAnthropic(ctx context.Context, req ChatRequest, onChunk f
 		}
 		if ev.Message != nil {
 			u := ev.Message.Usage
-			usage = &Usage{PromptTokens: u.InputTokens, CompletionTokens: u.OutputTokens, TotalTokens: u.InputTokens + u.OutputTokens, CacheReadInputTokens: u.CacheReadInputTokens}
+			usage = u.normalized()
 		}
 		if ev.Usage != nil {
 			if usage == nil {
@@ -101,8 +107,15 @@ func (c *Client) streamAnthropic(ctx context.Context, req ChatRequest, onChunk f
 			delta.Content = ev.Delta.Text
 			delta.Reasoning = ev.Delta.Thinking
 		}
-		if delta.Content != "" || delta.Reasoning != "" {
-			if err := onChunk(StreamChunk{Model: req.Model, Choices: []StreamChoice{{Delta: delta}}}); err != nil {
+		var finishReason *string
+		if ev.Delta != nil && ev.Delta.StopReason != "" {
+			finishReason = &ev.Delta.StopReason
+		}
+		if ev.ContentBlock != nil && ev.ContentBlock.Type == "tool_use" {
+			delta.ToolCalls = []json.RawMessage{json.RawMessage(`{}`)}
+		}
+		if delta.Content != "" || delta.Reasoning != "" || finishReason != nil || len(delta.ToolCalls) > 0 {
+			if err := onChunk(StreamChunk{Model: req.Model, Choices: []StreamChoice{{Delta: delta, FinishReason: finishReason}}}); err != nil {
 				return usage, err
 			}
 		}
@@ -140,9 +153,15 @@ func (c *Client) chatAnthropic(ctx context.Context, req ChatRequest) (*ChatRespo
 	if err := json.Unmarshal(body, &raw); err != nil {
 		return nil, fmt.Errorf("invalid Anthropic response JSON: %w", err)
 	}
+	if raw.Content == nil {
+		return nil, fmt.Errorf("Anthropic response has no content array")
+	}
+	var toolCalls []json.RawMessage
 	var content, reasoning strings.Builder
 	for _, block := range raw.Content {
 		switch block.Type {
+		case "tool_use":
+			toolCalls = append(toolCalls, json.RawMessage(`{}`))
 		case "thinking":
 			reasoning.WriteString(block.Thinking)
 		case "text":
@@ -153,10 +172,10 @@ func (c *Client) chatAnthropic(ctx context.Context, req ChatRequest) (*ChatRespo
 	if model == "" {
 		model = req.Model
 	}
-	result := &ChatResponse{Raw: body, ID: raw.ID, Model: model, Choices: []ChatChoice{{FinishReason: raw.StopReason, Message: RespMsg{Role: "assistant", Content: content.String(), Reasoning: reasoning.String()}}}}
+	result := &ChatResponse{Raw: body, ID: raw.ID, Model: model, Choices: []ChatChoice{{FinishReason: raw.StopReason, Message: RespMsg{Role: "assistant", Content: content.String(), Reasoning: reasoning.String(), ToolCalls: toolCalls}}}}
 	if raw.Usage != nil {
 		u := raw.Usage
-		result.Usage = &Usage{PromptTokens: u.InputTokens, CompletionTokens: u.OutputTokens, TotalTokens: u.InputTokens + u.OutputTokens, CacheReadInputTokens: u.CacheReadInputTokens}
+		result.Usage = u.normalized()
 	}
 	return result, nil
 }
@@ -164,6 +183,17 @@ func (c *Client) chatAnthropic(ctx context.Context, req ChatRequest) (*ChatRespo
 func convertToAnthropicReq(req ChatRequest, stream bool) (anthropicReq, error) {
 	if err := validateRequest(req); err != nil {
 		return anthropicReq{}, err
+	}
+	profile := nativeClaudeProfile(req.Model)
+	effort := strings.ToLower(req.ReasoningEffort)
+	if !permitsEffort(effort, profile.efforts) {
+		return anthropicReq{}, fmt.Errorf("effort %q is unsupported for %s; choose %s", effort, req.Model, strings.Join(profile.efforts, ", "))
+	}
+	if req.Thinking != nil && !profile.manual {
+		return anthropicReq{}, fmt.Errorf("thinking-budget is unsupported for %s; use --effort with adaptive thinking", req.Model)
+	}
+	if profile.fixedSampling && (req.Temperature != nil || req.TopP != nil) {
+		return anthropicReq{}, fmt.Errorf("omit temperature and top-p for %s; use --effort", req.Model)
 	}
 	if req.ResponseFormat != nil {
 		return anthropicReq{}, fmt.Errorf("json-object is not supported by Anthropic Messages; use raw with an Anthropic structured-output schema")
@@ -196,11 +226,15 @@ func convertToAnthropicReq(req ChatRequest, stream bool) (anthropicReq, error) {
 		maxTokens = *req.MaxCompletionTokens
 	}
 	thinking := req.Thinking
-	if req.ReasoningEffort != "" {
+	var outputConfig *anthropicOutputConfig
+	if effort != "" && profile.adaptive {
+		thinking = &ThinkingConfig{Type: "adaptive"}
+		outputConfig = &anthropicOutputConfig{Effort: effort}
+	} else if req.ReasoningEffort != "" {
 		budget := map[string]int{"low": 1024, "medium": 2048, "high": 4096}[strings.ToLower(req.ReasoningEffort)]
 		thinking = &ThinkingConfig{Type: "enabled", BudgetTokens: budget}
 	}
-	if thinking != nil {
+	if thinking != nil && thinking.Type == "enabled" {
 		if thinking.BudgetTokens < 1024 {
 			return anthropicReq{}, fmt.Errorf("Anthropic thinking-budget must be at least 1024")
 		}
@@ -220,7 +254,15 @@ func convertToAnthropicReq(req ChatRequest, stream bool) (anthropicReq, error) {
 			return anthropicReq{}, fmt.Errorf("Anthropic thinking requires top-p between 0.95 and 1")
 		}
 	}
-	return anthropicReq{Model: req.Model, Messages: messages, System: strings.Join(system, "\n\n"), MaxTokens: maxTokens, Temperature: req.Temperature, TopP: req.TopP, Stream: stream, Thinking: thinking}, nil
+	if thinking != nil && thinking.Type == "adaptive" {
+		if req.Temperature != nil && *req.Temperature != 1 {
+			return anthropicReq{}, fmt.Errorf("Anthropic adaptive thinking requires temperature 1 or omission")
+		}
+		if req.TopP != nil && *req.TopP < 0.95 {
+			return anthropicReq{}, fmt.Errorf("Anthropic adaptive thinking requires top-p between 0.95 and 1")
+		}
+	}
+	return anthropicReq{Model: req.Model, Messages: messages, System: strings.Join(system, "\n\n"), MaxTokens: maxTokens, Temperature: req.Temperature, TopP: req.TopP, Stream: stream, Thinking: thinking, OutputConfig: outputConfig}, nil
 }
 
 func anthropicContent(content interface{}) (interface{}, error) {
@@ -271,4 +313,11 @@ func anthropicContent(content interface{}) (interface{}, error) {
 		blocks = append(blocks, map[string]interface{}{"type": "image", "source": source})
 	}
 	return blocks, nil
+}
+
+// Anthropic input_tokens excludes both cache categories; OpenAI prompt_tokens
+// already includes cached input and is never passed through this conversion.
+func (u anthropicUsage) normalized() *Usage {
+	input := u.InputTokens + u.CacheReadInputTokens + u.CacheCreationInputTokens
+	return &Usage{PromptTokens: input, CompletionTokens: u.OutputTokens, TotalTokens: input + u.OutputTokens, UncachedInputTokens: u.InputTokens, CacheReadInputTokens: u.CacheReadInputTokens, CacheCreationInputTokens: u.CacheCreationInputTokens}
 }

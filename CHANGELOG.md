@@ -1,5 +1,30 @@
 # Changelog
 
+## Unreleased
+
+- Reject truncated, refused, filtered, tool-dependent and empty text completions.
+  Add `--strict` for terminal-reason enforcement (including JSON), and
+  `--allow-empty` for intentionally empty answers. Plain `--json` retains diagnostic
+  envelope semantics. Partial streamed output can precede a failure.
+- Preserve literal `<think>` content by default; add explicit `--parse-think`.
+  Propagate answer/reasoning/statistics/raw/info/table/help/version write errors,
+  including renderer short writes and flush failures.
+- Include Anthropic cache reads and cache creation in processed-input statistics
+  without adding cache categories again to compatible-provider totals.
+- Add bounded model profiles for native Claude adaptive thinking/effort and known
+  GPT-6 reasoning, sampling and token-limit parameters. Keep provider/model defaults;
+  explicit caps remain unchanged. Legacy/manual and adaptive effort can consume
+  different amounts of reasoning; evaluate the new behavior on your workload.
+- Reject native Anthropic editor exports with native-adapter guidance; retain
+  table and lossless JSON catalogs. Improve redacted missing-key diagnostics.
+- Test supported Go 1.26/1.27 patches in CI; build releases with Go 1.27.2.
+  Keep the Go 1.22 module language minimum.
+- Correct provider-specific examples, add guarded JSON publication, and validate
+  paid live-test answer/usage/reasoning metadata instead of accepting any stderr.
+- Record individual repairs, observations and validation in
+  `audit/2026-10-09/PROGRESS.md`; use unit/local mock tests and synthetic fixtures.
+  Paid provider generation, editor imports and remote CI were not executed.
+
 ## v0.9.0 — 2026-09-16
 
 ### Security

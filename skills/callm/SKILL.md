@@ -35,7 +35,7 @@ callm --reasoning "Explain why 9.11 is smaller than 9.9"
 
 ```bash
 # Straitly gateway:
-callm "Your prompt here"
+callm --st "Your prompt here"
 
 # Claude Sonnet 4.6 shortcut (via Straitly/OpenRouter gateway):
 callm --claude "Refactor this SQL query"
@@ -67,8 +67,8 @@ callm --orca --claude --effort high "Review this function"
 # Poolside (POOLSIDE_API_KEY), default model poolside/laguna-s-2.1:
 callm --pool "What are channels in Go?"
 
-# Local Ollama or vLLM (auto-detects inline <think> tags):
-callm --ollama "Solve 17 * 23 step by step"
+# Local Ollama or vLLM (use explicit inline <think> parsing):
+callm --ollama --parse-think "Solve 17 * 23 step by step"
 ```
 
 ### 3. Piping Code or Stdin
@@ -105,7 +105,7 @@ callm --api-key="sk-..." "Prompt"
 
 ```bash
 callm models deepseek
-callm info deepseek/deepseek-v4-flash-0731
+callm --or info deepseek/deepseek-v4-flash-0731
 
 # Substring filter terms (comma-separated, case-insensitive; z.ai matches z-ai):
 callm models --filter="deepseek,z.ai,qwen"
@@ -204,3 +204,34 @@ Flash); use `-m deepseek-v4-pro` for V4 Pro. DeepSeek retired `deepseek-chat` an
 `--effort` sends `reasoning_effort` (DeepSeek maps `medium` to `high`), and
 `--thinking-budget` is rejected. For a non-thinking request, use
 `callm --ds raw /chat/completions` with `"thinking": {"type": "disabled"}` in the body.
+
+## Unreleased repair behavior
+
+Check `callm --help` before using these options with an older binary.
+
+- Text output rejects truncation/refusal/tool-dependent/empty results. `--allow-empty`
+  permits an expected empty result; `--strict` also requires a terminal reason.
+  Use `--json --strict` for pipelines; plain `--json` preserves diagnostic envelopes
+  with transport success. Stage streamed output because partial bytes can precede failure.
+- Literal `<think>` text is preserved. Use `--parse-think` only for a model that
+  embeds reasoning in those tags. It conflicts with full `--json`. Reasoning fields
+  keep their display controls. Write/flush/statistics errors return failure.
+- Anthropic input totals include uncached, cache-read and cache-creation tokens once;
+  cache categories are displayed as included in input. Compatible-provider totals
+  keep provider accounting; missing cost stays unknown.
+- Native Claude 4.6 and recognized newer IDs use adaptive thinking with `--effort`
+  and `output_config.effort`. 4.6 supports low/medium/high/max; recognized 5.x and
+  Opus 4.7–4.8 add xhigh and reject manual budgets/sampling. Older/custom models
+  keep legacy low/medium/high budgets. Explicit caps remain intact. Returned thinking
+  may be omitted; local display flags do not alter inference or cost.
+- Known GPT-6 Astra/6.1 Sol/Sol/Luna IDs normalize token caps and accept model-specific
+  efforts. Sol/Luna accept none and allow sampling only with explicit none;
+  Astra/6.1 Sol reject none/minimal and sampling. Unknown/custom models retain
+  low/medium/high and explicit caps; use raw for other model options.
+- Native Anthropic editor exports fail with native-adapter guidance; table/JSON
+  catalogs remain available. Compatible gateway exports remain supported.
+- Missing-key errors show preset flags/variable names without credentials. Select
+  providers explicitly in pipelines; automatic priority remains as documented.
+- The repository tests supported Go 1.26/1.27 lines; releases compile with 1.27.2.
+  The guarded JSON example and paid live-script assertions were fixture-tested;
+  model-default promotion needs a separate live evaluation.

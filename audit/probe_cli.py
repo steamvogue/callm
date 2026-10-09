@@ -147,7 +147,7 @@ with tempfile.TemporaryDirectory(prefix='callm-audit-') as temporary:
         run('output ' + ' '.join(flags), [*flags, '-m', 'reason', 'prompt'])
     for model in ['inline', 'thought']:
         for flags in [['--no-reasoning'], ['--only-reasoning'], ['--reasoning']]:
-            run('nonstream ' + model + ' ' + flags[0], ['--no-stream', '-m', model, *flags, 'prompt'])
+            run('nonstream ' + model + ' ' + flags[0], ['--no-stream', '-m', model, *(['--parse-think'] if model == 'inline' else []), *flags, 'prompt'])
     run('json-is-lossy-and-skips-stats', ['--json', '--stats', 'prompt'])
     run('string-cost', ['--no-stream', '--stats', '-m', 'string-cost', 'prompt'])
     run('stream-stats-with-opt-in-usage-server', ['--stream', '--stats', 'prompt'])

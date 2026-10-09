@@ -13,6 +13,7 @@ func TestStreamRendererInlineThinking(t *testing.T) {
 	var errOut bytes.Buffer
 
 	r := NewStreamRenderer(&out, &errOut, true, false)
+	r.ParseThinking = true
 	r.IsTTY = false // disable ANSI escapes in test
 
 	chunks := []client.StreamDelta{
@@ -45,6 +46,7 @@ func TestStreamRendererNoReasoning(t *testing.T) {
 	var errOut bytes.Buffer
 
 	r := NewStreamRenderer(&out, &errOut, false, false)
+	r.ParseThinking = true
 	r.IsTTY = false
 
 	chunks := []client.StreamDelta{
@@ -72,6 +74,7 @@ func TestStreamRendererOnlyReasoning(t *testing.T) {
 	var errOut bytes.Buffer
 
 	r := NewStreamRenderer(&out, &errOut, true, true)
+	r.ParseThinking = true
 	r.IsTTY = false
 
 	chunks := []client.StreamDelta{
@@ -96,6 +99,7 @@ func TestStreamRendererDeltaFields(t *testing.T) {
 	var errOut bytes.Buffer
 
 	r := NewStreamRenderer(&out, &errOut, true, false)
+	r.ParseThinking = true
 	r.IsTTY = false
 
 	chunks := []client.StreamDelta{
@@ -118,5 +122,20 @@ func TestStreamRendererDeltaFields(t *testing.T) {
 	}
 	if !strings.Contains(outText, "Final result.") {
 		t.Fatalf("expected 'Final result.' in outText, got: %q", outText)
+	}
+}
+
+func TestLiteralThinkingPreserved(t *testing.T) {
+	for _, text := range []string{"Example: <think>literal text</think> end", `{"example":"<think>literal text</think>"}`, "partial <thi"} {
+		for split := 0; split <= len(text); split++ {
+			var out, errOut bytes.Buffer
+			r := NewStreamRenderer(&out, &errOut, false, false)
+			r.HandleDelta(client.StreamDelta{Content: text[:split]})
+			r.HandleDelta(client.StreamDelta{Content: text[split:]})
+			r.Finish()
+			if out.String() != text+"\n" || errOut.Len() != 0 {
+				t.Fatalf("split %d: stdout=%q stderr=%q", split, out.String(), errOut.String())
+			}
+		}
 	}
 }

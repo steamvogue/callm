@@ -1,0 +1,5 @@
+ok  	callm/cmd/callm	1.758s	coverage: 75.9% of statements
+ok  	callm/internal/client	0.715s	coverage: 79.8% of statements
+ok  	callm/internal/config	0.027s	coverage: 80.9% of statements
+ok  	callm/internal/export	0.022s	coverage: 86.3% of statements
+ok  	callm/internal/ui	0.011s	coverage: 82.5% of statements

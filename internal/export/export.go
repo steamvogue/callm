@@ -24,6 +24,7 @@ const (
 
 // Meta carries the active endpoint details needed by provider config snippets.
 type Meta struct {
+	Protocol     string
 	BaseURL      string
 	ProviderID   string
 	ProviderName string
@@ -71,6 +72,9 @@ func Slug(value string) string {
 // Render serializes models in the requested format. Warnings are non-fatal
 // notes intended for stderr; only invalid input returns an error.
 func Render(format string, models []client.ModelInfo, meta Meta) ([]byte, []string, error) {
+	if format != FormatJSON && meta.Protocol != "" && meta.Protocol != "openai" {
+		return nil, nil, fmt.Errorf("%s export does not support the %s protocol; use --format=json and configure the editor native provider", format, meta.Protocol)
+	}
 	switch format {
 	case FormatJSON:
 		data, err := renderJSON(models)

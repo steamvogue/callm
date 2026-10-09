@@ -46,11 +46,13 @@ var (
 )
 
 func printVersion() {
-	fmt.Printf("callm %s (commit: %s, built at: %s)\n", Version, Commit, Date)
+	if _, err := fmt.Printf("callm %s (commit: %s, built at: %s)\n", Version, Commit, Date); err != nil {
+		die(err)
+	}
 }
 
 func printUsage() {
-	fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, OrcaRouter, DeepSeek, Anthropic, Moonshot, Kimi Code, Zhipu, Qwen, OpenAI, Groq, Poolside, and Ollama.
+	_, writeErr := fmt.Printf(`callm %s — High-performance CLI for calling LLMs across Straitly, OpenRouter, OrcaRouter, DeepSeek, Anthropic, Moonshot, Kimi Code, Zhipu, Qwen, OpenAI, Groq, Poolside, and Ollama.
 
 Usage:
   callm [chat] [OPTIONS] ["PROMPT"...]
@@ -103,9 +105,9 @@ Options (chat unless stated otherwise):
   -s, --system SYSTEM              System prompt instruction
   -t, --temp, --temperature T      Sampling temperature (omitted by default)
   -n, --max-tokens N               Maximum tokens to generate
-      --max-completion-tokens N    Maximum completion tokens (for OpenAI o1/o3/o4 reasoning models)
-      --effort, --reasoning-effort E   Reasoning effort: low, medium, high (omitted by default)
-      --thinking-budget N          Extended thinking token budget (Claude / OpenRouter)
+      --max-completion-tokens N    Maximum completion tokens (OpenAI reasoning models, including known GPT-6 IDs)
+      --effort, --reasoning-effort E   Reasoning effort (model-dependent; low, medium, high, xhigh, max, none)
+      --thinking-budget N          Manual thinking budget (older Claude / OpenRouter; new Claude uses --effort)
       --top-p P                    Top-p nucleus sampling
   -f, --file FILE                  Include contents of FILE in prompt context (can repeat)
       --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)
@@ -113,10 +115,13 @@ Options (chat unless stated otherwise):
       --stream                     Force streaming response (default when stdout is terminal)
       --no-stream                  Disable streaming response
       --reasoning                  Display returned reasoning on stderr (default when stdout is terminal)
-      --no-reasoning               Hide reasoning tokens
+      --no-reasoning               Hide reasoning fields (literal content is preserved)
+      --parse-think                Interpret inline <think> tags as reasoning (explicit opt-in)
       --only-reasoning             Only output reasoning tokens (suppress final answer)
       --stats                      Print token usage, latency, tok/s, and cost to stderr
-      --json                       Output original JSON response (non-streaming)
+      --json                       Output original JSON response (non-streaming; transport success)
+      --strict                     Require usable output and a terminal reason (also with --json)
+      --allow-empty                Permit intentionally empty output (still rejects failed completions)
       --header-timeout DURATION    Wait for response headers (inherits --timeout; 0 disables)
       --idle-timeout DURATION      Wait for streamed bytes (inherits --timeout; 0 disables)
       --stdin-timeout DURATION     Wait for piped input EOF (default 300s; 0 disables)
@@ -151,15 +156,22 @@ Defaults and precedence:
   among ANTHROPIC_API_KEY, STRAITLY_API_KEY and OPENROUTER_API_KEY.
   Default provider: Poolside. Without a preset flag, the first provider whose key
   is set wins, checked in order Poolside, OrcaRouter, Straitly, DeepSeek,
-  OpenRouter, Kimi Code.
+  OpenRouter, Kimi Code. Other configured keys require an explicit preset (e.g. --oa).
   Streaming/reasoning display default on only when stdout is a terminal.
+  Text output rejects truncation, refusal, tools and empty answers; --allow-empty permits empty.
+  --strict also requires a terminal reason; --json alone preserves diagnostic envelopes.
   OrcaRouter: --effort sends reasoning_effort; --thinking-budget is unsupported.
   OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
   Kimi Code: --kimi uses subscription quota; --ms/--moonshot use Moonshot billing.
+  Native Anthropic catalogs support table/JSON; editor exports require OpenAI-compatible endpoints.
   --stats reports only server-supplied cost; it does not estimate subscription cost.
   DeepSeek: --ds defaults to deepseek-flash, which thinks unless disabled; deepseek-chat
   and deepseek-reasoner are retired. raw can send "thinking":{"type":"disabled"}.
   Reasoning display flags do not enable model reasoning; --effort/--thinking-budget request it.
+  Native Claude 4.6 and known newer models use adaptive thinking with --effort.
+  New Claude models reject manual budgets/sampling; returned thinking may be omitted.
+  Known GPT-6 IDs normalize token caps; sampling requires --effort none on Sol/Luna.
+  Astra/6.1 Sol reject none; unknown/custom models retain low/medium/high effort.
 
 Examples:
   # Quick query using the default provider (first configured key; Poolside otherwise):
@@ -194,13 +206,16 @@ Examples:
   callm -f schema.sql --reasoning --stats "Generate 3 sample INSERT statements"
 
   # Local Ollama model with inline <think> tags:
-  callm --ollama "Solve 17 * 23 step by step"
+  callm --ollama --parse-think "Solve 17 * 23 step by step"
 
   # Save the model catalog or paste-ready editor configs:
   callm models --format=json --filter="deepseek,z.ai,qwen" > models.json
   callm models --format=zed deepseek
   callm models --format=kilo
 `, Version)
+	if writeErr != nil {
+		die(writeErr)
+	}
 }
 
 func main() {
@@ -362,6 +377,34 @@ func detectDefaultPreset() string {
 	return "pool"
 }
 
+// missingKeyError lists variable names and explicit presets, never credentials.
+func missingKeyError(preset string) error {
+	selected := config.Presets[preset]
+	message := fmt.Sprintf("API key not found for %s (--%s). Set %s or CALLM_API_KEY or use --api-key / --api-key-env", selected.Name, preset, selected.KeyEnv)
+	var available []string
+	for _, name := range []string{"pool", "orca", "st", "ds", "or", "kimi", "ant", "oa", "ms", "zai", "qw", "groq", "ollama"} {
+		if name == preset {
+			continue
+		}
+		key := config.Presets[name].KeyEnv
+		if os.Getenv(key) == "" {
+			switch name {
+			case "zai":
+				key = "ZHIPU_API_KEY"
+			case "qw":
+				key = "QWEN_API_KEY"
+			}
+		}
+		if os.Getenv(key) != "" {
+			available = append(available, fmt.Sprintf("%s: --%s", key, name))
+		}
+	}
+	if len(available) > 0 {
+		message += ". Configured keys for other presets (select one explicitly): " + strings.Join(available, ", ")
+	}
+	return errors.New(message)
+}
+
 // registerTimeout accepts either seconds or a duration such as "5m" or "500ms".
 func registerTimeout(fs *flag.FlagSet) *time.Duration {
 	return registerDuration(fs, "timeout", client.DefaultTimeout)
@@ -425,6 +468,7 @@ func runModels(ctx context.Context, args []string) {
 		fmt.Fprintln(fs.Output(), "Usage: callm models [OPTIONS] [FILTER]")
 		fmt.Fprintln(fs.Output(), "  FILTER is a case-insensitive regex over model IDs and canonical slugs.")
 		fmt.Fprintln(fs.Output(), "  --filter terms are comma-separated normalized substrings (z.ai matches z-ai).")
+		fmt.Fprintln(fs.Output(), "  Native Anthropic endpoints support table/JSON, not editor configuration exports.")
 		fs.PrintDefaults()
 	}
 
@@ -454,7 +498,7 @@ func runModels(ctx context.Context, args []string) {
 		die(err)
 	}
 	if apiKey == "" {
-		die(fmt.Errorf("API key required. Export %s or pass --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
+		die(missingKeyError(presetName))
 	}
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
@@ -465,6 +509,9 @@ func runModels(ctx context.Context, args []string) {
 	}
 	if transport, ok := apiClient.HTTPClient.Transport.(*http.Transport); ok {
 		transport.ResponseHeaderTimeout = *headerTimeout
+	}
+	if apiClient.Provider == "ant" && format != export.FormatTable && format != export.FormatJSON {
+		die(fmt.Errorf("%s export does not support native Anthropic; use --format=json and configure the editor native provider", format))
 	}
 	models, err := apiClient.ListModels(ctx)
 	if err != nil {
@@ -490,7 +537,12 @@ func runModels(ctx context.Context, args []string) {
 	if providerID == "" {
 		providerID = "callm"
 	}
+	protocol := "openai"
+	if apiClient.Provider == "ant" {
+		protocol = "anthropic"
+	}
 	meta := export.Meta{
+		Protocol:     protocol,
 		BaseURL:      baseURL,
 		ProviderID:   providerID,
 		ProviderName: providerNameRaw,
@@ -562,7 +614,7 @@ func runInfo(ctx context.Context, args []string) {
 		die(err)
 	}
 	if apiKey == "" {
-		die(fmt.Errorf("API key required. Export %s or pass --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
+		die(missingKeyError(presetName))
 	}
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
@@ -581,7 +633,9 @@ func runInfo(ctx context.Context, args []string) {
 
 	for _, m := range models {
 		if m.ID == modelID || m.CanonicalSlug == modelID {
-			ui.PrintModelInfo(os.Stdout, m)
+			if err := ui.PrintModelInfo(os.Stdout, m); err != nil {
+				die(err)
+			}
 			return
 		}
 	}
@@ -628,7 +682,7 @@ func runRaw(ctx context.Context, args []string) {
 		die(err)
 	}
 	if apiKey == "" {
-		die(fmt.Errorf("API key required. Export %s or CALLM_API_KEY or pass --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
+		die(missingKeyError(presetName))
 	}
 	baseURL := config.ResolveBaseURL(presetName, customAPI)
 
@@ -648,9 +702,13 @@ func runRaw(ctx context.Context, args []string) {
 
 	var pretty bytes.Buffer
 	if json.Indent(&pretty, respBytes, "", "  ") == nil {
-		fmt.Println(pretty.String())
+		if _, err := fmt.Println(pretty.String()); err != nil {
+			die(err)
+		}
 	} else {
-		fmt.Println(string(respBytes))
+		if _, err := fmt.Println(string(respBytes)); err != nil {
+			die(err)
+		}
 	}
 }
 
@@ -691,8 +749,11 @@ func runChat(ctx context.Context, args []string) {
 		reasoningFlag bool
 		noReasoning   bool
 		onlyReasoning bool
+		parseThinking bool
 		showStats     bool
 		jsonOutput    bool
+		strictOutput  bool
+		allowEmpty    bool
 		versionFlag   bool
 	)
 
@@ -711,8 +772,8 @@ func runChat(ctx context.Context, args []string) {
 	fs.StringVar(&keyEnvFlag, "api-key-env", "", "Environment variable name containing API key")
 	fs.StringVar(&systemPrompt, "s", "", "System prompt")
 	fs.StringVar(&systemPrompt, "system", "", "System prompt")
-	fs.StringVar(&effortFlag, "effort", "", "Reasoning effort (low, medium, high)")
-	fs.StringVar(&effortFlag, "reasoning-effort", "", "Reasoning effort (low, medium, high)")
+	fs.StringVar(&effortFlag, "effort", "", "Reasoning effort (model-dependent; low, medium, high, xhigh, max, none)")
+	fs.StringVar(&effortFlag, "reasoning-effort", "", "Reasoning effort (model-dependent; low, medium, high, xhigh, max, none)")
 
 	fs.Func("t", "Sampling temperature", func(v string) error {
 		hasTemp = true
@@ -775,8 +836,11 @@ func runChat(ctx context.Context, args []string) {
 	fs.BoolVar(&reasoningFlag, "reasoning", false, "Display reasoning tokens")
 	fs.BoolVar(&noReasoning, "no-reasoning", false, "Hide reasoning tokens")
 	fs.BoolVar(&onlyReasoning, "only-reasoning", false, "Only display reasoning tokens")
+	fs.BoolVar(&parseThinking, "parse-think", false, "Interpret inline <think> tags as reasoning (may alter literal content)")
 	fs.BoolVar(&showStats, "stats", false, "Print stats to stderr")
-	fs.BoolVar(&jsonOutput, "json", false, "Output full unparsed JSON")
+	fs.BoolVar(&jsonOutput, "json", false, "Output full unparsed JSON (transport success unless --strict)")
+	fs.BoolVar(&strictOutput, "strict", false, "Require usable output and a terminal finish/stop reason, including with --json")
+	fs.BoolVar(&allowEmpty, "allow-empty", false, "Permit intentionally empty output; still reject failed completions")
 
 	fs.Usage = printUsage
 
@@ -818,7 +882,7 @@ func runChat(ctx context.Context, args []string) {
 		die(err)
 	}
 	if apiKey == "" {
-		die(fmt.Errorf("API key not found. Set %s or CALLM_API_KEY or use --api-key / --api-key-env", config.Presets[presetName].KeyEnv))
+		die(missingKeyError(presetName))
 	}
 
 	// Read file contents
@@ -971,7 +1035,7 @@ func runChat(ctx context.Context, args []string) {
 	if (reasoningFlag || onlyReasoning) && noReasoning {
 		die(errors.New("--no-reasoning conflicts with --reasoning and --only-reasoning"))
 	}
-	if jsonOutput && (reasoningFlag || noReasoning || onlyReasoning) {
+	if jsonOutput && (reasoningFlag || noReasoning || onlyReasoning || parseThinking) {
 		die(errors.New("reasoning display controls cannot filter full --json output"))
 	}
 	isStreaming := ui.IsTerminal(os.Stdout)
@@ -996,15 +1060,26 @@ func runChat(ctx context.Context, args []string) {
 	}
 
 	if isStreaming {
+		var completion client.Completion
 		renderer := ui.NewStreamRenderer(os.Stdout, os.Stderr, displayReasoning, onlyReasoning)
+		renderer.ParseThinking = parseThinking
 		usage, err := apiClient.StreamChat(ctx, chatReq, func(chunk client.StreamChunk) error {
 			if len(chunk.Choices) > 0 {
-				renderer.HandleDelta(chunk.Choices[0].Delta)
+				completion.Add(chunk.Choices[0])
+				return renderer.HandleDelta(chunk.Choices[0].Delta)
 			}
 			return nil
 		})
-		renderer.Finish()
+		err = errors.Join(err, renderer.Finish())
 
+		completion.HasContent = renderer.HasContent
+		completion.HasReasoning = renderer.HasReasoned
+		if err == nil {
+			err = completion.Validate(strictOutput, allowEmpty, onlyReasoning)
+		}
+		if showStats {
+			err = errors.Join(err, ui.PrintStats(os.Stderr, time.Since(startTime), usage, model))
+		}
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				die(fmt.Errorf("request canceled: %w", err))
@@ -1012,10 +1087,6 @@ func runChat(ctx context.Context, args []string) {
 			die(err)
 		}
 
-		if showStats {
-			duration := time.Since(startTime)
-			ui.PrintStats(os.Stderr, duration, usage, model)
-		}
 		return
 	}
 
@@ -1026,18 +1097,45 @@ func runChat(ctx context.Context, args []string) {
 		die(err)
 	}
 
-	if jsonOutput {
-		fmt.Println(string(resp.Raw))
-	} else if len(resp.Choices) > 0 {
-		message := resp.Choices[0].Message
-		renderer := ui.NewStreamRenderer(os.Stdout, os.Stderr, displayReasoning, onlyReasoning)
-		renderer.HandleDelta(client.StreamDelta{Content: message.Content, Reasoning: message.Reasoning, ReasoningContent: message.ReasoningContent, Thought: message.Thought})
-		renderer.Finish()
+	if showStats {
+		if err := ui.PrintStats(os.Stderr, duration, resp.Usage, model); err != nil {
+			die(err)
+		}
 	}
 
-	if showStats {
-		ui.PrintStats(os.Stderr, duration, resp.Usage, model)
+	if jsonOutput {
+		if strictOutput {
+			if err := resp.Choices[0].Completion().Validate(true, allowEmpty, false); err != nil {
+				die(err)
+			}
+		}
+		if _, err := fmt.Println(string(resp.Raw)); err != nil {
+			die(err)
+		}
+		return
 	}
+	message := resp.Choices[0].Message
+	var answer, reasoning bytes.Buffer
+	renderer := ui.NewStreamRenderer(&answer, &reasoning, displayReasoning, onlyReasoning)
+	renderer.IsTTY = ui.IsTerminal(os.Stdout)
+	renderer.ParseThinking = parseThinking
+	renderErr := renderer.HandleDelta(client.StreamDelta{Content: message.Content, Reasoning: message.Reasoning, ReasoningContent: message.ReasoningContent, Thought: message.Thought})
+	if err := errors.Join(renderErr, renderer.Finish()); err != nil {
+		die(err)
+	}
+	completion := resp.Choices[0].Completion()
+	completion.HasContent = renderer.HasContent
+	completion.HasReasoning = renderer.HasReasoned
+	if err := completion.Validate(strictOutput, allowEmpty, onlyReasoning); err != nil {
+		die(err)
+	}
+	if _, err := os.Stderr.Write(reasoning.Bytes()); err != nil {
+		die(err)
+	}
+	if _, err := os.Stdout.Write(answer.Bytes()); err != nil {
+		die(err)
+	}
+
 }
 
 func encodeImageToDataURI(pathOrURL string) (string, error) {
@@ -1101,7 +1199,7 @@ func splitCommand(args []string) (string, []string) {
 	bools := flag.NewFlagSet("dispatch", flag.ContinueOnError)
 	var presets presetFlags
 	presets.Register(bools)
-	for _, name := range []string{"stream", "no-stream", "reasoning", "no-reasoning", "only-reasoning", "json", "stats", "json-object", "no-stdin", "v", "version", "h", "help"} {
+	for _, name := range []string{"stream", "no-stream", "reasoning", "no-reasoning", "only-reasoning", "parse-think", "json", "stats", "json-object", "strict", "allow-empty", "no-stdin", "v", "version", "h", "help"} {
 		bools.Bool(name, false, "")
 	}
 	for i := 0; i < len(args); i++ {

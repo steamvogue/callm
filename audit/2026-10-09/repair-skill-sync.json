@@ -1,0 +1,16 @@
+[
+  {
+    "path": "/home/lordtime/.codex/skills/callm/SKILL.md",
+    "before_sha256": "7125500e88a0cc994ba18a697be45b53226a1cfd0628e47a2dd31c28979f18e2",
+    "after_sha256": "3578ae78b9cff4f134899445fa608be34af1c15f21498b9687332bd446a7f03e",
+    "matches_repository": true,
+    "backup": "/tmp/callm-repair-skill-backups/codex-SKILL.md"
+  },
+  {
+    "path": "/home/lordtime/.claude/skills/callm/SKILL.md",
+    "before_sha256": "7125500e88a0cc994ba18a697be45b53226a1cfd0628e47a2dd31c28979f18e2",
+    "after_sha256": "3578ae78b9cff4f134899445fa608be34af1c15f21498b9687332bd446a7f03e",
+    "matches_repository": true,
+    "backup": "/tmp/callm-repair-skill-backups/claude-SKILL.md"
+  }
+]

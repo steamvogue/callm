@@ -58,7 +58,7 @@ func TestDefaultRequestTimeout(t *testing.T) {
 				if !ok || remaining < 299*time.Second || remaining > 300*time.Second {
 					t.Errorf("expected a 300s request deadline, got deadline=%v remaining=%v", ok, remaining)
 				}
-				body := `{"choices":[],"data":[],"content":[]}`
+				body := `{"choices":[{"message":{"content":"answer"},"finish_reason":"stop"}],"data":[],"content":[]}`
 				if r.Header.Get("Accept") == "text/event-stream" {
 					body = "data: [DONE]\n\n"
 					if op.anthropic {
@@ -142,7 +142,7 @@ func TestDisabledTimeoutPreservesCallerDeadline(t *testing.T) {
 			if expected, ok := ctx.Deadline(); ok && !deadline.Equal(expected) {
 				t.Error("caller deadline changed when disabling client timeout")
 			}
-			return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": []string{"text/event-stream"}}, Body: io.NopCloser(strings.NewReader(`{"choices":[]}`)), Request: r}, nil
+			return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": []string{"text/event-stream"}}, Body: io.NopCloser(strings.NewReader(`{"choices":[{"message":{"content":"answer"},"finish_reason":"stop"}]}`)), Request: r}, nil
 		})
 		if _, err := c.Chat(ctx, ChatRequest{}); err != nil {
 			t.Fatal(err)

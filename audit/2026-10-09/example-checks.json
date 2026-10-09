@@ -1,0 +1,52 @@
+[
+  {
+    "case": "valid",
+    "passed": true,
+    "exit": 0
+  },
+  {
+    "case": "literal-tags-preserved",
+    "passed": true,
+    "exit": 0
+  },
+  {
+    "case": "truncated",
+    "passed": true,
+    "exit": 5
+  },
+  {
+    "case": "refusal",
+    "passed": true,
+    "exit": 5
+  },
+  {
+    "case": "missing-choices",
+    "passed": true,
+    "exit": 5
+  },
+  {
+    "case": "invalid-json-content",
+    "passed": true,
+    "exit": 5
+  },
+  {
+    "case": "wrong-type",
+    "passed": true,
+    "exit": 5
+  },
+  {
+    "case": "missing-summary",
+    "passed": true,
+    "exit": 5
+  },
+  {
+    "case": "empty-summary",
+    "passed": true,
+    "exit": 5
+  },
+  {
+    "case": "provider-failure",
+    "passed": true,
+    "exit": 1
+  }
+]

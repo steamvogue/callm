@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -47,7 +48,8 @@ func PrintModelsTable(out io.Writer, models []client.ModelInfo, filter string) e
 		return err
 	}
 
-	w := tabwriter.NewWriter(out, 0, 0, 3, ' ', 0)
+	checked := &checkedWriter{Writer: out}
+	w := tabwriter.NewWriter(checked, 0, 0, 3, ' ', 0)
 	fmt.Fprintln(w, "MODEL\tCONTEXT\t$/Mtok-IN\t$/Mtok-OUT\tMODALITIES")
 
 	for _, m := range models {
@@ -67,11 +69,12 @@ func PrintModelsTable(out io.Writer, models []client.ModelInfo, filter string) e
 			m.ID, formatContext(m.ContextLength), priceIn, priceOut, modalities)
 	}
 
-	return w.Flush()
+	return errors.Join(checked.err, w.Flush())
 }
 
 // PrintModelInfo displays detailed specifications for a single model.
-func PrintModelInfo(out io.Writer, m client.ModelInfo) {
+func PrintModelInfo(out io.Writer, m client.ModelInfo) error {
+	var text strings.Builder
 	priceIn := "unknown"
 	priceOut := "unknown"
 	cacheRead := "unknown"
@@ -108,17 +111,35 @@ func PrintModelInfo(out io.Writer, m client.ModelInfo) {
 		supported = "none specified"
 	}
 
-	fmt.Fprintf(out, "Model ID:         %s\n", m.ID)
-	fmt.Fprintf(out, "Canonical Slug:   %s\n", slug)
-	fmt.Fprintf(out, "Context Length:   %s\n", formatContext(m.ContextLength))
-	fmt.Fprintf(out, "Modality:         %s\n", modality)
-	fmt.Fprintf(out, "Input Modalities: %s\n", inputs)
-	fmt.Fprintf(out, "Output Modalities:%s\n", outputs)
-	fmt.Fprintf(out, "Pricing (Prompt): $%s/Mtok\n", priceIn)
-	fmt.Fprintf(out, "Pricing (Comp):   $%s/Mtok\n", priceOut)
-	fmt.Fprintf(out, "Cache Read:       $%s/Mtok\n", cacheRead)
-	fmt.Fprintf(out, "Cache Write:      $%s/Mtok\n", cacheWrite)
-	fmt.Fprintf(out, "Supported Params: %s\n", supported)
+	fmt.Fprintf(&text, "Model ID:         %s\n", m.ID)
+	fmt.Fprintf(&text, "Canonical Slug:   %s\n", slug)
+	fmt.Fprintf(&text, "Context Length:   %s\n", formatContext(m.ContextLength))
+	fmt.Fprintf(&text, "Modality:         %s\n", modality)
+	fmt.Fprintf(&text, "Input Modalities: %s\n", inputs)
+	fmt.Fprintf(&text, "Output Modalities:%s\n", outputs)
+	fmt.Fprintf(&text, "Pricing (Prompt): $%s/Mtok\n", priceIn)
+	fmt.Fprintf(&text, "Pricing (Comp):   $%s/Mtok\n", priceOut)
+	fmt.Fprintf(&text, "Cache Read:       $%s/Mtok\n", cacheRead)
+	fmt.Fprintf(&text, "Cache Write:      $%s/Mtok\n", cacheWrite)
+	fmt.Fprintf(&text, "Supported Params: %s\n", supported)
+	return writeText(out, text.String())
+}
+
+type checkedWriter struct {
+	io.Writer
+	err error
+}
+
+func (w *checkedWriter) Write(p []byte) (int, error) {
+	if w.err != nil {
+		return 0, w.err
+	}
+	n, err := w.Writer.Write(p)
+	if err == nil && n != len(p) {
+		err = io.ErrShortWrite
+	}
+	w.err = err
+	return n, err
 }
 
 func formatContext(n int64) string {

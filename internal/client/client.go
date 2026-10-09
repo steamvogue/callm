@@ -91,9 +91,9 @@ func validateRequest(req ChatRequest) error {
 	}
 	if req.ReasoningEffort != "" {
 		switch strings.ToLower(req.ReasoningEffort) {
-		case "low", "medium", "high":
+		case "none", "minimal", "low", "medium", "high", "xhigh", "max":
 		default:
-			return fmt.Errorf("effort must be low, medium, or high")
+			return fmt.Errorf("unknown effort; supported values are model-dependent")
 		}
 	}
 	if req.Thinking != nil {
@@ -112,22 +112,29 @@ func (c *Client) prepareRequest(req *ChatRequest) error {
 		return err
 	}
 	req.ReasoningEffort = strings.ToLower(req.ReasoningEffort)
-	model := strings.TrimPrefix(req.Model, "openai/")
-	isOModel := false
-	for _, prefix := range []string{"o1", "o3", "o4"} {
-		if model == prefix || strings.HasPrefix(model, prefix+"-") {
-			isOModel = true
-		}
+
+	profile := openAIModelProfile(req.Model)
+	allowed := profile.efforts
+	if strings.HasPrefix(req.Model, "anthropic/") && (c.Provider == "or" || c.Provider == "st" || c.Provider == "orca") {
+		allowed = nativeClaudeProfile(strings.ReplaceAll(strings.TrimPrefix(req.Model, "anthropic/"), ".", "-")).efforts
 	}
-	if isOModel {
-		if req.Temperature != nil {
-			return fmt.Errorf("temperature is unsupported for %s", req.Model)
+	if !permitsEffort(req.ReasoningEffort, allowed) {
+		return fmt.Errorf("effort %q is unsupported for %s; choose %s", req.ReasoningEffort, req.Model, strings.Join(allowed, ", "))
+	}
+	if profile.reasoning {
+		if profile.samplingRequiresNone {
+			if req.ReasoningEffort != "none" && (req.Temperature != nil || req.TopP != nil) {
+				return fmt.Errorf("temperature/top-p require --effort none for %s (where supported)", req.Model)
+			}
+		} else if req.Temperature != nil || req.TopP != nil {
+			return fmt.Errorf("temperature/top-p are unsupported for %s", req.Model)
 		}
 		if req.MaxTokens != nil {
 			req.MaxCompletionTokens = req.MaxTokens
 			req.MaxTokens = nil
 		}
 	}
+
 	if c.Provider == "or" || c.Provider == "st" {
 		if req.ReasoningEffort != "" {
 			req.Reasoning = &ReasoningConfig{Effort: req.ReasoningEffort}
@@ -268,6 +275,9 @@ func (c *Client) Chat(ctx context.Context, req ChatRequest) (*ChatResponse, erro
 	var result ChatResponse
 	if err := json.Unmarshal(b, &result); err != nil {
 		return nil, fmt.Errorf("invalid response JSON: %w", err)
+	}
+	if len(result.Choices) == 0 {
+		return nil, fmt.Errorf("response has no completion choices")
 	}
 	result.Raw = append([]byte(nil), b...)
 	return &result, nil

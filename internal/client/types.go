@@ -36,10 +36,10 @@ type ReasoningConfig struct {
 	MaxTokens int    `json:"max_tokens,omitempty"`
 }
 
-// ThinkingConfig represents Anthropic-style extended thinking parameters.
+// ThinkingConfig represents native manual or adaptive thinking parameters.
 type ThinkingConfig struct {
-	Type         string `json:"type"` // "enabled"
-	BudgetTokens int    `json:"budget_tokens"`
+	Type         string `json:"type"` // "enabled" or "adaptive"
+	BudgetTokens int    `json:"budget_tokens,omitempty"`
 }
 
 // ChatRequest is the payload sent to /v1/chat/completions.
@@ -66,12 +66,14 @@ type StreamOptions struct {
 
 // Usage holds token count and cost metadata.
 type Usage struct {
-	PromptTokens         int         `json:"prompt_tokens"`
-	CompletionTokens     int         `json:"completion_tokens"`
-	TotalTokens          int         `json:"total_tokens"`
-	Cost                 interface{} `json:"cost,omitempty"`     // float64 or string or nil
-	CostUSD              interface{} `json:"cost_usd,omitempty"` // OrcaRouter's opt-in billed cost
-	CacheReadInputTokens int         `json:"cache_read_input_tokens,omitempty"`
+	PromptTokens             int         `json:"prompt_tokens"`
+	CompletionTokens         int         `json:"completion_tokens"`
+	TotalTokens              int         `json:"total_tokens"`
+	Cost                     interface{} `json:"cost,omitempty"`     // float64 or string or nil
+	CostUSD                  interface{} `json:"cost_usd,omitempty"` // OrcaRouter's opt-in billed cost
+	CacheCreationInputTokens int         `json:"cache_creation_input_tokens,omitempty"`
+	UncachedInputTokens      int         `json:"uncached_input_tokens,omitempty"`
+	CacheReadInputTokens     int         `json:"cache_read_input_tokens,omitempty"`
 }
 
 // GetCostFloat returns cost as float64 if available.
@@ -116,11 +118,14 @@ type ChatChoice struct {
 
 // RespMsg holds the assistant response content and reasoning.
 type RespMsg struct {
-	Role             string `json:"role"`
-	Content          string `json:"content"`
-	Reasoning        string `json:"reasoning,omitempty"`
-	ReasoningContent string `json:"reasoning_content,omitempty"`
-	Thought          string `json:"thought,omitempty"`
+	Refusal          string            `json:"refusal,omitempty"`
+	ToolCalls        []json.RawMessage `json:"tool_calls,omitempty"`
+	FunctionCall     json.RawMessage   `json:"function_call,omitempty"`
+	Role             string            `json:"role"`
+	Content          string            `json:"content"`
+	Reasoning        string            `json:"reasoning,omitempty"`
+	ReasoningContent string            `json:"reasoning_content,omitempty"`
+	Thought          string            `json:"thought,omitempty"`
 }
 
 // ChatResponse is the response from non-streaming /v1/chat/completions.
@@ -137,11 +142,14 @@ type ChatResponse struct {
 
 // StreamDelta holds streaming token delta.
 type StreamDelta struct {
-	Role             string `json:"role,omitempty"`
-	Content          string `json:"content,omitempty"`
-	Reasoning        string `json:"reasoning,omitempty"`
-	ReasoningContent string `json:"reasoning_content,omitempty"`
-	Thought          string `json:"thought,omitempty"`
+	Refusal          string            `json:"refusal,omitempty"`
+	ToolCalls        []json.RawMessage `json:"tool_calls,omitempty"`
+	FunctionCall     json.RawMessage   `json:"function_call,omitempty"`
+	Role             string            `json:"role,omitempty"`
+	Content          string            `json:"content,omitempty"`
+	Reasoning        string            `json:"reasoning,omitempty"`
+	ReasoningContent string            `json:"reasoning_content,omitempty"`
+	Thought          string            `json:"thought,omitempty"`
 }
 
 // StreamChoice is a chunk choice.

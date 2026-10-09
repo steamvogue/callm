@@ -163,3 +163,20 @@ func TestRenderContinue(t *testing.T) {
 		t.Fatalf("export must not carry keys: %s", data)
 	}
 }
+
+func TestNativeProtocolExportGuard(t *testing.T) {
+	for _, format := range []string{FormatZed, FormatKilo, FormatContinue} {
+		data, _, err := Render(format, sampleModels(), Meta{Protocol: "anthropic", ProviderID: "renamed", BaseURL: "https://proxy.invalid/v1"})
+		if err == nil || len(data) > 0 || !strings.Contains(err.Error(), "protocol") {
+			t.Fatalf("format=%s data=%s error=%v", format, data, err)
+		}
+	}
+	raw := `{"id":"claude-sonnet-5-5","max_tokens":128000,"capabilities":{"thinking":{"supported":true}}}`
+	data, _, err := Render(FormatJSON, []client.ModelInfo{{Raw: json.RawMessage(raw)}}, Meta{Protocol: "anthropic"})
+	if err != nil || !strings.Contains(string(data), "capabilities") || !strings.Contains(string(data), "128000") {
+		t.Fatalf("data=%s error=%v", data, err)
+	}
+	if _, _, err := Render(FormatZed, sampleModels(), Meta{Protocol: "openai"}); err != nil {
+		t.Fatal(err)
+	}
+}

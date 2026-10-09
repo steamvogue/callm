@@ -3,6 +3,10 @@ set -euo pipefail
 
 CALLM=${CALLM_TEST_BIN:-./bin/callm}
 if [[ ! -x "$CALLM" ]]; then CALLM=callm; fi
+if ! command -v jq >/dev/null 2>&1; then
+  printf 'Live response validation requires jq.\n' >&2
+  exit 2
+fi
 passed=0
 skipped=0
 scratch=$(mktemp -d)
@@ -21,7 +25,7 @@ check_provider() {
   local minimal_tokens=64
   # deepseek-flash thinks by default; leave room for reasoning within max_tokens.
   if [[ $preset == ds ]]; then minimal_tokens=1024; fi
-  out=$("$CALLM" "--$preset" --api-key-env "$key_env" --no-stdin --no-stream --no-reasoning --max-tokens "$minimal_tokens" "Reply exactly: $marker")
+  out=$("$CALLM" "--$preset" --api-key-env "$key_env" --no-stdin --strict --no-stream --no-reasoning --max-tokens "$minimal_tokens" "Reply exactly: $marker")
   if [[ $out != *"$marker"* ]]; then
     printf '%s: minimal response did not contain the expected marker\n' "$preset" >&2
     return 1
@@ -29,12 +33,25 @@ check_provider() {
   passed=$((passed + 1))
   if [[ -n $reasoning_model ]]; then
     local options=(-m "$reasoning_model")
-    if [[ $preset == ant ]]; then options+=(--thinking-budget 1024); fi
-    out=$("$CALLM" "--$preset" --api-key-env "$key_env" --no-stdin --stream --reasoning "${options[@]}" --max-tokens 4096 'Which is larger, 9.11 or 9.9? Finish with: 9.9 is larger.' 2>"$scratch/reasoning")
-    if [[ $out != *'9.9 is larger'* ]] || [[ ! -s "$scratch/reasoning" ]]; then
-      printf '%s: reasoning/answer assertion failed\n' "$preset" >&2
+    if [[ $preset == ant ]]; then options+=(--effort high); fi
+    # Inspect actual provider JSON/usage. A dotenv notice or stats on stderr is
+    # not proof that reasoning ran. Omitted thinking blocks still establish it.
+    "$CALLM" "--$preset" --api-key-env "$key_env" --no-stdin --strict --json \
+      "${options[@]}" --max-tokens 4096 \
+      'Which is larger, 9.11 or 9.9? Finish with: 9.9 is larger.' >"$scratch/reply.json"
+    jq -e '
+      ((.choices[0].message.content // ([.content[]? | select(.type == "text") | .text] | join("")))
+        | contains("9.9 is larger"))
+      and ((.usage.completion_tokens // .usage.output_tokens // 0) > 0)
+      and (
+        any(.content[]?; .type == "thinking" or .type == "redacted_thinking")
+        or ((.choices[0].message.reasoning // .choices[0].message.reasoning_content // .choices[0].message.thought // "") | length > 0)
+        or ((.usage.completion_tokens_details.reasoning_tokens // 0) > 0)
+      )
+    ' "$scratch/reply.json" >/dev/null || {
+      printf '%s: answer/usage/reasoning metadata assertion failed\n' "$preset" >&2
       return 1
-    fi
+    }
     passed=$((passed + 1))
   fi
   printf '%s: passed\n' "$preset"

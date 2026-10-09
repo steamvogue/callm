@@ -1,0 +1,307 @@
+[
+  {
+    "case": "truncated",
+    "exit": 0,
+    "stdout": "partial\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/chat/completions",
+        "body": {
+          "model": "truncated",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "case": "empty",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/chat/completions",
+        "body": {
+          "model": "empty",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "case": "refusal",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/chat/completions",
+        "body": {
+          "model": "refusal",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "case": "filtered",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/chat/completions",
+        "body": {
+          "model": "filtered",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "case": "literal-think",
+    "exit": 0,
+    "stdout": "Example:  end\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/chat/completions",
+        "body": {
+          "model": "literal-think",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "case": "json-think",
+    "exit": 0,
+    "stdout": "{\"example\":\"\"}\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/chat/completions",
+        "body": {
+          "model": "json-think",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "case": "stream-truncated",
+    "exit": 0,
+    "stdout": "partial\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/chat/completions",
+        "body": {
+          "model": "stream-truncated",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "stream": true
+        }
+      }
+    ]
+  },
+  {
+    "case": "done-only",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/chat/completions",
+        "body": {
+          "model": "done-only",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "stream": true
+        }
+      }
+    ]
+  },
+  {
+    "case": "anthropic-cache-and-stop---no-stream",
+    "exit": 0,
+    "stdout": "partial\n",
+    "stderr": "[stats: 1ms | 15 tokens (10 in / 5 out) | 4029.5 tok/s | model: cache]\n",
+    "requests": [
+      {
+        "path": "/v1/messages",
+        "body": {
+          "model": "cache",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "max_tokens": 4096
+        }
+      }
+    ]
+  },
+  {
+    "case": "anthropic-cache-and-stop---stream",
+    "exit": 0,
+    "stdout": "partial\n",
+    "stderr": "[stats: 1ms | 15 tokens (10 in / 5 out) | 3611.9 tok/s | model: cache]\n",
+    "requests": [
+      {
+        "path": "/v1/messages",
+        "body": {
+          "model": "cache",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "max_tokens": 4096,
+          "stream": true
+        }
+      }
+    ]
+  },
+  {
+    "case": "stdout-write-failure",
+    "exit": 0,
+    "stdout": null,
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/chat/completions",
+        "body": {
+          "model": "gpt-4o",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "case": "gpt6-token-cap",
+    "exit": 0,
+    "stdout": "OK\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/chat/completions",
+        "body": {
+          "model": "gpt-6.1-sol",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "max_tokens": 200
+        }
+      }
+    ]
+  },
+  {
+    "case": "new-effort-rejected",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: effort must be low, medium, or high\n",
+    "requests": []
+  },
+  {
+    "case": "sonnet55-legacy-thinking",
+    "exit": 0,
+    "stdout": "partial\n",
+    "stderr": "",
+    "requests": [
+      {
+        "path": "/v1/messages",
+        "body": {
+          "model": "claude-sonnet-5-5",
+          "messages": [
+            {
+              "role": "user",
+              "content": "prompt"
+            }
+          ],
+          "max_tokens": 6144,
+          "thinking": {
+            "type": "enabled",
+            "budget_tokens": 4096
+          }
+        }
+      }
+    ]
+  },
+  {
+    "case": "anthropic-export-zed",
+    "exit": 0,
+    "stdout": "{\n  \"language_models\": {\n    \"openai_compatible\": {\n      \"127-0-0-1\": {\n        \"api_url\": \"http://127.0.0.1:33103/v1\",\n        \"available_models\": [\n          {\n            \"name\": \"claude-sonnet-5-5\",\n            \"max_tokens\": 1000000\n          }\n        ]\n      }\n    }\n  }\n}\n",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "case": "anthropic-export-kilo",
+    "exit": 0,
+    "stdout": "{\n  \"provider\": {\n    \"127-0-0-1\": {\n      \"name\": \"127.0.0.1\",\n      \"npm\": \"@ai-sdk/openai-compatible\",\n      \"options\": {\n        \"baseURL\": \"http://127.0.0.1:33103/v1\"\n      },\n      \"models\": {\n        \"claude-sonnet-5-5\": {\n          \"limit\": {\n            \"context\": 1000000\n          }\n        }\n      }\n    }\n  }\n}\n",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "case": "anthropic-export-continue",
+    "exit": 0,
+    "stdout": "{\n  \"models\": [\n    {\n      \"name\": \"claude-sonnet-5-5\",\n      \"provider\": \"openai\",\n      \"model\": \"claude-sonnet-5-5\",\n      \"apiBase\": \"http://127.0.0.1:33103/v1\"\n    }\n  ]\n}\n",
+    "stderr": "hint: set the Continue API key (\"apiKey\") or export ANTHROPIC_API_KEY in your shell\n",
+    "requests": []
+  },
+  {
+    "case": "only-openai-key",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "callm: API key not found. Set POOLSIDE_API_KEY or CALLM_API_KEY or use --api-key / --api-key-env\n"
+  }
+]

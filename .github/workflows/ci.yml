@@ -8,7 +8,10 @@ on:
 
 jobs:
   lint-and-test:
-    name: Lint & Vet
+    name: Lint & Test (Go ${{ matrix.go }})
+    strategy:
+      matrix:
+        go: ['1.26.x', '1.27.x']
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -17,7 +20,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: ${{ matrix.go }}
           check-latest: true
 
       - name: Go Vet
@@ -49,7 +52,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: '1.27.2'
           check-latest: true
 
       - name: Build binary
