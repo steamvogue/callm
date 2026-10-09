@@ -1,0 +1,38 @@
+[
+  {
+    "case": "free",
+    "passed": true,
+    "generation_calls": 2,
+    "exit_code": 0
+  },
+  {
+    "case": "paid-id",
+    "passed": true,
+    "generation_calls": 0,
+    "exit_code": 1
+  },
+  {
+    "case": "nonzero-price",
+    "passed": true,
+    "generation_calls": 0,
+    "exit_code": 1
+  },
+  {
+    "case": "missing-price",
+    "passed": true,
+    "generation_calls": 0,
+    "exit_code": 1
+  },
+  {
+    "case": "malformed-price",
+    "passed": true,
+    "generation_calls": 0,
+    "exit_code": 1
+  },
+  {
+    "case": "extra-nonzero-price",
+    "passed": true,
+    "generation_calls": 0,
+    "exit_code": 1
+  }
+]

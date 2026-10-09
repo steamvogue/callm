@@ -1,0 +1,42 @@
+{
+  "kind": "live-free-provider-schema",
+  "requested_model": "google/gemma-4-26b-a4b-it:free",
+  "pricing_preflight": {
+    "prompt": "0",
+    "completion": "0"
+  },
+  "generation_call_limit": 1,
+  "exit_code": 1,
+  "elapsed_seconds": 1.752,
+  "stderr": "callm: answer is not a single JSON value: invalid character '`' looking for beginning of value\n",
+  "stdout": "{\"version\":1,\"status\":\"error\",\"requested_model\":\"google/gemma-4-26b-a4b-it:free\",\"returned_model\":\"google/gemma-4-26b-a4b-it:free\",\"answer\":\"```json\\n{\\n  \\\"invoice_id\\\": \\\"INV-17\\\",\\n  \\\"currency\\\": \\\"EUR\\\",\\n  \\\"cents\\\": 4250\\n}\\n```\",\"finish_reason\":\"stop\",\"refusal\":\"\",\"usage\":{\"prompt_tokens\":29,\"completion_tokens\":39,\"total_tokens\":68,\"cost\":0,\"prompt_tokens_details\":{\"cached_tokens\":0,\"cache_write_tokens\":0},\"completion_tokens_details\":{\"reasoning_tokens\":0}},\"duration_ms\":1743,\"schema_valid\":false,\"error\":{\"code\":\"invalid_schema_output\",\"message\":\"answer is not a single JSON value: invalid character '`' looking for beginning of value\"}}\n",
+  "result": {
+    "version": 1,
+    "status": "error",
+    "requested_model": "google/gemma-4-26b-a4b-it:free",
+    "returned_model": "google/gemma-4-26b-a4b-it:free",
+    "answer": "```json\n{\n  \"invoice_id\": \"INV-17\",\n  \"currency\": \"EUR\",\n  \"cents\": 4250\n}\n```",
+    "finish_reason": "stop",
+    "refusal": "",
+    "usage": {
+      "prompt_tokens": 29,
+      "completion_tokens": 39,
+      "total_tokens": 68,
+      "cost": 0,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    },
+    "duration_ms": 1743,
+    "schema_valid": false,
+    "error": {
+      "code": "invalid_schema_output",
+      "message": "answer is not a single JSON value: invalid character '`' looking for beginning of value"
+    }
+  },
+  "passed": false
+}

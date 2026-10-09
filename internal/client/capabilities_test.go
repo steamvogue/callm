@@ -6,6 +6,18 @@ import (
 	"testing"
 )
 
+func TestNativeSchemaAndAdaptiveEffortCoexist(t *testing.T) {
+	cap := 128
+	schema := json.RawMessage(`{"type":"object","properties":{"n":{"type":"integer"}},"required":["n"],"additionalProperties":false}`)
+	req, err := convertToAnthropicReq(ChatRequest{Model: "claude-sonnet-4-6", ReasoningEffort: "high", MaxTokens: &cap, ResponseFormat: &ResponseFormat{Type: "json_schema", JSONSchema: &JSONSchemaFormat{Name: "test", Strict: true, Schema: schema}}}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if req.MaxTokens != cap || req.OutputConfig == nil || req.OutputConfig.Effort != "high" || req.OutputConfig.Format == nil || req.OutputConfig.Format.Type != "json_schema" || string(req.OutputConfig.Format.Schema) != string(schema) {
+		t.Fatalf("%+v", req)
+	}
+}
+
 func TestClaudeAdaptiveProfiles(t *testing.T) {
 	cap := 200
 	temperature := 0.2

@@ -29,6 +29,12 @@ jobs:
       - name: Go Test
         run: go test -race -timeout=60s -v ./...
 
+      - name: Pipeline and free-test fixtures (no provider calls)
+        run: |
+          go build -o bin/callm ./cmd/callm
+          python3 scripts/test_free_live.py
+          python3 scripts/test_mini_harness.py
+
   build-matrix:
     name: Build (${{ matrix.goos }}/${{ matrix.goarch }})
     runs-on: ubuntu-latest

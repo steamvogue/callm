@@ -22,11 +22,13 @@ type Client struct {
 	StreamIdleTimeout time.Duration
 	IncludeCost       bool
 	UserAgent         string
+	MaxRequestBytes   int // Zero uses the default 64 MiB combined wire-body limit.
 }
 
 const DefaultTimeout = 300 * time.Second
 const DefaultUserAgent = "CallM (Call-LLM; +https://github.com/steamvogue/callm)"
 const maxResponseBytes = 64 << 20
+const MaxRequestBytes = 64 << 20
 
 // NewClient accepts an explicit provider; otherwise only exact known hostnames are detected.
 func NewClient(baseURL, apiKey string, provider ...string) *Client {
@@ -112,6 +114,11 @@ func (c *Client) prepareRequest(req *ChatRequest) error {
 		return err
 	}
 	req.ReasoningEffort = strings.ToLower(req.ReasoningEffort)
+	if c.Provider == "or" && req.ResponseFormat != nil && req.ResponseFormat.Type == "json_schema" {
+		// OpenRouter otherwise permits routing to providers that ignore optional
+		// parameters. Local output validation remains mandatory in the CLI.
+		req.Provider = &ProviderRouting{RequireParameters: true}
+	}
 
 	profile := openAIModelProfile(req.Model)
 	allowed := profile.efforts
@@ -157,6 +164,13 @@ func (c *Client) prepareRequest(req *ChatRequest) error {
 }
 
 func (c *Client) request(ctx context.Context, method, endpoint string, body []byte) (*http.Request, error) {
+	limit := c.MaxRequestBytes
+	if limit <= 0 {
+		limit = MaxRequestBytes
+	}
+	if len(body) > limit {
+		return nil, fmt.Errorf("combined request body exceeds %d bytes", limit)
+	}
 	for _, ch := range c.UserAgent {
 		if ch < 32 || ch == 127 {
 			return nil, fmt.Errorf("user-agent must not contain control characters")

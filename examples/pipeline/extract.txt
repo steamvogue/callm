@@ -1,0 +1,1 @@
+Extract the attached invoice. Return exactly {"invoice":"ID","currency":"EUR","cents":INTEGER}. Convert the amount into integer cents.

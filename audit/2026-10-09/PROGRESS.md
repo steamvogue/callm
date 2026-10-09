@@ -136,3 +136,8 @@ The original report probes assert the baseline and should be run against the ori
 All B1–B9 repair entries and O1 are complete within the stated scope. Documentation was consolidated into user-facing behavior/reference sections and concise release notes while this log retains the individual decisions and observations. Provider/model defaults were not promoted. No system binary was installed and no release was published; the working-tree build is required for the unreleased flags.
 
 The final tests/probes, help synchronization, workflow/shell lint and diff-whitespace checks passed. [Validation inventory and source hashes](repair-validation.json) make the reviewed files and artifacts identifiable. Future feature/evaluation work is listed separately in [NEXT_ACTIONS.md](NEXT_ACTIONS.md).
+
+Subsequent authorized delivery, free-only evaluation and pipeline implementation
+are recorded in [PIPELINE_PROGRESS.md](PIPELINE_PROGRESS.md). This log and its
+repair-validation hashes describe the earlier repair snapshot; later installations
+and CI results supersede the completion record's then-current delivery status.

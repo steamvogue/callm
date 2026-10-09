@@ -8,7 +8,7 @@ Company: [Netcraft](https://netcraft.pro)
 [![Release](https://img.shields.io/github/v/release/steamvogue/callm)](https://github.com/steamvogue/callm/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A blazing-fast, zero-dependency Go CLI utility for calling LLMs across multiple OpenAI-compatible gateways.
+A fast, standalone Go CLI utility for calling LLMs across multiple OpenAI-compatible gateways.
 
 Includes thirteen provider presets, native Anthropic support, and custom OpenAI-compatible endpoints.
 
@@ -370,7 +370,7 @@ Usage:
                                     Chat completion. Reads PROMPT from arguments, files, or stdin.
   callm models [OPTIONS] [FILTER]  List, filter, or export models (--format json|zed|kilo|continue).
   callm info [OPTIONS] <MODEL>     Inspect full technical specs, pricing, and parameters for a model.
-  callm raw [OPTIONS] <ENDPOINT> '<JSON>'
+  callm raw [OPTIONS] <ENDPOINT> ['<JSON>']
                                     POST raw JSON body to any endpoint (e.g. /chat/completions).
   callm version | -v | --version   Print version, commit, and build date.
   callm -h | --help                Show this help message.
@@ -414,6 +414,10 @@ Options (chat unless stated otherwise):
       --key-env, --api-key-env ENV Custom environment variable name containing API key
       --user-agent TEXT           HTTP User-Agent override (empty string omits header)
   -s, --system SYSTEM              System prompt instruction
+      --system-file FILE           Read system instructions verbatim (conflicts with --system)
+      --prompt-file FILE           Read prompt text without a file wrapper
+      --body-file FILE|-           Raw command JSON body from a file or stdin
+      --max-input-bytes N          Combined wire-body limit (default 67108864; maximum 64 MiB)
   -t, --temp, --temperature T      Sampling temperature (omitted by default)
   -n, --max-tokens N               Maximum tokens to generate
       --max-completion-tokens N    Maximum completion tokens (OpenAI reasoning models, including known GPT-6 IDs)
@@ -423,6 +427,9 @@ Options (chat unless stated otherwise):
   -f, --file FILE                  Include contents of FILE in prompt context (can repeat)
       --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)
       --json-object                Request structured JSON object response_format
+      --schema FILE                Request JSON Schema output and validate locally (non-streaming)
+      --validate-schema FILE       Validate locally without sending a provider schema
+      --result-json                Versioned result/status envelope (non-streaming, implies --strict)
       --stream                     Force streaming response (default when stdout is terminal)
       --no-stream                  Disable streaming response
       --reasoning                  Display returned reasoning on stderr (default when stdout is terminal)
@@ -471,6 +478,8 @@ Defaults and precedence:
   Streaming/reasoning display default on only when stdout is a terminal.
   Text output rejects truncation, refusal, tools and empty answers; --allow-empty permits empty.
   --strict also requires a terminal reason; --json alone preserves diagnostic envelopes.
+  Schema validation buffers output; external schema references are disabled.
+  --result-json errors may contain partial answers; publish only exit 0 and status "ok".
   OrcaRouter: --effort sends reasoning_effort; --thinking-budget is unsupported.
   OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
   Kimi Code: --kimi uses subscription quota; --ms/--moonshot use Moonshot billing.
@@ -572,14 +581,20 @@ callm --version
 - HTTP errors, API error envelopes, malformed/truncated SSE, and cancellation
   return failure exit codes. Missing usage and catalog prices display as unavailable
   or unknown, rather than zero. No automatic generation retries are performed.
-- `make test-live` requires exported credentials and performs actual billed calls.
-  It reports passed assertions and skipped providers, includes Anthropic, and exits
-  2 if no tests ran. `make test-race` requires a host supported by ThreadSanitizer;
+- `make test-live` requires `OPENROUTER_API_KEY` and jq. It verifies current zero-price
+  catalog metadata before at most two calls to an explicit `:free` model, with no
+  retries or paid fallback. `CALLM_TEST_FREE_MODEL` can select another verified free
+  model; the smoke-test default is `google/gemma-4-26b-a4b-it:free`. It exits 2 if
+  credentials/tools are unavailable. `make test-race` requires a host supported by ThreadSanitizer;
   CI runs race detection on Linux amd64.
 
 ## Build toolchain
 
 CI tests the latest patches of Go 1.26 and 1.27 on Linux amd64, including the race detector. Release and cross-compilation jobs use Go 1.27.2. The module language minimum remains Go 1.22; use a supported patched compiler when building releases.
+
+Builds download the pinned JSON Schema validator and its Go module dependencies.
+The installed CLI requires no external runtime. The optional mini harness uses
+Python 3, and the shell examples/free live checks use jq.
 
 ## Unreleased result and model behavior
 
@@ -617,7 +632,8 @@ Profiles recognize known dated snapshots. Explicit caps are preserved; adaptive
 effort does not create a manual thinking budget. Returning reasoning text is
 provider-dependent: newer Claude models may omit it while still generating and
 billing reasoning. `--reasoning` displays only returned text. No model-default
-upgrade or live-generation benchmark accompanies these repairs.
+upgrade accompanies these repairs. A separate [free-model evaluation](audit/2026-10-09/FREE_EVALUATION.md)
+records 24 zero-price requests; it does not validate paid defaults or direct providers.
 
 Native Anthropic catalogs support tables and lossless JSON. Zed/Kilo/Continue
 exports fail locally for that protocol, including explicit proxies; configure the
@@ -626,6 +642,49 @@ errors name the selected preset and configured variable names/flags without
 showing credentials. Provider priority remains documented; OpenAI-only credentials
 require `--oa`.
 
-The paid live script requires jq and validates actual answer/usage/reasoning
-metadata. Its assertion logic was checked with fake responses. Development records,
-limitations and next actions are in [the repair log](audit/2026-10-09/PROGRESS.md).
+The free live script requires jq and verifies catalog pricing, answer, finish,
+usage and zero reported cost. Its rejection paths are tested with fake responses.
+Development records, limitations and next actions are in [the repair log](audit/2026-10-09/PROGRESS.md).
+
+## File inputs and validated pipelines
+
+`--prompt-file FILE` reads prompt text without a wrapper, retaining its whitespace.
+It follows attached `-f` sections and stdin, and precedes positional prompt text;
+sections join with blank lines. `--system-file FILE` reads system instructions
+verbatim and conflicts with `--system`. These flags accept regular files. For
+raw requests use `callm raw --body-file request.json /chat/completions`, or
+`--body-file -` to read stdin with `--stdin-timeout`; a positional body conflicts.
+Raw bodies must contain one valid JSON value.
+
+`--max-input-bytes N` sets a combined input and serialized request-body limit for
+chat/raw, from 1 to 67108864 (the default). JSON escaping, schema data and image
+encoding count toward the wire limit. Attachments and stdin also remain bounded;
+this byte limit is not a model token/context estimate.
+
+`--schema FILE` sends a strict OpenAI-compatible `response_format.json_schema`,
+or native Anthropic `output_config.format`, and validates the answer locally.
+Provider/model schema subsets still apply; callm sends the schema unchanged and
+does not silently downgrade it. `--validate-schema FILE` performs the same local
+validation without sending a provider schema. OpenRouter schema requests also
+set `provider.require_parameters: true` to require parameter-aware routing.
+Both buffer output, require a
+complete answer and conflict with streaming, `--json-object`, `--parse-think` and
+`--only-reasoning`. Plain text or original `--json` is published only after checks.
+Schemas are limited to 1 MiB; default dialect is Draft 2020-12, with supported
+declared older drafts. Built-in format assertions are enabled. In-document
+references work; external file/network references and custom remote dialects
+are blocked. Schema validity cannot establish that an answer is factually correct.
+
+`--result-json` adds a version 1 envelope with `status`, `answer`, requested/returned
+model, finish/refusal, usage, duration, schema result and error code/message. It
+implies strict completion checks and conflicts with raw `--json`, streaming,
+reasoning display controls and `--allow-empty`. Once a request is attempted,
+request/completion/schema failures emit `status: "error"` and return nonzero;
+argument, credential and input/preflight failures can have empty stdout. Error
+answers can be partial. Publish only with **exit 0 and status `ok`**. Absent usage
+is null; cache and reasoning details are returned when supplied, with no estimated
+cost or tokens. `schema_valid` is null when no schema check ran, including an
+earlier completion failure. `--json` retains the original provider envelope.
+
+See [the two-step mini harness and manifest contract](examples/README.md) for
+atomic artifacts, a journal, hash-based resume and bounded sequential calls.

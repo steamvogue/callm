@@ -1,0 +1,7 @@
+{"conclusion":"success","html_url":"https://github.com/steamvogue/callm/actions/runs/37924720634/job/113800797896","name":"Lint \u0026 Test (Go 1.27.x)","status":"completed"}
+{"conclusion":"success","html_url":"https://github.com/steamvogue/callm/actions/runs/37924720634/job/113800798093","name":"Build (darwin/arm64)","status":"completed"}
+{"conclusion":"success","html_url":"https://github.com/steamvogue/callm/actions/runs/37924720634/job/113800798156","name":"Build (darwin/amd64)","status":"completed"}
+{"conclusion":"success","html_url":"https://github.com/steamvogue/callm/actions/runs/37924720634/job/113800798162","name":"Lint \u0026 Test (Go 1.26.x)","status":"completed"}
+{"conclusion":"success","html_url":"https://github.com/steamvogue/callm/actions/runs/37924720634/job/113800798231","name":"Build (linux/arm64)","status":"completed"}
+{"conclusion":"success","html_url":"https://github.com/steamvogue/callm/actions/runs/37924720634/job/113800798240","name":"Build (windows/amd64)","status":"completed"}
+{"conclusion":"success","html_url":"https://github.com/steamvogue/callm/actions/runs/37924720634/job/113800798270","name":"Build (linux/amd64)","status":"completed"}

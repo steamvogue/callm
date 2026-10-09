@@ -26,7 +26,12 @@ type anthropicReq struct {
 	OutputConfig *anthropicOutputConfig `json:"output_config,omitempty"`
 }
 type anthropicOutputConfig struct {
-	Effort string `json:"effort"`
+	Effort string                 `json:"effort,omitempty"`
+	Format *anthropicOutputFormat `json:"format,omitempty"`
+}
+type anthropicOutputFormat struct {
+	Type   string          `json:"type"`
+	Schema json.RawMessage `json:"schema"`
 }
 type anthropicContentBlock struct {
 	Type     string `json:"type"`
@@ -195,8 +200,8 @@ func convertToAnthropicReq(req ChatRequest, stream bool) (anthropicReq, error) {
 	if profile.fixedSampling && (req.Temperature != nil || req.TopP != nil) {
 		return anthropicReq{}, fmt.Errorf("omit temperature and top-p for %s; use --effort", req.Model)
 	}
-	if req.ResponseFormat != nil {
-		return anthropicReq{}, fmt.Errorf("json-object is not supported by Anthropic Messages; use raw with an Anthropic structured-output schema")
+	if req.ResponseFormat != nil && (req.ResponseFormat.Type != "json_schema" || req.ResponseFormat.JSONSchema == nil) {
+		return anthropicReq{}, fmt.Errorf("json-object is not supported by Anthropic Messages; use --schema with a structured-output model")
 	}
 	if req.Temperature != nil && *req.Temperature > 1 {
 		return anthropicReq{}, fmt.Errorf("Anthropic temperature must be between 0 and 1")
@@ -261,6 +266,12 @@ func convertToAnthropicReq(req ChatRequest, stream bool) (anthropicReq, error) {
 		if req.TopP != nil && *req.TopP < 0.95 {
 			return anthropicReq{}, fmt.Errorf("Anthropic adaptive thinking requires top-p between 0.95 and 1")
 		}
+	}
+	if req.ResponseFormat != nil {
+		if outputConfig == nil {
+			outputConfig = &anthropicOutputConfig{}
+		}
+		outputConfig.Format = &anthropicOutputFormat{Type: "json_schema", Schema: req.ResponseFormat.JSONSchema.Schema}
 	}
 	return anthropicReq{Model: req.Model, Messages: messages, System: strings.Join(system, "\n\n"), MaxTokens: maxTokens, Temperature: req.Temperature, TopP: req.TopP, Stream: stream, Thinking: thinking, OutputConfig: outputConfig}, nil
 }

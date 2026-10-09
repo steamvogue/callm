@@ -1,0 +1,1 @@
+2 free live assertions passed (google/gemma-4-26b-a4b-it:free); no retries or paid fallback.

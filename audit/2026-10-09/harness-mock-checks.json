@@ -1,0 +1,44 @@
+[
+  {
+    "case": "two-step-success",
+    "passed": true,
+    "mock_calls": 2,
+    "exit_code": 0
+  },
+  {
+    "case": "resume-skips-unchanged",
+    "passed": true,
+    "mock_calls": 0,
+    "exit_code": 0
+  },
+  {
+    "case": "tampered-output-recomputed",
+    "passed": true,
+    "mock_calls": 1,
+    "exit_code": 0
+  },
+  {
+    "case": "changed-input-recomputed",
+    "passed": true,
+    "mock_calls": 1,
+    "exit_code": 0
+  },
+  {
+    "case": "failed-schema-preserves-artifact",
+    "passed": true,
+    "mock_calls": 1,
+    "exit_code": 1
+  },
+  {
+    "case": "resume-retries-failed-step-on-new-invocation",
+    "passed": true,
+    "mock_calls": 1,
+    "exit_code": 0
+  },
+  {
+    "case": "forward-reference-rejected",
+    "passed": true,
+    "mock_calls": 0,
+    "exit_code": 1
+  }
+]

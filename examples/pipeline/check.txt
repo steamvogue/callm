@@ -1,0 +1,1 @@
+Check whether the attached structured invoice has a nonempty invoice ID, EUR currency, and nonnegative integer cents. Return exactly {"valid":BOOLEAN}.

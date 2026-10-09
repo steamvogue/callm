@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
-"""Test live-script assertions with a fake CLI; never invoke a provider."""
+"""Historical repair assertions for 469f25b, fake CLI only, never a provider.
+
+The current free-only guard is checked by scripts/test_free_live.py.
+"""
 import json
 import os
 from pathlib import Path
 import subprocess
 import tempfile
 
-script = Path(__file__).resolve().parents[2] / 'scripts/test_live.sh'
+repository = Path(__file__).resolve().parents[2]
+script_source = subprocess.check_output(['git', 'show', '469f25b:scripts/test_live.sh'], cwd=repository, text=True)
 answer = '9.9 is larger'
 fixtures = [
     ('native-omitted-thinking', 'ant', {'content':[{'type':'thinking','thinking':''},{'type':'text','text':answer}], 'usage':{'output_tokens':5}}, True),
@@ -19,6 +23,8 @@ fixtures = [
 results = []
 with tempfile.TemporaryDirectory(prefix='callm-live-script-') as directory:
     root=Path(directory)
+    script=root/'historical-test-live.sh'
+    script.write_text(script_source)
     fake=root/'fake-callm'
     fake.write_text('''#!/usr/bin/python3
 import os,sys

@@ -22,6 +22,7 @@ import (
 	"callm/internal/client"
 	"callm/internal/config"
 	"callm/internal/export"
+	"callm/internal/pipeline"
 	"callm/internal/ui"
 )
 
@@ -59,7 +60,7 @@ Usage:
                                     Chat completion. Reads PROMPT from arguments, files, or stdin.
   callm models [OPTIONS] [FILTER]  List, filter, or export models (--format json|zed|kilo|continue).
   callm info [OPTIONS] <MODEL>     Inspect full technical specs, pricing, and parameters for a model.
-  callm raw [OPTIONS] <ENDPOINT> '<JSON>'
+  callm raw [OPTIONS] <ENDPOINT> ['<JSON>']
                                     POST raw JSON body to any endpoint (e.g. /chat/completions).
   callm version | -v | --version   Print version, commit, and build date.
   callm -h | --help                Show this help message.
@@ -103,6 +104,10 @@ Options (chat unless stated otherwise):
       --key-env, --api-key-env ENV Custom environment variable name containing API key
       --user-agent TEXT           HTTP User-Agent override (empty string omits header)
   -s, --system SYSTEM              System prompt instruction
+      --system-file FILE           Read system instructions verbatim (conflicts with --system)
+      --prompt-file FILE           Read prompt text without a file wrapper
+      --body-file FILE|-           Raw command JSON body from a file or stdin
+      --max-input-bytes N          Combined wire-body limit (default 67108864; maximum 64 MiB)
   -t, --temp, --temperature T      Sampling temperature (omitted by default)
   -n, --max-tokens N               Maximum tokens to generate
       --max-completion-tokens N    Maximum completion tokens (OpenAI reasoning models, including known GPT-6 IDs)
@@ -112,6 +117,9 @@ Options (chat unless stated otherwise):
   -f, --file FILE                  Include contents of FILE in prompt context (can repeat)
       --image IMAGE                Attach image URL or local file path (base64 encoded, can repeat)
       --json-object                Request structured JSON object response_format
+      --schema FILE                Request JSON Schema output and validate locally (non-streaming)
+      --validate-schema FILE       Validate locally without sending a provider schema
+      --result-json                Versioned result/status envelope (non-streaming, implies --strict)
       --stream                     Force streaming response (default when stdout is terminal)
       --no-stream                  Disable streaming response
       --reasoning                  Display returned reasoning on stderr (default when stdout is terminal)
@@ -160,6 +168,8 @@ Defaults and precedence:
   Streaming/reasoning display default on only when stdout is a terminal.
   Text output rejects truncation, refusal, tools and empty answers; --allow-empty permits empty.
   --strict also requires a terminal reason; --json alone preserves diagnostic envelopes.
+  Schema validation buffers output; external schema references are disabled.
+  --result-json errors may contain partial answers; publish only exit 0 and status "ok".
   OrcaRouter: --effort sends reasoning_effort; --thinking-budget is unsupported.
   OrcaRouter --stats requests usage.cost_usd via X-OrcaRouter-Include-Cost.
   Kimi Code: --kimi uses subscription quota; --ms/--moonshot use Moonshot billing.
@@ -647,6 +657,9 @@ func runRaw(ctx context.Context, args []string) {
 	timeout := registerTimeout(fs)
 	headerTimeout := registerDuration(fs, "header-timeout", client.DefaultTimeout)
 	userAgent := registerUserAgent(fs)
+	stdinTimeout := registerDuration(fs, "stdin-timeout", client.DefaultTimeout)
+	maxInput := registerInputLimit(fs)
+	bodyFile := fs.String("body-file", "", "JSON body from a regular file, or - for stdin")
 	var keyFlag, keyEnvFlag, customAPI string
 	var pFlags presetFlags
 	pFlags.Register(fs)
@@ -659,7 +672,7 @@ func runRaw(ctx context.Context, args []string) {
 	fs.StringVar(&customAPI, "base-url", "", "Custom API base URL")
 
 	fs.Usage = func() {
-		fmt.Fprintln(fs.Output(), "Usage: callm raw [OPTIONS] <ENDPOINT> '<JSON>'")
+		fmt.Fprintln(fs.Output(), "Usage: callm raw [OPTIONS] <ENDPOINT> ['<JSON>'] (or --body-file FILE|-)")
 		fs.PrintDefaults()
 	}
 
@@ -670,11 +683,33 @@ func runRaw(ctx context.Context, args []string) {
 		die(err)
 	}
 	rem := fs.Args()
-	if len(rem) < 2 {
-		die(errors.New("raw requires <ENDPOINT> and '<JSON>' arguments (e.g. callm raw /chat/completions '{\"model\": \"...\"}')"))
+	if len(rem) != 2 && !(len(rem) == 1 && *bodyFile != "") {
+		die(errors.New("raw requires <ENDPOINT> and either one JSON argument or --body-file FILE|-"))
 	}
 	endpoint := rem[0]
-	rawJSON := rem[1]
+	var body []byte
+	var err error
+	if *bodyFile != "" {
+		if len(rem) != 1 {
+			die(errors.New("--body-file conflicts with a positional JSON body"))
+		}
+		if *bodyFile == "-" {
+			inputCtx, cancel := inputContext(ctx, *stdinTimeout)
+			data, inputErr := readStdinWithLimit(inputCtx, *maxInput)
+			cancel()
+			body, err = []byte(data), inputErr
+		} else {
+			body, err = readContextFileLimit(*bodyFile, *maxInput)
+		}
+	} else {
+		body = []byte(rem[1])
+	}
+	if err != nil {
+		die(fmt.Errorf("raw body: %w", err))
+	}
+	if !json.Valid(body) {
+		die(errors.New("raw body must be one valid JSON value"))
+	}
 
 	presetName := pFlags.ResolvePreset()
 	apiKey, err := config.ResolveAPIKey(presetName, keyFlag, keyEnvFlag)
@@ -688,6 +723,7 @@ func runRaw(ctx context.Context, args []string) {
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
 	apiClient.UserAgent = *userAgent
+	apiClient.MaxRequestBytes = *maxInput
 	apiClient.HTTPClient.Timeout = *timeout
 	if !flagWasSet(fs, "header-timeout") {
 		*headerTimeout = *timeout
@@ -695,7 +731,7 @@ func runRaw(ctx context.Context, args []string) {
 	if transport, ok := apiClient.HTTPClient.Transport.(*http.Transport); ok {
 		transport.ResponseHeaderTimeout = *headerTimeout
 	}
-	respBytes, err := apiClient.RawRequest(ctx, endpoint, []byte(rawJSON))
+	respBytes, err := apiClient.RawRequest(ctx, endpoint, body)
 	if err != nil {
 		die(err)
 	}
@@ -717,6 +753,12 @@ func runChat(ctx context.Context, args []string) {
 	timeout := registerTimeout(fs)
 	headerTimeout := registerDuration(fs, "header-timeout", client.DefaultTimeout)
 	userAgent := registerUserAgent(fs)
+	maxInput := registerInputLimit(fs)
+	promptFile := fs.String("prompt-file", "", "Prompt text from a regular file, without wrappers")
+	systemFile := fs.String("system-file", "", "System instructions from a regular file (conflicts with --system)")
+	schemaFile := fs.String("schema", "", "JSON Schema to request and validate locally")
+	validateSchemaFile := fs.String("validate-schema", "", "JSON Schema for local validation only")
+	resultOutput := fs.Bool("result-json", false, "Versioned result/status envelope (implies --strict)")
 	idleTimeout := registerDuration(fs, "idle-timeout", client.DefaultTimeout)
 
 	stdinTimeout := registerDuration(fs, "stdin-timeout", client.DefaultTimeout)
@@ -855,6 +897,63 @@ func runChat(ctx context.Context, args []string) {
 		printVersion()
 		return
 	}
+	if *schemaFile != "" && *validateSchemaFile != "" {
+		die(errors.New("choose --schema or --validate-schema"))
+	}
+	if *systemFile != "" && (flagWasSet(fs, "s") || flagWasSet(fs, "system")) {
+		die(errors.New("--system-file conflicts with --system"))
+	}
+	if *resultOutput && (jsonOutput || reasoningFlag || noReasoning || onlyReasoning || parseThinking || allowEmpty) {
+		die(errors.New("--result-json conflicts with --json, reasoning display controls and --allow-empty"))
+	}
+	var outputSchema *pipeline.Schema
+	path := *schemaFile
+	if path == "" {
+		path = *validateSchemaFile
+	}
+	if path != "" {
+		if jsonObject || parseThinking || onlyReasoning {
+			die(errors.New("schema options conflict with --json-object, --parse-think and --only-reasoning"))
+		}
+		data, err := readContextFileLimit(path, pipeline.MaxSchemaBytes)
+		if err != nil {
+			die(fmt.Errorf("schema: %w", err))
+		}
+		outputSchema, err = pipeline.CompileSchema(data)
+		if err != nil {
+			die(err)
+		}
+		strictOutput = true
+	}
+	if *resultOutput {
+		strictOutput = true
+	}
+	if streamFlag && (*resultOutput || outputSchema != nil) {
+		die(errors.New("--stream conflicts with --result-json and schema validation"))
+	}
+	if *systemFile != "" {
+		data, err := readContextFileLimit(*systemFile, *maxInput)
+		if err != nil {
+			die(fmt.Errorf("system file: %w", err))
+		}
+		systemPrompt = string(data)
+	}
+	var promptText string
+	if *promptFile != "" {
+		data, err := readContextFileLimit(*promptFile, *maxInput)
+		if err != nil {
+			die(fmt.Errorf("prompt file: %w", err))
+		}
+		promptText = string(data)
+	}
+	inputSize := len(systemPrompt) + len(promptText) + len(strings.Join(fs.Args(), " "))
+	checkSize := func(added int) {
+		inputSize += added
+		if inputSize > *maxInput {
+			die(fmt.Errorf("combined input exceeds %d bytes", *maxInput))
+		}
+	}
+	checkSize(0)
 
 	presetName := pFlags.ResolvePreset()
 	baseURL := config.ResolveBaseURL(presetName, customAPI)
@@ -888,13 +987,15 @@ func runChat(ctx context.Context, args []string) {
 	// Read file contents
 	var fileSections []string
 	for _, fp := range filesFlag {
-		content, err := readContextFile(fp)
+		content, err := readContextFileLimit(fp, *maxInput-inputSize)
 		if err != nil {
 			die(fmt.Errorf("failed to read file '%s': %w", fp, err))
 		}
 		ext := filepath.Ext(fp)
 		lang := strings.TrimPrefix(ext, ".")
-		fileSections = append(fileSections, fmt.Sprintf("File `%s`:\n```%s\n%s\n```", fp, lang, string(content)))
+		section := fmt.Sprintf("File `%s`:\n```%s\n%s\n```", fp, lang, string(content))
+		checkSize(len(section) + 2)
+		fileSections = append(fileSections, section)
 	}
 
 	// Read stdin if piped or redirected
@@ -905,11 +1006,12 @@ func runChat(ctx context.Context, args []string) {
 		if *stdinTimeout > 0 {
 			inputCtx, cancel = context.WithTimeout(ctx, *stdinTimeout)
 		}
-		stdinData, err = readStdinIfAvailable(inputCtx)
+		stdinData, err = readStdinWithLimit(inputCtx, *maxInput-inputSize)
 		cancel()
 		if err != nil {
 			die(fmt.Errorf("stdin: %w", err))
 		}
+		checkSize(len(stdinData))
 	}
 
 	// Positional arguments
@@ -926,11 +1028,20 @@ func runChat(ctx context.Context, args []string) {
 		promptBuilder.WriteString("\n\n")
 	}
 	if promptArgs != "" {
+		if promptText != "" {
+			promptBuilder.WriteString(promptText)
+			promptBuilder.WriteString("\n\n")
+		}
 		promptBuilder.WriteString(promptArgs)
+	} else {
+		promptBuilder.WriteString(promptText)
 	}
 
 	userPrompt := strings.TrimSpace(promptBuilder.String())
-	if userPrompt == "" && len(imagesFlag) == 0 {
+	if *promptFile != "" {
+		userPrompt = promptBuilder.String()
+	}
+	if strings.TrimSpace(userPrompt) == "" && len(imagesFlag) == 0 {
 		die(errors.New("no prompt provided (via arguments, -f file, or stdin)"))
 	}
 
@@ -963,6 +1074,7 @@ func runChat(ctx context.Context, args []string) {
 					URL: dataURI,
 				},
 			})
+			checkSize(len(dataURI))
 		}
 		messages = append(messages, client.Message{
 			Role:    "user",
@@ -1001,9 +1113,13 @@ func runChat(ctx context.Context, args []string) {
 	if jsonObject {
 		chatReq.ResponseFormat = &client.ResponseFormat{Type: "json_object"}
 	}
+	if *schemaFile != "" {
+		chatReq.ResponseFormat = &client.ResponseFormat{Type: "json_schema", JSONSchema: &client.JSONSchemaFormat{Name: "callm_output", Strict: true, Schema: outputSchema.Raw}}
+	}
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
 	apiClient.UserAgent = *userAgent
+	apiClient.MaxRequestBytes = *maxInput
 	apiClient.HTTPClient.Timeout = *timeout
 	if !flagWasSet(fs, "header-timeout") {
 		*headerTimeout = *timeout
@@ -1042,7 +1158,7 @@ func runChat(ctx context.Context, args []string) {
 	if streamSeen {
 		isStreaming = streamFlag
 	}
-	if noStreamFlag || jsonOutput {
+	if noStreamFlag || jsonOutput || *resultOutput || outputSchema != nil {
 		isStreaming = false
 	}
 	displayReasoning := ui.IsTerminal(os.Stdout)
@@ -1093,8 +1209,31 @@ func runChat(ctx context.Context, args []string) {
 	// Non-streaming completion
 	resp, err := apiClient.Chat(ctx, chatReq)
 	duration := time.Since(startTime)
+	if *resultOutput {
+		result := pipeline.NewResult(model, resp, duration, outputSchema, err)
+		if writeErr := json.NewEncoder(os.Stdout).Encode(result); writeErr != nil {
+			die(writeErr)
+		}
+		if result.Error != nil {
+			die(errors.New(result.Error.Message))
+		}
+		if showStats {
+			if err := ui.PrintStats(os.Stderr, duration, resp.Usage, model); err != nil {
+				die(err)
+			}
+		}
+		return
+	}
 	if err != nil {
 		die(err)
+	}
+	if outputSchema != nil {
+		if err := resp.Choices[0].Completion().Validate(true, allowEmpty, false); err != nil {
+			die(err)
+		}
+		if err := outputSchema.Validate(resp.Choices[0].Message.Content); err != nil {
+			die(err)
+		}
 	}
 
 	if showStats {
@@ -1166,6 +1305,10 @@ func die(err error) {
 
 // readStdinIfAvailable waits for pipe EOF on all supported platforms, bounded by ctx.
 func readStdinIfAvailable(ctx context.Context) (string, error) {
+	return readStdinWithLimit(ctx, client.MaxRequestBytes)
+}
+
+func readStdinWithLimit(ctx context.Context, limit int) (string, error) {
 	stat, err := os.Stdin.Stat()
 	if err != nil {
 		return "", err
@@ -1180,9 +1323,9 @@ func readStdinIfAvailable(ctx context.Context) (string, error) {
 	done := make(chan result, 1)
 	stdin := os.Stdin
 	go func() {
-		data, err := io.ReadAll(io.LimitReader(stdin, (64<<20)+1))
-		if len(data) > 64<<20 {
-			err = errors.New("stdin exceeds 64 MiB")
+		data, err := io.ReadAll(io.LimitReader(stdin, int64(limit)+1))
+		if len(data) > limit {
+			err = fmt.Errorf("stdin exceeds %d bytes remaining input limit", limit)
 		}
 		done <- result{data, err}
 	}()
@@ -1199,7 +1342,7 @@ func splitCommand(args []string) (string, []string) {
 	bools := flag.NewFlagSet("dispatch", flag.ContinueOnError)
 	var presets presetFlags
 	presets.Register(bools)
-	for _, name := range []string{"stream", "no-stream", "reasoning", "no-reasoning", "only-reasoning", "parse-think", "json", "stats", "json-object", "strict", "allow-empty", "no-stdin", "v", "version", "h", "help"} {
+	for _, name := range []string{"stream", "no-stream", "reasoning", "no-reasoning", "only-reasoning", "parse-think", "json", "result-json", "stats", "json-object", "strict", "allow-empty", "no-stdin", "v", "version", "h", "help"} {
 		bools.Bool(name, false, "")
 	}
 	for i := 0; i < len(args); i++ {
@@ -1237,6 +1380,10 @@ func (p *presetFlags) clientProvider(preset, baseURL, explicitURL string) string
 
 // readContextFile bounds local attachments and excludes special files that can block.
 func readContextFile(path string) ([]byte, error) {
+	return readContextFileLimit(path, client.MaxRequestBytes)
+}
+
+func readContextFileLimit(path string, limit int) ([]byte, error) {
 	info, err := os.Stat(path)
 	if err != nil {
 		return nil, err
@@ -1244,19 +1391,39 @@ func readContextFile(path string) ([]byte, error) {
 	if !info.Mode().IsRegular() {
 		return nil, fmt.Errorf("attachment must be a regular file")
 	}
-	if info.Size() > 64<<20 {
-		return nil, fmt.Errorf("attachment exceeds 64 MiB")
+	if info.Size() > int64(limit) {
+		return nil, fmt.Errorf("attachment exceeds %d bytes", limit)
 	}
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
-	data, err := io.ReadAll(io.LimitReader(file, (64<<20)+1))
-	if len(data) > 64<<20 {
-		return nil, fmt.Errorf("attachment exceeds 64 MiB")
+	data, err := io.ReadAll(io.LimitReader(file, int64(limit)+1))
+	if len(data) > limit {
+		return nil, fmt.Errorf("attachment exceeds %d bytes", limit)
 	}
 	return data, err
+}
+
+func registerInputLimit(fs *flag.FlagSet) *int {
+	limit := client.MaxRequestBytes
+	fs.Func("max-input-bytes", "Combined wire-body limit in bytes (default 67108864; maximum 64 MiB)", func(value string) error {
+		parsed, err := strconv.Atoi(value)
+		if err != nil || parsed < 1 || parsed > client.MaxRequestBytes {
+			return errors.New("max-input-bytes must be between 1 and 67108864")
+		}
+		limit = parsed
+		return nil
+	})
+	return &limit
+}
+
+func inputContext(ctx context.Context, timeout time.Duration) (context.Context, context.CancelFunc) {
+	if timeout > 0 {
+		return context.WithTimeout(ctx, timeout)
+	}
+	return ctx, func() {}
 }
 
 func flagWasSet(fs *flag.FlagSet, name string) bool {

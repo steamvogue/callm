@@ -1,0 +1,2 @@
+Invoice INV-17
+Total: EUR 42.50

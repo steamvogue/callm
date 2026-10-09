@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "provider": "or",
+  "api": "https://openrouter.ai/api/v1",
+  "key_env": "OPENROUTER_API_KEY",
+  "model": "google/gemma-4-26b-a4b-it:free",
+  "max_tokens": 2048,
+  "timeout_seconds": 60,
+  "steps": [
+    {"id": "extract", "prompt_file": "extract.txt", "system_file": "system.txt", "schema": "invoice.schema.json", "inputs": ["invoice.txt"]},
+    {"id": "check", "prompt_file": "check.txt", "system_file": "system.txt", "schema": "check.schema.json", "inputs": ["step:extract"]}
+  ]
+}

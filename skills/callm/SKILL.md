@@ -1,6 +1,6 @@
 ---
 name: callm
-description: Use the fast, zero-dependency `callm` CLI tool to query external LLMs (DeepSeek V4, Claude, OpenAI, OpenRouter, OrcaRouter, Kimi Code, etc.) for second opinions, complex logic, code review, or specialized model capabilities.
+description: Use the fast, standalone `callm` CLI tool to query external LLMs (DeepSeek V4, Claude, OpenAI, OpenRouter, OrcaRouter, Kimi Code, etc.) for second opinions, complex logic, code review, or specialized model capabilities.
 ---
 
 # callm (call - llm) Agent Skill
@@ -233,5 +233,53 @@ Check `callm --help` before using these options with an older binary.
 - Missing-key errors show preset flags/variable names without credentials. Select
   providers explicitly in pipelines; automatic priority remains as documented.
 - The repository tests supported Go 1.26/1.27 lines; releases compile with 1.27.2.
-  The guarded JSON example and paid live-script assertions were fixture-tested;
-  model-default promotion needs a separate live evaluation.
+  The guarded example and free live-test guards are fixture-tested. `make test-live`
+  requires a current zero-price OpenRouter `:free` catalog entry and makes at most
+  two calls, without retries or paid fallback. Never use paid models in tests.
+  The free smoke default is `google/gemma-4-26b-a4b-it:free`; production defaults
+  remain unchanged. Six synthetic tasks are insufficient for default promotion.
+
+### Pipeline inputs, schemas and results (unreleased)
+
+Check binary help for these options before using an older installation:
+
+```bash
+callm --or -m google/gemma-4-26b-a4b-it:free --no-stdin \
+  --prompt-file prompt.txt --system-file system.txt \
+  --validate-schema output.schema.json --result-json --max-tokens 2048
+callm raw --or --body-file request.json /chat/completions
+```
+
+`--prompt-file` reads plain text retaining whitespace, after files/stdin and before
+positional text. `--system-file` reads verbatim instructions and conflicts with
+`--system`. Regular files only; raw `--body-file -` reads stdin with its timeout.
+Raw requires exactly one valid JSON body. Chat/raw `--max-input-bytes` caps the
+combined serialized request (default/maximum 67108864), including escaped text,
+schema and encoded images; it is a byte limit, not a token/context estimate.
+
+`--schema FILE` requests provider constraints and validates locally; native
+Anthropic uses `output_config.format`, compatible providers use strict
+`response_format.json_schema`. Provider/model subsets apply without silent
+rewriting. `--validate-schema FILE` validates only locally. Schemas are at most
+1 MiB; OpenRouter --schema also requires provider parameter support for routing.
+Default Draft 2020-12, declared older supported drafts, built-in format
+assertions. Use in-document `$defs`; external schema resources are blocked.
+Both options buffer output, imply strict completion checks and conflict with
+streaming/json-object/parse-think/only-reasoning. Checks also precede raw `--json`
+publication. Schema validity does not establish task correctness.
+
+`--result-json` emits a version 1 status/answer/requested/returned-model,
+finish/refusal/usage/duration/schema/error envelope; it buffers and implies strict
+completion checks. It conflicts with --json, streaming, reasoning display controls
+and --allow-empty. Require exit 0 **and** status ok. Request/completion/schema
+errors produce status error; preflight/input/credential failures may have empty
+stdout. Error answers can be partial, absent usage/schema checks are null, and
+reported cache/reasoning counts are included categories, never added twice.
+
+The repository's `examples/mini-harness.py` (optional Python 3, Linux/macOS) runs
+a version 1 manifest with 1–16 sequential calls, local schemas, atomic artifacts,
+journal/hash resume and no automatic retries or model-controlled tools. Pin the
+API/model and keep credentials outside the manifest. Its example selects a free
+model; the general runner does not enforce prices. Use localhost mocks in tests.
+See the [manifest contract](https://github.com/steamvogue/callm/blob/main/examples/README.md).
+The installed CLI itself needs no external runtime; builds use pinned Go modules.

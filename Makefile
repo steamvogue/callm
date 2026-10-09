@@ -56,7 +56,7 @@ test-unit: ## Run unit tests with verbose output (use test-race on a supported h
 test-race: ## Run tests with the Go race detector
 	@go test -race -timeout=60s ./...
 
-test-live: build ## Run live minimal and reasoning tests across all configured providers
+test-live: build ## Run two catalog-verified free OpenRouter smoke tests (no paid fallback)
 	@./scripts/test_live.sh
 
 models: build check-env ## List DeepSeek models available on the gateway

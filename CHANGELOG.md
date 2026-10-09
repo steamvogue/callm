@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+- Add regular-file prompt/system inputs, raw `--body-file FILE|-`, and a combined
+  64 MiB request limit with a lower `--max-input-bytes` override. Raw bodies now
+  require one valid JSON value and reject extra/conflicting body arguments.
+- Add `--schema` provider constraints plus offline JSON Schema validation, and
+  `--validate-schema` for local-only checks. Buffer and validate before publishing;
+  block external schema references. Builds now use pinned Go modules for validation.
+  OpenRouter schema requests require provider parameter support; local validation
+  remains mandatory even after a successful API response.
+- Add strict, versioned `--result-json` status/answer/model/finish/refusal/usage/timing
+  envelopes, including request/completion/schema errors. Keep original `--json`.
+- Add an optional Python mini harness with sequential manifests, atomic artifacts,
+  hashes/journal/resume and one call per step. Test the harness against localhost
+  mocks in CI; no automatic retries, repairs or model-controlled tools.
+- Make live tests free-only: verify all catalog prices are zero before at most two
+  explicit OpenRouter `:free` calls, with no paid fallback. Record a separate
+  24-call free-model evaluation; leave production provider/model defaults unchanged.
+
 - Reject truncated, refused, filtered, tool-dependent and empty text completions.
   Add `--strict` for terminal-reason enforcement (including JSON), and
   `--allow-empty` for intentionally empty answers. Plain `--json` retains diagnostic
@@ -23,7 +40,8 @@
   paid live-test answer/usage/reasoning metadata instead of accepting any stderr.
 - Record individual repairs, observations and validation in
   `audit/2026-10-09/PROGRESS.md`; use unit/local mock tests and synthetic fixtures.
-  Paid provider generation, editor imports and remote CI were not executed.
+  Paid provider generation and editor imports were not executed. Separate
+  free evaluation/pipeline progress follows in `audit/2026-10-09/PIPELINE_PROGRESS.md`.
 
 ## v0.9.0 — 2026-09-16
 

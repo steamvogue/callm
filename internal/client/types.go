@@ -27,7 +27,18 @@ type ImageURL struct {
 
 // ResponseFormat specifies structured outputs e.g. json_object.
 type ResponseFormat struct {
-	Type string `json:"type"`
+	Type       string            `json:"type"`
+	JSONSchema *JSONSchemaFormat `json:"json_schema,omitempty"`
+}
+
+type JSONSchemaFormat struct {
+	Name   string          `json:"name"`
+	Strict bool            `json:"strict"`
+	Schema json.RawMessage `json:"schema"`
+}
+
+type ProviderRouting struct {
+	RequireParameters bool `json:"require_parameters"`
 }
 
 // ReasoningConfig represents provider-specific reasoning options (e.g. OpenRouter).
@@ -56,6 +67,7 @@ type ChatRequest struct {
 	Thinking            *ThinkingConfig  `json:"thinking,omitempty"`
 	TopP                *float64         `json:"top_p,omitempty"`
 	ResponseFormat      *ResponseFormat  `json:"response_format,omitempty"`
+	Provider            *ProviderRouting `json:"provider,omitempty"`
 	Stop                []string         `json:"stop,omitempty"`
 	StreamOptions       *StreamOptions   `json:"stream_options,omitempty"`
 }
@@ -66,14 +78,24 @@ type StreamOptions struct {
 
 // Usage holds token count and cost metadata.
 type Usage struct {
-	PromptTokens             int         `json:"prompt_tokens"`
-	CompletionTokens         int         `json:"completion_tokens"`
-	TotalTokens              int         `json:"total_tokens"`
-	Cost                     interface{} `json:"cost,omitempty"`     // float64 or string or nil
-	CostUSD                  interface{} `json:"cost_usd,omitempty"` // OrcaRouter's opt-in billed cost
-	CacheCreationInputTokens int         `json:"cache_creation_input_tokens,omitempty"`
-	UncachedInputTokens      int         `json:"uncached_input_tokens,omitempty"`
-	CacheReadInputTokens     int         `json:"cache_read_input_tokens,omitempty"`
+	PromptTokens             int                      `json:"prompt_tokens"`
+	CompletionTokens         int                      `json:"completion_tokens"`
+	TotalTokens              int                      `json:"total_tokens"`
+	Cost                     interface{}              `json:"cost,omitempty"`     // float64 or string or nil
+	CostUSD                  interface{}              `json:"cost_usd,omitempty"` // OrcaRouter's opt-in billed cost
+	CacheCreationInputTokens int                      `json:"cache_creation_input_tokens,omitempty"`
+	UncachedInputTokens      int                      `json:"uncached_input_tokens,omitempty"`
+	CacheReadInputTokens     int                      `json:"cache_read_input_tokens,omitempty"`
+	PromptTokensDetails      *PromptTokensDetails     `json:"prompt_tokens_details,omitempty"`
+	CompletionTokensDetails  *CompletionTokensDetails `json:"completion_tokens_details,omitempty"`
+}
+
+type PromptTokensDetails struct {
+	CachedTokens     *int `json:"cached_tokens,omitempty"`
+	CacheWriteTokens *int `json:"cache_write_tokens,omitempty"`
+}
+type CompletionTokensDetails struct {
+	ReasoningTokens *int `json:"reasoning_tokens,omitempty"`
 }
 
 // GetCostFloat returns cost as float64 if available.

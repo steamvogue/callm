@@ -1,0 +1,108 @@
+{
+  "source_base_commit": "469f25be0e06a048b89d24036d2e4e8594e087d5",
+  "toolchains": [
+    "go1.27.2 linux/arm64",
+    "go1.26.9 linux/arm64"
+  ],
+  "checks": {
+    "go1.27.2_test_cover": {
+      "observed_exit_code": 0,
+      "artifact": "pipeline-go-test.txt"
+    },
+    "go1.26.9_test": {
+      "observed_exit_code": 0,
+      "artifact": "pipeline-go1269-test.txt"
+    },
+    "go_vet": {
+      "observed_exit_code": 0,
+      "artifact": "pipeline-vet.txt"
+    },
+    "actionlint": {
+      "observed_exit_code": 0,
+      "artifact": "pipeline-actionlint.txt"
+    },
+    "shellcheck": {
+      "observed_exit_code": 0,
+      "artifact": "pipeline-shellcheck.txt"
+    },
+    "free_guard_fixtures": {
+      "observed_exit_code": 0,
+      "artifact": "free-live-mock-checks.json"
+    },
+    "harness_localhost_fixtures": {
+      "observed_exit_code": 0,
+      "artifact": "harness-mock-checks.json"
+    },
+    "free_live_smoke": {
+      "observed_exit_code": 0,
+      "artifact": "free-live-smoke.txt"
+    }
+  },
+  "free_evaluation_calls": 24,
+  "extra_free_calls": 3,
+  "paid_calls": 0,
+  "schema_live_result": "quality/capability check failed; invalid_schema_output rejected locally",
+  "final_schema_routing_guard": "localhost mock-tested; no additional live request after the guard",
+  "local_race": "not run: unsupported ARM/VMA host",
+  "files": {
+    ".github/workflows/ci.yml": "73f06ef16068e854168bb5d98953aea94b44cc976851f8e351effdac20ef37da",
+    ".github/workflows/release.yml": "e48c815087512c987042152838ef5c53bac1341e05052a77353f1486c97497bc",
+    "AGENTS.md": "c7d5f02e340be1d746d2570158bf4edeec35dd684f0b7417167f8afd19e137d8",
+    "CHANGELOG.md": "53b09dc5bc7579134fbb8d0f9cdc6be309de9fc5a20c700177565ae46e2f0b89",
+    "Makefile": "da6ffdd655c6fdccdc0bf13b8ee028d3e7f1f6e727af90dcf1a703ebf3cdb013",
+    "README.md": "fb7aadbbee7da0189582892d462edfab74c05450aae1f939a8d3bbf021c962ce",
+    "THIRD_PARTY_NOTICES.md": "6237711fbeb598d5da902867a64da769c7f2812e2b065726f0dc7b76652cce97",
+    "audit/2026-10-09/FREE_EVALUATION.md": "79d738176b3d6a3844604dbad4516819d8d4c24f14c0475d37d6754fcda06204",
+    "audit/2026-10-09/NEXT_ACTIONS.md": "8ca30ed37d1edab76d4d3653db0843441626cce6923007255d7a6d973069cda0",
+    "audit/2026-10-09/PIPELINE_PROGRESS.md": "5143db119ec004e390ff97591466918a99a9786f0d9a43410433d3ce2edec67d",
+    "audit/2026-10-09/PROGRESS.md": "d20fcd9346fb95c09e7b9533a8b5da29da79eadb93e9105b0feacdb104d7129d",
+    "audit/2026-10-09/check_live_script.py": "1661d7f427369d22fa533bc6195626483fc5d5ed3a5e44fec0b3bf894e0e34ec",
+    "audit/2026-10-09/evaluate_free.py": "63d3984c6d14742bce90c540d9299925b7216c8ca7fdb17440da8771a72d9d59",
+    "audit/2026-10-09/free-evaluation.json": "16b8798f757054fe9a372ddf49cd8ac8f666819c886b78e79d928c6cb3c95a2f",
+    "audit/2026-10-09/free-live-mock-checks.json": "c34a2c434da62f529bf534639cf9f3030f072dee6b256e6e1c850d265ba9139a",
+    "audit/2026-10-09/free-live-smoke.txt": "ba2ed6f51d1904baf0b50348f4a2936d2a98f89afe604509d8a92cc5ce4031c6",
+    "audit/2026-10-09/free-model-catalog.json": "125c8c9b3db9a47a1b5813e578115eac50bf1729154a5f7e2ec7c632896ccbf7",
+    "audit/2026-10-09/free-schema-live.json": "0805f5fc18d397b633cf04894637cfde6c277e221916faddc3ab5c332383d41f",
+    "audit/2026-10-09/harness-mock-checks.json": "91625787fb9b0763c430ec482e2b3c441452c15ea46572e58f1afe906642f808",
+    "audit/2026-10-09/pipeline-actionlint.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "audit/2026-10-09/pipeline-go-test.txt": "5f702c6abb381c967bf83524f815777aaa700f1777b7f7d4300f7eac67d753fe",
+    "audit/2026-10-09/pipeline-go1269-test.txt": "be06809fd319656e67dc331364599294b22c87468b326b0c94b8ffe5f0c4629c",
+    "audit/2026-10-09/pipeline-routing-go-test.txt": "5923a2d86ea6efd84a6a8030ae5b8779eac6feae489e2b1d51863778c1d9c5b0",
+    "audit/2026-10-09/pipeline-shellcheck.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "audit/2026-10-09/pipeline-skill-sync.json": "afaf33e514ef3bbb83d72b286f8f79dfccdfdc0085343396d272be692a0a3a21",
+    "audit/2026-10-09/pipeline-startup-benchmark.json": "2ce049433aab5d89560f2db7593dc3655ac84bc4b8fe12cbebcf2cb663958d8e",
+    "audit/2026-10-09/pipeline-vet.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "audit/2026-10-09/repair-remote-ci.jsonl": "8800937d5ab2e0af27372ee453950be4657782b751544be3a354d03ab9356b57",
+    "cmd/callm/main.go": "ddef72a61eef75d323717fab39295204886c00389c170cfa91e6b78bca7f4620",
+    "cmd/callm/pipeline_test.go": "75c3db649c9d9ab9306ee35cfba08cde32edfe9b4590dd3fe4df8b19c63a4a58",
+    "examples/README.md": "182e9b38eb1c4e70884a6bd3a2968884e6ccbaa747bcc0548be4934023829f0c",
+    "examples/mini-harness.py": "36ddc6d8ce42baf1cd168b872f199823865854afac84ff3203c06c6d64ad3827",
+    "examples/pipeline/check.schema.json": "5d266ee25c837573c8f1857afb2ea86fb5bd2e196b18f2bd3fabaf9d95b44dd7",
+    "examples/pipeline/check.txt": "019f7030bb549c2f71a404080455bb05cf59b53c15f2f746db5cdc70430de610",
+    "examples/pipeline/extract.txt": "56fe6c3e3fbb1928f3c852983d5b5aef4d244e2512154bbc2f8398f4f37268bd",
+    "examples/pipeline/invoice.schema.json": "edf5a05bec273e851f2bcd5d87cb9c3dc8826cc151a461c2d791be7b7603ce32",
+    "examples/pipeline/invoice.txt": "0d84a43b420b98d947944266c227150a390d0b4b8135a3f9706b29f19250da4c",
+    "examples/pipeline/manifest.json": "510341383f68c039311d270f9f8c8f98773fe57ca4d6b62ca34ba2164e2fad84",
+    "examples/pipeline/system.txt": "babf325aa51208fe7a0214d40281373ceead811db338410f35b9a218bb13dbbb",
+    "go.mod": "d8ff518911a88d5c843957de2ce0fc73b8ba1d5e49f614dfa002dbdb793fa581",
+    "go.sum": "190d9eb7b0bf958a72cdfa38e70887ba644442b0389537f21fcf5eff3daf325f",
+    "internal/client/anthropic.go": "f5766c1357342c7b2c42539c2cba3a62afd4d1042333a93e8b95fbe83f112460",
+    "internal/client/capabilities_test.go": "4d2f18bf6c82c050a5086a9207e7e09810c7c25e3fe6ed2559c7917f7c9101da",
+    "internal/client/client.go": "eca6c6d80cecbecaf27bd39cbf7d2d63b501e16da371444da38e2cafc640f3fa",
+    "internal/client/types.go": "ec0d95db961c981e6cc57a1ebfbdda7dc5f81610f92bb98f5d7035a99e3771fa",
+    "internal/pipeline/result.go": "bea4bfc5df9a78fb9f39fc6c9172cf1adae3867b029287676de5ff6304c9e87e",
+    "internal/pipeline/schema.go": "999eee62ccf88f406579ca569875523b04a2aaa5e30fd6ef1e54e7dfcd731a65",
+    "internal/pipeline/schema_test.go": "d2fc68477246789e34a2055b28bdfda0dfbb0cf1fd75fa5b6fc6e4887526fe9f",
+    "licenses/jsonschema-LICENSE": "c8858a5a76440bbca484e134cf7df46385d090dd18b2c58e650f939258802e5b",
+    "licenses/x-text-LICENSE": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067",
+    "licenses/x-text-PATENTS": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc",
+    "scripts/test_free_live.py": "5bb05c86902c38eb0abacf068fc6a5b5127c69b6bd9a0c1965464683a446c6f8",
+    "scripts/test_live.sh": "1dbd9117cb16eeca6d28a8d2dea02392f80e8cfdcf13fc0055b7d97a4d958879",
+    "scripts/test_mini_harness.py": "e0f8db89d5dcdbf91f4a1bbb5c173a727a9543692d9d44b861079b2db2b26a55",
+    "skills/callm/SKILL.md": "b2058022611adb4efeb42e0c2adcfa2ac1051a0ada97d0d420aa7f5bea96d0f4"
+  },
+  "exported_secret_scan": {
+    "files_checked": 55,
+    "matching_files": []
+  }
+}
