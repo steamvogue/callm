@@ -5,15 +5,17 @@ Original numbered recommendations follow, with delivery updates. Later user
 instruction: no paid models in tests. See [pipeline progress](PIPELINE_PROGRESS.md)
 and [free evaluation](FREE_EVALUATION.md) for completed follow-up work.
 
-1. **Complete release validation on Linux amd64.** Run the configured Go 1.26/1.27
-   race jobs and a pinned govulncheck scan. Review the result-status and inline-tag
-   compatibility changes before publishing a release. Local native ARM tests and
+1. **Finish security and platform validation.** The configured Go 1.26/1.27 amd64
+   race/test jobs and all five builds passed on release commit a7b0bd0; v0.10.0
+   is published with verified archive checksums. [Release evidence](RELEASE.md).
+   A pinned govulncheck scan remains a follow-up. Local native ARM tests and
    cross-compilation do not establish race safety, native macOS/Windows behavior,
    or a clean vulnerability scan. Refresh the release compiler pin when a newer
-   supported security patch appears. No release was published here.
+   supported security patch appears.
    Update: repair commit 469f25b passed remote amd64 race/test jobs and all five
    build jobs. Local race execution remains impossible; no vulnerability scan
-   pass is claimed. Check the final pipeline commit's remote CI before release.
+   pass is claimed. Review supported GitHub action revisions and runner pinning
+   after the release workflow's Node 20 and ubuntu-latest migration annotations.
 
 2. **Evaluate free candidates individually.** Completed 24 free calls across four
    models and six tasks, without retries. Gemma passed 5/6; no production defaults

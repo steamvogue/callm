@@ -1,0 +1,100 @@
+{
+  "tag": "v0.10.0",
+  "archives": [
+    {
+      "name": "callm-v0.10.0-darwin-amd64.tar.gz",
+      "size": 3432388,
+      "sha256": "c414272ef58b7372fa422e0ed7df7780f7ddbe1ceeb4dc631f37f156e9162a4d",
+      "checksum_valid": true,
+      "packaged_reference_files_match": [
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md",
+        "licenses/jsonschema-LICENSE",
+        "licenses/x-text-LICENSE",
+        "licenses/x-text-PATENTS",
+        "examples/mini-harness.py",
+        "examples/pipeline/manifest.json",
+        "skills/callm/SKILL.md"
+      ]
+    },
+    {
+      "name": "callm-v0.10.0-darwin-arm64.tar.gz",
+      "size": 3150062,
+      "sha256": "386050b56fed537578928c77bd7c1985f8984b7469cb14abd3e697bce0faf804",
+      "checksum_valid": true,
+      "packaged_reference_files_match": [
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md",
+        "licenses/jsonschema-LICENSE",
+        "licenses/x-text-LICENSE",
+        "licenses/x-text-PATENTS",
+        "examples/mini-harness.py",
+        "examples/pipeline/manifest.json",
+        "skills/callm/SKILL.md"
+      ]
+    },
+    {
+      "name": "callm-v0.10.0-linux-amd64.tar.gz",
+      "size": 3380013,
+      "sha256": "e587038de39541e2222010c0a0f9b135148301234c41e47f18550ab89e726aa2",
+      "checksum_valid": true,
+      "packaged_reference_files_match": [
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md",
+        "licenses/jsonschema-LICENSE",
+        "licenses/x-text-LICENSE",
+        "licenses/x-text-PATENTS",
+        "examples/mini-harness.py",
+        "examples/pipeline/manifest.json",
+        "skills/callm/SKILL.md"
+      ]
+    },
+    {
+      "name": "callm-v0.10.0-linux-arm64.tar.gz",
+      "size": 3036224,
+      "sha256": "46cbc973ebd9b599a018838f9673c203533db4cf9c98b1fab01b16dee9b55669",
+      "checksum_valid": true,
+      "packaged_reference_files_match": [
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md",
+        "licenses/jsonschema-LICENSE",
+        "licenses/x-text-LICENSE",
+        "licenses/x-text-PATENTS",
+        "examples/mini-harness.py",
+        "examples/pipeline/manifest.json",
+        "skills/callm/SKILL.md"
+      ]
+    },
+    {
+      "name": "callm-v0.10.0-windows-amd64.zip",
+      "size": 3460878,
+      "sha256": "04262095c1442ab2a522b26fb0892d3e6a1e510a5077fdb8a390687ea1c53061",
+      "checksum_valid": true,
+      "packaged_reference_files_match": [
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md",
+        "licenses/jsonschema-LICENSE",
+        "licenses/x-text-LICENSE",
+        "licenses/x-text-PATENTS",
+        "examples/mini-harness.py",
+        "examples/pipeline/manifest.json",
+        "skills/callm/SKILL.md"
+      ]
+    }
+  ],
+  "checksums_sha256": "8ca09e246bd6e55cd6fc48fcf0fd1e5eaf62a657bc08d464cd867c463c75fd92",
+  "native_release_asset_version": "callm v0.10.0 (commit: a7b0bd0, built at: 2026-10-09T12:36:10Z)",
+  "native_release_asset_help_verified": true,
+  "native_execution": "Only downloaded Linux ARM64 binary; other four targets inspected but not executed",
+  "provider_calls": 0
+}
