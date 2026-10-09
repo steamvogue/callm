@@ -111,7 +111,8 @@ exit delay](https://go.dev/doc/articles/race_detector) defaults to 1000 ms. The
 expanded case count exposed that repeated delay. Added a shared test-only
 cliRaceEnvironment() to every fixture environment, including isolated ones,
 preserving caller settings and appending atexit_sleep_ms=0. Kept race instrumentation
-and the 60-second timeout. Remote success for this fix will be recorded in delivery.
+and the 60-second timeout. The 73cafd8 fix passed both remote race/test jobs and
+all offline fixtures/builds. [Final delivery/CI/installation](DELIVERY.md).
 
 Final source passed native Go 1.27.2 tests/coverage and vet, native Go 1.26.9 tests,
 help synchronization, workflow lint and shell lint. [Go 1.27.2](pipeline-go-test.txt),
@@ -146,7 +147,7 @@ vulnerability scan is claimed. Schemas establish structure, not factual correctn
 The optional harness needs Python 3 on Linux/macOS; the CLI remains portable Go.
 Its failure journal/lock are documented, and no global token budget or automatic
 retry/repair is implemented. Final installation and source hashes are recorded
-separately after committing the implementation.
+separately in [DELIVERY.md](DELIVERY.md) and its linked installation records.
 
 Sources: [validator API/features](https://github.com/santhosh-tekuri/jsonschema),
 [Anthropic structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs),

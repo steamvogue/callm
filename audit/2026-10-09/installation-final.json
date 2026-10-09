@@ -1,0 +1,32 @@
+{
+  "code_commit": "73cafd88bc55b0c4384d7e53d977ea2418365dee",
+  "toolchain": "go1.27.2 linux/arm64",
+  "versions": {
+    "/var/www/straitly/bin/callm": "callm v0.9.0-3-g73cafd8 (commit: 73cafd8, built at: 2026-10-09T12:24:53Z)",
+    "/usr/local/bin/callm": "callm v0.9.0-3-g73cafd8 (commit: 73cafd8, built at: 2026-10-09T12:24:53Z)",
+    "/home/lordtime/.local/bin/callm": "callm v0.9.0-3-g73cafd8 (commit: 73cafd8, built at: 2026-10-09T12:24:53Z)"
+  },
+  "binary_sha256": {
+    "/var/www/straitly/bin/callm": "0151bf982b2f582d4b950993b4d14e3889fbdab585a70ffe4154d38990b24ebf",
+    "/usr/local/bin/callm": "0151bf982b2f582d4b950993b4d14e3889fbdab585a70ffe4154d38990b24ebf",
+    "/home/lordtime/.local/bin/callm": "0151bf982b2f582d4b950993b4d14e3889fbdab585a70ffe4154d38990b24ebf"
+  },
+  "installed_help_checks_passed": true,
+  "installed_alias_version": "callm v0.9.0-3-g73cafd8 (commit: 73cafd8, built at: 2026-10-09T12:24:53Z)",
+  "skill_sha256": {
+    "skills/callm/SKILL.md": "b2058022611adb4efeb42e0c2adcfa2ac1051a0ada97d0d420aa7f5bea96d0f4",
+    "/home/lordtime/.codex/skills/callm/SKILL.md": "b2058022611adb4efeb42e0c2adcfa2ac1051a0ada97d0d420aa7f5bea96d0f4",
+    "/home/lordtime/.claude/skills/callm/SKILL.md": "b2058022611adb4efeb42e0c2adcfa2ac1051a0ada97d0d420aa7f5bea96d0f4"
+  },
+  "remote_ci": {
+    "conclusion": "success",
+    "head_sha": "73cafd88bc55b0c4384d7e53d977ea2418365dee",
+    "html_url": "https://github.com/steamvogue/callm/actions/runs/37929256975",
+    "id": 37929256975,
+    "status": "completed"
+  },
+  "release_published": false,
+  "free_request_attempts": 27,
+  "paid_calls": 0,
+  "validation_inventory": "pipeline-validation.json describes the cc4c776 feature snapshot; the later test-only correction is 73cafd8"
+}
