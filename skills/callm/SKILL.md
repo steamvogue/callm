@@ -6,7 +6,7 @@ description: Use the fast, standalone `callm` CLI tool to query external LLMs (D
 # callm (call - llm) Agent Skill
 
 `callm` is a fast standalone CLI utility installed at `/usr/local/bin/callm` (and in `$PATH`).
-It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.6.0+; check `callm --version` and `callm --help` when using an older installation.
+It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.10.0; check `callm --version` and `callm --help` when using an older installation.
 
 Default provider: **Poolside** (`poolside/laguna-s-2.1`). Without a preset flag,
 callm uses the first provider whose key is set, checked in order Poolside,
@@ -205,7 +205,7 @@ Flash); use `-m deepseek-v4-pro` for V4 Pro. DeepSeek retired `deepseek-chat` an
 `--thinking-budget` is rejected. For a non-thinking request, use
 `callm --ds raw /chat/completions` with `"thinking": {"type": "disabled"}` in the body.
 
-## Unreleased repair behavior
+## Result and model behavior in v0.10.0
 
 Check `callm --help` before using these options with an older binary.
 
@@ -239,7 +239,7 @@ Check `callm --help` before using these options with an older binary.
   The free smoke default is `google/gemma-4-26b-a4b-it:free`; production defaults
   remain unchanged. Six synthetic tasks are insufficient for default promotion.
 
-### Pipeline inputs, schemas and results (unreleased)
+### Pipeline inputs, schemas and results (v0.10.0)
 
 Check binary help for these options before using an older installation:
 

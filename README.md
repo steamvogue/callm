@@ -596,7 +596,7 @@ Builds download the pinned JSON Schema validator and its Go module dependencies.
 The installed CLI requires no external runtime. The optional mini harness uses
 Python 3, and the shell examples/free live checks use jq.
 
-## Unreleased result and model behavior
+## Result and model behavior in v0.10.0
 
 Text output fails on truncation, refusal/filtering, unsupported tool or continuation
 requests, and empty answers. `--allow-empty` permits an intentionally empty answer;

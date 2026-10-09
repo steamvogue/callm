@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Requires an unreleased build with --strict, jq, and OPENROUTER_API_KEY.
+# Requires callm v0.10.0+ with --strict, jq, and OPENROUTER_API_KEY.
 set -euo pipefail
 input=${1:-input.txt}
 destination=${2:-summary.json}

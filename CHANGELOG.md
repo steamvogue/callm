@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.10.0 — 2026-10-09
 
 - Add regular-file prompt/system inputs, raw `--body-file FILE|-`, and a combined
   64 MiB request limit with a lower `--max-input-bytes` override. Raw bodies now
@@ -39,8 +39,8 @@
   table and lossless JSON catalogs. Improve redacted missing-key diagnostics.
 - Test supported Go 1.26/1.27 patches in CI; build releases with Go 1.27.2.
   Keep the Go 1.22 module language minimum.
-- Correct provider-specific examples, add guarded JSON publication, and validate
-  paid live-test answer/usage/reasoning metadata instead of accepting any stderr.
+- Correct provider-specific examples and add guarded JSON publication. Free-only
+  live tests require valid answer/usage/finish metadata and zero reported cost.
 - Record individual repairs, observations and validation in
   `audit/2026-10-09/PROGRESS.md`; use unit/local mock tests and synthetic fixtures.
   Paid provider generation and editor imports were not executed. Separate

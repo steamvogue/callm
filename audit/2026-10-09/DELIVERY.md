@@ -1,7 +1,8 @@
 # Delivery record
 
-Date: 2026-10-09. All authorized work is committed/pushed to main. No release tag
-or published release was created.
+Date: 2026-10-09. All authorized implementation work is committed/pushed to main.
+At this delivery checkpoint no release tag or published release had been created.
+The subsequent user-requested v0.10.0 release is tracked in [the release record](RELEASE.md).
 
 - `469f25b`: original B1–B9 repairs, examples and research/progress evidence.
 - `cc4c776`: file inputs, combined size limits, JSON Schema/local validation,
