@@ -131,7 +131,7 @@ const dotenvNotice = "ignoring ./.env (it could redirect API keys); " + dotenvVa
 // is true in the environment or a trusted file. The returned notice is for stderr.
 func LoadEnvFiles() (string, error) {
 	var trusted []string
-	// Executable directory's parent .env (e.g. /var/www/straitly/.env when binary is in bin/)
+	// Executable directory's parent .env (e.g. /path/to/project/.env when binary is in bin/)
 	if execPath, err := os.Executable(); err == nil {
 		trusted = append(trusted, filepath.Join(filepath.Dir(filepath.Dir(execPath)), ".env"))
 	}

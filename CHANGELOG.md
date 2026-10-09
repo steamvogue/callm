@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Keep local development audit records out of version control and remove public
+  documentation links to them. Preserve local copies for development use.
+
 ## v0.10.0 — 2026-10-09
 
 - Add regular-file prompt/system inputs, raw `--body-file FILE|-`, and a combined
@@ -41,10 +46,9 @@
   Keep the Go 1.22 module language minimum.
 - Correct provider-specific examples and add guarded JSON publication. Free-only
   live tests require valid answer/usage/finish metadata and zero reported cost.
-- Record individual repairs, observations and validation in
-  `audit/2026-10-09/PROGRESS.md`; use unit/local mock tests and synthetic fixtures.
-  Paid provider generation and editor imports were not executed. Separate
-  free evaluation/pipeline progress follows in `audit/2026-10-09/PIPELINE_PROGRESS.md`.
+- Validate repairs with unit/local mock tests and synthetic fixtures. Paid provider
+  generation and editor imports were not executed; free-model evaluations do not
+  establish compatibility with direct paid providers.
 
 ## v0.9.0 — 2026-09-16
 

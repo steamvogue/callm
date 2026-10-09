@@ -1,5 +1,0 @@
-linux/amd64: exit=0
-linux/arm64: exit=0
-darwin/amd64: exit=0
-darwin/arm64: exit=0
-windows/amd64: exit=0

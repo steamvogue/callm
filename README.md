@@ -632,8 +632,8 @@ Profiles recognize known dated snapshots. Explicit caps are preserved; adaptive
 effort does not create a manual thinking budget. Returning reasoning text is
 provider-dependent: newer Claude models may omit it while still generating and
 billing reasoning. `--reasoning` displays only returned text. No model-default
-upgrade accompanies these repairs. A separate [free-model evaluation](audit/2026-10-09/FREE_EVALUATION.md)
-records 24 zero-price requests; it does not validate paid defaults or direct providers.
+upgrade accompanies these repairs. A small evaluation used 24 zero-price requests;
+it does not validate paid defaults or direct providers.
 
 Native Anthropic catalogs support tables and lossless JSON. Zed/Kilo/Continue
 exports fail locally for that protocol, including explicit proxies; configure the
@@ -644,7 +644,6 @@ require `--oa`.
 
 The free live script requires jq and verifies catalog pricing, answer, finish,
 usage and zero reported cost. Its rejection paths are tested with fake responses.
-Development records, limitations and next actions are in [the repair log](audit/2026-10-09/PROGRESS.md).
 
 ## File inputs and validated pipelines
 
