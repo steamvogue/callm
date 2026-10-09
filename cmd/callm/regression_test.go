@@ -19,8 +19,15 @@ func testCLI(t *testing.T, args ...string) *exec.Cmd {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	t.Cleanup(cancel)
 	cmd := exec.CommandContext(ctx, os.Args[0], append([]string{"-test.run=^TestTimeoutCLIHelper$", "--"}, args...)...)
-	cmd.Env = append(os.Environ(), "CALLM_TIMEOUT_TEST_HELPER=1")
+	cmd.Env = append(os.Environ(), "CALLM_TIMEOUT_TEST_HELPER=1", cliRaceEnvironment())
 	return cmd
+}
+
+// CLI fixtures execute this test binary, which is instrumented under -race.
+// Avoid paying the default one-second runtime exit delay per successful child.
+// Preserve any caller-supplied detector/reporting options.
+func cliRaceEnvironment() string {
+	return "GORACE=" + strings.TrimSpace(os.Getenv("GORACE")+" atexit_sleep_ms=0")
 }
 
 func TestGlobalSubcommandDispatch(t *testing.T) {

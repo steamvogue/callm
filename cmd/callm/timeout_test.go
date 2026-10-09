@@ -95,7 +95,7 @@ func TestTimeoutCLICommands(t *testing.T) {
 				ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 				defer cancel()
 				cmd := exec.CommandContext(ctx, os.Args[0], append([]string{"-test.run=^TestTimeoutCLIHelper$", "--"}, args...)...)
-				cmd.Env = append(os.Environ(), "CALLM_TIMEOUT_TEST_HELPER=1")
+				cmd.Env = append(os.Environ(), "CALLM_TIMEOUT_TEST_HELPER=1", cliRaceEnvironment())
 				cmd.Stdin = strings.NewReader("")
 				output, err := cmd.CombinedOutput()
 				if err == nil || ctx.Err() != nil {

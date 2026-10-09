@@ -18,6 +18,9 @@
 - Make live tests free-only: verify all catalog prices are zero before at most two
   explicit OpenRouter `:free` calls, with no paid fallback. Record a separate
   24-call free-model evaluation; leave production provider/model defaults unchanged.
+- Remove the Go race runtime's repeated one-second exit delay from CLI fixture
+  subprocesses while retaining detector settings, keeping the expanded CI suite
+  within its existing 60-second timeout.
 
 - Reject truncated, refused, filtered, tool-dependent and empty text completions.
   Add `--strict` for terminal-reason enforcement (including JSON), and

@@ -69,7 +69,7 @@ func TestWorkspaceDotenvCannotRedirectKeys(t *testing.T) {
 			}
 			cmd := testCLI(t, tc.args...)
 			cmd.Dir = dir
-			cmd.Env = []string{"CALLM_TIMEOUT_TEST_HELPER=1", "HOME=" + home}
+			cmd.Env = []string{"CALLM_TIMEOUT_TEST_HELPER=1", "HOME=" + home, cliRaceEnvironment()}
 			for _, value := range tc.env {
 				cmd.Env = append(cmd.Env, expand(value))
 			}

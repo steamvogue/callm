@@ -23,7 +23,7 @@ func runModelsCLI(t *testing.T, args ...string) (string, string, error) {
 	t.Helper()
 	cmd := testCLI(t, args...)
 	cmd.Dir = t.TempDir()
-	cmd.Env = []string{"CALLM_TIMEOUT_TEST_HELPER=1", "HOME=" + t.TempDir()}
+	cmd.Env = []string{"CALLM_TIMEOUT_TEST_HELPER=1", "HOME=" + t.TempDir(), cliRaceEnvironment()}
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr

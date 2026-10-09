@@ -101,6 +101,18 @@ on recommendation 3; automated retry/repair/concurrency is deferred.
 
 ## Validation and remaining limits
 
+The first pipeline CI run [37928538480](https://github.com/steamvogue/callm/actions/runs/37928538480)
+failed the CLI package's cumulative 60-second timeout. All five build jobs and
+other package tests passed; the matrix cancelled the second test job. The log
+shows successful CLI subprocess cases taking about 1.02 seconds each, with no
+data-race warning. [Original failed logs](pipeline-ci-failure.txt) are retained.
+The test helper executes the instrumented test binary, whose [documented race
+exit delay](https://go.dev/doc/articles/race_detector) defaults to 1000 ms. The
+expanded case count exposed that repeated delay. Added a shared test-only
+cliRaceEnvironment() to every fixture environment, including isolated ones,
+preserving caller settings and appending atexit_sleep_ms=0. Kept race instrumentation
+and the 60-second timeout. Remote success for this fix will be recorded in delivery.
+
 Final source passed native Go 1.27.2 tests/coverage and vet, native Go 1.26.9 tests,
 help synchronization, workflow lint and shell lint. [Go 1.27.2](pipeline-go-test.txt),
 [Go 1.26.9](pipeline-go1269-test.txt), [vet](pipeline-vet.txt),

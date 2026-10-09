@@ -1,0 +1,1297 @@
+Lint & Test (Go 1.26.x)	Go Test	﻿2026-10-09T12:13:05.0875166Z ##[group]Run go test -race -timeout=60s -v ./...
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:13:05.0875660Z [36;1mgo test -race -timeout=60s -v ./...[0m
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:13:05.0936146Z shell: /usr/bin/bash -e {0}
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:13:05.0936375Z ##[endgroup]
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5267254Z === RUN   TestCompletionExitStatus
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5267743Z === RUN   TestCompletionExitStatus/null_tool_fields
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5268180Z === RUN   TestCompletionExitStatus/complete
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5268590Z === RUN   TestCompletionExitStatus/length
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5268959Z === RUN   TestCompletionExitStatus/empty_shape
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5269343Z === RUN   TestCompletionExitStatus/refusal
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5269716Z === RUN   TestCompletionExitStatus/filtered
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5270095Z === RUN   TestCompletionExitStatus/tools
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5270455Z === RUN   TestCompletionExitStatus/empty
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5270815Z === RUN   TestCompletionExitStatus/allowed_empty
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5271282Z === RUN   TestCompletionExitStatus/allow_empty_still_truncated
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5271867Z === RUN   TestCompletionExitStatus/legacy_missing_reason
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5272305Z === RUN   TestCompletionExitStatus/strict_missing_reason
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5272776Z === RUN   TestCompletionExitStatus/json_diagnostics
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5273197Z === RUN   TestCompletionExitStatus/json_strict
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5273623Z === RUN   TestCompletionExitStatus/reasoning_only
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5274078Z --- PASS: TestCompletionExitStatus (6.36s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5274866Z     --- PASS: TestCompletionExitStatus/null_tool_fields (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5275423Z     --- PASS: TestCompletionExitStatus/complete (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5275928Z     --- PASS: TestCompletionExitStatus/length (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5276435Z     --- PASS: TestCompletionExitStatus/empty_shape (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5276949Z     --- PASS: TestCompletionExitStatus/refusal (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5277458Z     --- PASS: TestCompletionExitStatus/filtered (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5277993Z     --- PASS: TestCompletionExitStatus/tools (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5278499Z     --- PASS: TestCompletionExitStatus/empty (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5279052Z     --- PASS: TestCompletionExitStatus/allowed_empty (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5279740Z     --- PASS: TestCompletionExitStatus/allow_empty_still_truncated (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5280457Z     --- PASS: TestCompletionExitStatus/legacy_missing_reason (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5281141Z     --- PASS: TestCompletionExitStatus/strict_missing_reason (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5281827Z     --- PASS: TestCompletionExitStatus/json_diagnostics (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5282411Z     --- PASS: TestCompletionExitStatus/json_strict (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5282969Z     --- PASS: TestCompletionExitStatus/reasoning_only (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5283448Z === RUN   TestStreamingCompletionExitStatus
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5283910Z === RUN   TestStreamingCompletionExitStatus/complete
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5284412Z === RUN   TestStreamingCompletionExitStatus/truncated
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5285087Z === RUN   TestStreamingCompletionExitStatus/done_only
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5285606Z === RUN   TestStreamingCompletionExitStatus/anthropic_truncation
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5286177Z === RUN   TestStreamingCompletionExitStatus/anthropic_tools
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5286697Z --- PASS: TestStreamingCompletionExitStatus (1.11s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5287323Z     --- PASS: TestStreamingCompletionExitStatus/complete (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5288254Z     --- PASS: TestStreamingCompletionExitStatus/truncated (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5288896Z     --- PASS: TestStreamingCompletionExitStatus/done_only (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5289614Z     --- PASS: TestStreamingCompletionExitStatus/anthropic_truncation (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5290398Z     --- PASS: TestStreamingCompletionExitStatus/anthropic_tools (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5290935Z === RUN   TestParsedReasoningCompletion
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5291480Z --- PASS: TestParsedReasoningCompletion (2.07s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5292164Z === RUN   TestDeepSeekCLI
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5292500Z === RUN   TestDeepSeekCLI/default_model
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5292892Z === RUN   TestDeepSeekCLI/reasoning_display
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5293289Z === RUN   TestDeepSeekCLI/model_override
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5293680Z === RUN   TestDeepSeekCLI/effort
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5294056Z === RUN   TestDeepSeekCLI/raw_thinking_switch
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5294682Z --- PASS: TestDeepSeekCLI (5.12s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5295152Z     --- PASS: TestDeepSeekCLI/default_model (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5295684Z     --- PASS: TestDeepSeekCLI/reasoning_display (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5296206Z     --- PASS: TestDeepSeekCLI/model_override (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5296697Z     --- PASS: TestDeepSeekCLI/effort (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5297219Z     --- PASS: TestDeepSeekCLI/raw_thinking_switch (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5297671Z === RUN   TestDeepSeekThinkingBudgetRejected
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5298125Z --- PASS: TestDeepSeekThinkingBudgetRejected (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5298576Z === RUN   TestDefaultPresetDetection
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5298962Z === RUN   TestDefaultPresetDetection/no_keys
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5299299Z === RUN   TestDefaultPresetDetection/unrelated_keys_only
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5299589Z === RUN   TestDefaultPresetDetection/poolside
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5299861Z === RUN   TestDefaultPresetDetection/orcarouter
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5300188Z === RUN   TestDefaultPresetDetection/straitly
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5300478Z === RUN   TestDefaultPresetDetection/deepseek
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5300738Z === RUN   TestDefaultPresetDetection/openrouter
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5300995Z === RUN   TestDefaultPresetDetection/kimi
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5301284Z === RUN   TestDefaultPresetDetection/priority_pool_over_all
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5301617Z === RUN   TestDefaultPresetDetection/priority_orca_over_straitly
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5301959Z === RUN   TestDefaultPresetDetection/explicit_st_overrides_keys
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5302309Z === RUN   TestDefaultPresetDetection/explicit_pool_overrides_keys
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5302700Z === RUN   TestDefaultPresetDetection/claude_with_only_anthropic_key
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5303086Z === RUN   TestDefaultPresetDetection/claude_with_anthropic_and_poolside_keys
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5303504Z === RUN   TestDefaultPresetDetection/claude_with_anthropic_and_openrouter_keys
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5303857Z --- PASS: TestDefaultPresetDetection (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5304193Z     --- PASS: TestDefaultPresetDetection/no_keys (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5304774Z     --- PASS: TestDefaultPresetDetection/unrelated_keys_only (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5305151Z     --- PASS: TestDefaultPresetDetection/poolside (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5305812Z     --- PASS: TestDefaultPresetDetection/orcarouter (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5306416Z     --- PASS: TestDefaultPresetDetection/straitly (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5306979Z     --- PASS: TestDefaultPresetDetection/deepseek (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5307339Z     --- PASS: TestDefaultPresetDetection/openrouter (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5307689Z     --- PASS: TestDefaultPresetDetection/kimi (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5308075Z     --- PASS: TestDefaultPresetDetection/priority_pool_over_all (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5308553Z     --- PASS: TestDefaultPresetDetection/priority_orca_over_straitly (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5309017Z     --- PASS: TestDefaultPresetDetection/explicit_st_overrides_keys (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5309470Z     --- PASS: TestDefaultPresetDetection/explicit_pool_overrides_keys (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5310131Z     --- PASS: TestDefaultPresetDetection/claude_with_only_anthropic_key (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5310637Z     --- PASS: TestDefaultPresetDetection/claude_with_anthropic_and_poolside_keys (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5311182Z     --- PASS: TestDefaultPresetDetection/claude_with_anthropic_and_openrouter_keys (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5311549Z === RUN   TestMissingKeyDiagnostic
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5311799Z --- PASS: TestMissingKeyDiagnostic (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5312078Z === RUN   TestWorkspaceDotenvCannotRedirectKeys
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5312520Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/reported_reproduction
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5312903Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/key_from_environment
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5313263Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/key_from_user_config
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5313648Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/dotenv_cannot_enable_itself
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5314041Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/opt-out_hides_notice
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5314402Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/environment_opt-in
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5314982Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/user_config_opt-in
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5315358Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/invalid_setting
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5315694Z --- PASS: TestWorkspaceDotenvCannotRedirectKeys (6.19s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5316140Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/reported_reproduction (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5316650Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/key_from_environment (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5317129Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/key_from_user_config (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5317635Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/dotenv_cannot_enable_itself (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5318136Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/opt-out_hides_notice (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5318621Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/environment_opt-in (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5319095Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/user_config_opt-in (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5319555Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/invalid_setting (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5319880Z === RUN   TestREADMEHelpReference
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5320123Z --- PASS: TestREADMEHelpReference (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5320369Z === RUN   TestSubcommandHelpTimeouts
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5320610Z === RUN   TestSubcommandHelpTimeouts/models
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5320863Z === RUN   TestSubcommandHelpTimeouts/info
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5321099Z === RUN   TestSubcommandHelpTimeouts/raw
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5321347Z --- PASS: TestSubcommandHelpTimeouts (3.07s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5321673Z     --- PASS: TestSubcommandHelpTimeouts/models (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5321998Z     --- PASS: TestSubcommandHelpTimeouts/info (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5322317Z     --- PASS: TestSubcommandHelpTimeouts/raw (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5322567Z === RUN   TestKimiCLI
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5322757Z === RUN   TestKimiCLI/chat
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5322960Z === RUN   TestKimiCLI/stream
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5323170Z === RUN   TestKimiCLI/model_override
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5323392Z === RUN   TestKimiCLI/key_override
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5323610Z === RUN   TestKimiCLI/models
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5323814Z === RUN   TestKimiCLI/info
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5324021Z === RUN   TestKimiCLI/raw
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5324221Z === RUN   TestKimiCLI/moonshot
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5324427Z === RUN   TestKimiCLI/ms
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5324801Z --- PASS: TestKimiCLI (9.21s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5325051Z     --- PASS: TestKimiCLI/chat (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5325315Z     --- PASS: TestKimiCLI/stream (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5325601Z     --- PASS: TestKimiCLI/model_override (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5325897Z     --- PASS: TestKimiCLI/key_override (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5326169Z     --- PASS: TestKimiCLI/models (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5326549Z     --- PASS: TestKimiCLI/info (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5326814Z     --- PASS: TestKimiCLI/raw (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5327078Z     --- PASS: TestKimiCLI/moonshot (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5327340Z     --- PASS: TestKimiCLI/ms (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5327571Z === RUN   TestKimiInvalidOptions
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5327816Z --- PASS: TestKimiInvalidOptions (0.08s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5328053Z === RUN   TestModelsFormatsAndFilter
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5328323Z === RUN   TestModelsFormatsAndFilter/json_raw_fidelity
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5328710Z === RUN   TestModelsFormatsAndFilter/json_alias
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5328964Z === RUN   TestModelsFormatsAndFilter/zed
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5329202Z === RUN   TestModelsFormatsAndFilter/kilo
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5329483Z === RUN   TestModelsFormatsAndFilter/kilo_provider_name
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5329760Z === RUN   TestModelsFormatsAndFilter/continue
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5330018Z === RUN   TestModelsFormatsAndFilter/table_filter
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5330319Z === RUN   TestModelsFormatsAndFilter/conflicting_output_modes
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5330621Z === RUN   TestModelsFormatsAndFilter/unknown_format
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5330919Z === RUN   TestModelsFormatsAndFilter/invalid_positional_regex
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5331209Z --- PASS: TestModelsFormatsAndFilter (7.23s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5331563Z     --- PASS: TestModelsFormatsAndFilter/json_raw_fidelity (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5331935Z     --- PASS: TestModelsFormatsAndFilter/json_alias (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5332270Z     --- PASS: TestModelsFormatsAndFilter/zed (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5332590Z     --- PASS: TestModelsFormatsAndFilter/kilo (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5332951Z     --- PASS: TestModelsFormatsAndFilter/kilo_provider_name (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5333318Z     --- PASS: TestModelsFormatsAndFilter/continue (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5333661Z     --- PASS: TestModelsFormatsAndFilter/table_filter (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5334058Z     --- PASS: TestModelsFormatsAndFilter/conflicting_output_modes (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5334637Z     --- PASS: TestModelsFormatsAndFilter/unknown_format (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5335060Z     --- PASS: TestModelsFormatsAndFilter/invalid_positional_regex (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5335376Z === RUN   TestModelsHelpFlags
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5335596Z --- PASS: TestModelsHelpFlags (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5335835Z === RUN   TestZedMissingContextWarning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5336096Z --- PASS: TestZedMissingContextWarning (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5336334Z === RUN   TestOrcaCLI
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5336530Z === RUN   TestOrcaCLI/chat
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5336730Z === RUN   TestOrcaCLI/stream
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5336930Z === RUN   TestOrcaCLI/claude
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5337134Z === RUN   TestOrcaCLI/model_override
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5337350Z === RUN   TestOrcaCLI/models
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5337546Z === RUN   TestOrcaCLI/info
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5337742Z === RUN   TestOrcaCLI/raw
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5337948Z === RUN   TestOrcaCLI/openrouter_unchanged
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5338185Z --- PASS: TestOrcaCLI (8.19s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5338423Z     --- PASS: TestOrcaCLI/chat (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5338679Z     --- PASS: TestOrcaCLI/stream (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5338933Z     --- PASS: TestOrcaCLI/claude (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5339205Z     --- PASS: TestOrcaCLI/model_override (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5339478Z     --- PASS: TestOrcaCLI/models (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5339729Z     --- PASS: TestOrcaCLI/info (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5339979Z     --- PASS: TestOrcaCLI/raw (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5340281Z     --- PASS: TestOrcaCLI/openrouter_unchanged (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5340539Z === RUN   TestOrcaInvalidOptions
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5340771Z --- PASS: TestOrcaInvalidOptions (0.04s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5341030Z === RUN   TestPipelineInputAndSchemaProtocols
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5341310Z === RUN   TestPipelineInputAndSchemaProtocols/oa
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5341600Z === RUN   TestPipelineInputAndSchemaProtocols/or
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5342040Z === RUN   TestPipelineInputAndSchemaProtocols/ant
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5342338Z --- PASS: TestPipelineInputAndSchemaProtocols (3.07s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5342702Z     --- PASS: TestPipelineInputAndSchemaProtocols/oa (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5343064Z     --- PASS: TestPipelineInputAndSchemaProtocols/or (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5343426Z     --- PASS: TestPipelineInputAndSchemaProtocols/ant (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5343728Z === RUN   TestPipelineFailureOutputAndLocalOnly
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5344022Z --- PASS: TestPipelineFailureOutputAndLocalOnly (0.09s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5344409Z === RUN   TestPipelinePreflightAndRawBody
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5344854Z --- PASS: TestPipelinePreflightAndRawBody (2.21s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5345119Z === RUN   TestRawBodyStdinDeadline
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5345356Z --- PASS: TestRawBodyStdinDeadline (0.04s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5345602Z === RUN   TestGlobalSubcommandDispatch
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5345853Z --- PASS: TestGlobalSubcommandDispatch (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5346107Z === RUN   TestStdinWaitAndDeadline
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5346335Z --- PASS: TestStdinWaitAndDeadline (0.17s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5346573Z === RUN   TestCLIOutputAndValidation
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5346820Z === RUN   TestCLIOutputAndValidation/json_stats
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5347098Z === RUN   TestCLIOutputAndValidation/inline_hidden
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5347395Z === RUN   TestCLIOutputAndValidation/invalid_temperature
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5347683Z === RUN   TestCLIOutputAndValidation/invalid_top-p
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5347978Z === RUN   TestCLIOutputAndValidation/conflicting_providers
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5348287Z === RUN   TestCLIOutputAndValidation/conflicting_tokens
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5348573Z === RUN   TestCLIOutputAndValidation/conflicting_stream
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5348863Z === RUN   TestCLIOutputAndValidation/conflicting_reasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5349144Z --- PASS: TestCLIOutputAndValidation (2.17s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5349470Z     --- PASS: TestCLIOutputAndValidation/json_stats (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5349842Z     --- PASS: TestCLIOutputAndValidation/inline_hidden (1.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5350230Z     --- PASS: TestCLIOutputAndValidation/invalid_temperature (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5350623Z     --- PASS: TestCLIOutputAndValidation/invalid_top-p (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5351022Z     --- PASS: TestCLIOutputAndValidation/conflicting_providers (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5351427Z     --- PASS: TestCLIOutputAndValidation/conflicting_tokens (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5351817Z     --- PASS: TestCLIOutputAndValidation/conflicting_stream (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5352215Z     --- PASS: TestCLIOutputAndValidation/conflicting_reasoning (0.02s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5352517Z === RUN   TestCLIIndependentTimeouts
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5352773Z === RUN   TestCLIIndependentTimeouts/header-timeout
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5353052Z === RUN   TestCLIIndependentTimeouts/idle-timeout
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5353322Z === RUN   TestCLIIndependentTimeouts/stdin-timeout
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5353586Z --- PASS: TestCLIIndependentTimeouts (0.16s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5353928Z     --- PASS: TestCLIIndependentTimeouts/header-timeout (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5354294Z     --- PASS: TestCLIIndependentTimeouts/idle-timeout (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5354829Z     --- PASS: TestCLIIndependentTimeouts/stdin-timeout (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5355103Z === RUN   TestCLIAnthropicProxy
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5355333Z panic: test timed out after 1m0s
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5355552Z 	running tests:
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5355753Z 		TestCLIAnthropicProxy (0s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5355879Z 
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5355976Z goroutine 526 [running]:
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5356184Z testing.(*M).startAlarm.func1()
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5356791Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/testing/testing.go:2802 +0x605
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5357107Z created by time.goFunc
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5357377Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/time/sleep.go:215 +0x45
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5357579Z 
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5357666Z goroutine 1 [chan receive]:
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5358053Z testing.(*T).Run(0xc000374b48, {0xb3d1c2, 0x15}, 0xb695f0)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5358431Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/testing/testing.go:2109 +0xb3e
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5358738Z testing.runTests.func1(0xc000374b48)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5359049Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/testing/testing.go:2585 +0x85
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5359350Z testing.tRunner(0xc000374b48, 0xc000045ad0)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5359681Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/testing/testing.go:2036 +0x21d
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5360179Z testing.runTests({0xb343d3, 0x5}, {0xb392a5, 0xf}, 0xc00029e678, {0xf41620, 0x1e, 0x1e}, {0xc2aa54875b16cebe, 0xdf97bb471, ...})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5360834Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/testing/testing.go:2583 +0x9ea
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5361130Z testing.(*M).Run(0xc000318640)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5361427Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/testing/testing.go:2443 +0xf4c
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5361713Z main.main()
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5361893Z 	_testmain.go:104 +0x165
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5362013Z 
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5362099Z goroutine 585 [syscall]:
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5362360Z syscall.Syscall6(0xf7, 0x3, 0xc, 0xc0000aba50, 0x4, 0xc00017a2d0, 0x0)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5362747Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/syscall/syscall_linux.go:96 +0x45
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5363138Z internal/syscall/unix.Waitid(0x3, 0xc, 0xc0000aba50, 0x4, 0xc00017a2d0)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5363571Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/internal/syscall/unix/waitid_linux.go:18 +0x70
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5363919Z os.(*Process).pidfdWait.func1(...)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5364223Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/pidfd_linux.go:108
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5364581Z os.ignoringEINTR(...)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5364848Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/file_posix.go:263
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5365130Z os.(*Process).pidfdWait(0xc00007e240)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5365441Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/pidfd_linux.go:107 +0x365
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5365734Z os.(*Process).wait(0xc00007e240)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5366019Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/exec_unix.go:25 +0x47
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5366296Z os.(*Process).Wait(...)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5366551Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/exec.go:346
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5366810Z os/exec.(*Cmd).Wait(0xc0002b44e0)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5367108Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/exec/exec.go:930 +0xb0
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5367388Z os/exec.(*Cmd).Run(0xc0002b44e0)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5367665Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/exec/exec.go:632 +0x55
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5367961Z os/exec.(*Cmd).CombinedOutput(0xc0002b44e0)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5368278Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/exec/exec.go:1047 +0x1f1
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5368600Z callm/cmd/callm.TestCLIAnthropicProxy(0xc00019c248)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5368962Z 	/home/runner/work/callm/callm/cmd/callm/regression_test.go:168 +0x39c
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5369272Z testing.tRunner(0xc00019c248, 0xb695f0)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5369587Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/testing/testing.go:2036 +0x21d
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5369904Z created by testing.(*T).Run in goroutine 1
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5370220Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/testing/testing.go:2101 +0xb13
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5370426Z 
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5370515Z goroutine 586 [IO wait]:
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5370752Z internal/poll.runtime_pollWait(0x7f30b3131200, 0x72)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5371089Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/runtime/netpoll.go:351 +0x85
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5371424Z internal/poll.(*pollDesc).wait(0xc0001a00a0, 0x72, 0x0)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5371806Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/internal/poll/fd_poll_runtime.go:84 +0xb1
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5372136Z internal/poll.(*pollDesc).waitRead(...)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5372470Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/internal/poll/fd_poll_runtime.go:89
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5372805Z internal/poll.(*FD).Accept(0xc0001a0080)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5373133Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/internal/poll/fd_unix.go:613 +0x4ea
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5373555Z net.(*netFD).accept(0xc0001a0080)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5373845Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/fd_unix.go:150 +0x45
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5374132Z net.(*TCPListener).accept(0xc00007e200)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5374557Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/tcpsock_posix.go:159 +0x4e
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5374871Z net.(*TCPListener).Accept(0xc00007e200)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5375176Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/tcpsock.go:387 +0x65
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5375522Z net/http.(*Server).Serve(0xc0000b8100, {0xb749d0, 0xc00007e200})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5375986Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/http/server.go:3454 +0x610
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5376303Z net/http/httptest.(*Server).goServe.func1()
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5376648Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/http/httptest/server.go:341 +0xb3
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5377030Z created by net/http/httptest.(*Server).goServe in goroutine 585
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5377416Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/http/httptest/server.go:339 +0xa5
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5377651Z 
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5377733Z goroutine 589 [IO wait]:
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5377968Z internal/poll.runtime_pollWait(0x7f30b3131800, 0x72)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5378315Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/runtime/netpoll.go:351 +0x85
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5378643Z internal/poll.(*pollDesc).wait(0xc0001a0120, 0x72, 0x0)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5379016Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/internal/poll/fd_poll_runtime.go:84 +0xb1
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5379348Z internal/poll.(*pollDesc).waitRead(...)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5379680Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/internal/poll/fd_poll_runtime.go:89
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5380052Z internal/poll.(*FD).Read(0xc0001a0100, {0xc00026d000, 0x1000, 0x1000})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5380429Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/internal/poll/fd_unix.go:165 +0x499
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5380776Z net.(*netFD).Read(0xc0001a0100, {0xc00026d000, 0x1000, 0x1000})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5381124Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/fd_posix.go:68 +0x4b
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5381449Z net.(*conn).Read(0xc000102160, {0xc00026d000, 0x1000, 0x1000})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5381779Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/net.go:196 +0xad
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5382121Z net/http.(*connReader).Read(0xc0002881c0, {0xc00026d000, 0x1000, 0x1000})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5382505Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/http/server.go:812 +0x288
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5382798Z bufio.(*Reader).fill(0xc000132540)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5383095Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/bufio/bufio.go:113 +0x2a4
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5383392Z bufio.(*Reader).Peek(0xc000132540, 0x4)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5383683Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/bufio/bufio.go:152 +0xb0
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5384009Z net/http.(*conn).serve(0xc0000001b0, {0xb75088, 0xc0000a06f0})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5384362Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/http/server.go:2123 +0x10bb
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5384860Z created by net/http.(*Server).Serve in goroutine 586
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5385211Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/net/http/server.go:3484 +0x88a
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5385426Z 
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5385506Z goroutine 587 [IO wait]:
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5385737Z internal/poll.runtime_pollWait(0x7f30b3131600, 0x72)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5386073Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/runtime/netpoll.go:351 +0x85
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5386402Z internal/poll.(*pollDesc).wait(0xc00040c320, 0x72, 0x1)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5386782Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/internal/poll/fd_poll_runtime.go:84 +0xb1
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5387116Z internal/poll.(*pollDesc).waitRead(...)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5387442Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/internal/poll/fd_poll_runtime.go:89
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5387804Z internal/poll.(*FD).Read(0xc00040c300, {0xc0003ca807, 0x3f9, 0x3f9})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5388171Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/internal/poll/fd_unix.go:165 +0x499
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5388466Z os.(*File).read(...)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5388716Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/file_posix.go:30
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5389143Z os.(*File).Read(0xc000102130, {0xc0003ca807, 0x3f9, 0x3f9})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5389461Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/file.go:144 +0xad
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5389786Z bytes.(*Buffer).ReadFrom(0xc000248600, {0xb70320, 0xc000102130})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5390138Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/bytes/buffer.go:229 +0x10e
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5390514Z io.copyBuffer({0xb70520, 0xc000248600}, {0xb70320, 0xc000102130}, {0x0, 0x0, 0x0})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5390890Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/io/io.go:415 +0x20f
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5391251Z io.Copy(...)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5391472Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/io/io.go:388
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5391763Z os.genericWriteTo(0xc000102130, {0xb70520, 0xc000248600})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5392089Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/file.go:295 +0x4a
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5392418Z os.(*File).WriteTo(0xc000102130, {0xb70520, 0xc000248600})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5392738Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/file.go:273 +0xd5
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5393088Z io.copyBuffer({0xb70520, 0xc000248600}, {0xb703a0, 0xc000102130}, {0x0, 0x0, 0x0})
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5393454Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/io/io.go:411 +0xd4
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5393705Z io.Copy(...)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5393921Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/io/io.go:388
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5394181Z os/exec.(*Cmd).writerDescriptor.func1()
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5394613Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/exec/exec.go:602 +0x5b
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5394935Z os/exec.(*Cmd).Start.func2(0xc00039c220)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5395233Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/exec/exec.go:757 +0x3d
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5395539Z created by os/exec.(*Cmd).Start in goroutine 585
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5395870Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/exec/exec.go:756 +0x10f2
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5396069Z 
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5396157Z goroutine 588 [select]:
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5396375Z os/exec.(*Cmd).watchCtx(0xc0002b44e0, 0xc000364380)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5396701Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/exec/exec.go:797 +0x10a
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5397002Z created by os/exec.(*Cmd).Start in goroutine 585
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5397320Z 	/opt/hostedtoolcache/go/1.26.9/x64/src/os/exec/exec.go:783 +0x109d
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5397624Z FAIL	callm/cmd/callm	60.033s
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5397853Z === RUN   TestConvertToAnthropicReq
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5398094Z --- PASS: TestConvertToAnthropicReq (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5398342Z === RUN   TestPrepareRequestOpenAIO1
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5398594Z --- PASS: TestPrepareRequestOpenAIO1 (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5398870Z === RUN   TestPrepareRequestOpenRouterReasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5399168Z --- PASS: TestPrepareRequestOpenRouterReasoning (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5399443Z === RUN   TestProviderAPICallMinimal
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5399686Z === RUN   TestProviderAPICallMinimal/straitly
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5399945Z === RUN   TestProviderAPICallMinimal/openrouter
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5400203Z === RUN   TestProviderAPICallMinimal/deepseek
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5400462Z === RUN   TestProviderAPICallMinimal/openai
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5400712Z === RUN   TestProviderAPICallMinimal/moonshot
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5400964Z === RUN   TestProviderAPICallMinimal/zhipu
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5401215Z === RUN   TestProviderAPICallMinimal/qwen
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5401461Z === RUN   TestProviderAPICallMinimal/groq
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5401704Z === RUN   TestProviderAPICallMinimal/poolside
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5401953Z === RUN   TestProviderAPICallMinimal/ollama
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5402208Z --- PASS: TestProviderAPICallMinimal (0.01s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5402530Z     --- PASS: TestProviderAPICallMinimal/straitly (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5402883Z     --- PASS: TestProviderAPICallMinimal/openrouter (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5403228Z     --- PASS: TestProviderAPICallMinimal/deepseek (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5403557Z     --- PASS: TestProviderAPICallMinimal/openai (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5404022Z     --- PASS: TestProviderAPICallMinimal/moonshot (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5404349Z     --- PASS: TestProviderAPICallMinimal/zhipu (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5404761Z     --- PASS: TestProviderAPICallMinimal/qwen (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5405078Z     --- PASS: TestProviderAPICallMinimal/groq (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5405401Z     --- PASS: TestProviderAPICallMinimal/poolside (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5405730Z     --- PASS: TestProviderAPICallMinimal/ollama (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5406004Z === RUN   TestProviderAPICallReasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5406427Z === RUN   TestProviderAPICallReasoning/deepseek_flash_thinking
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5406751Z === RUN   TestProviderAPICallReasoning/openrouter_reasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5407074Z === RUN   TestProviderAPICallReasoning/openai_o3_mini_reasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5407401Z === RUN   TestProviderAPICallReasoning/moonshot_reasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5407702Z === RUN   TestProviderAPICallReasoning/zhipu_glm_reasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5408013Z === RUN   TestProviderAPICallReasoning/qwen_qwq_reasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5408300Z === RUN   TestProviderAPICallReasoning/groq_reasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5408581Z --- PASS: TestProviderAPICallReasoning (0.01s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5408971Z     --- PASS: TestProviderAPICallReasoning/deepseek_flash_thinking (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5409404Z     --- PASS: TestProviderAPICallReasoning/openrouter_reasoning (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5409839Z     --- PASS: TestProviderAPICallReasoning/openai_o3_mini_reasoning (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5410267Z     --- PASS: TestProviderAPICallReasoning/moonshot_reasoning (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5410679Z     --- PASS: TestProviderAPICallReasoning/zhipu_glm_reasoning (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5411082Z     --- PASS: TestProviderAPICallReasoning/qwen_qwq_reasoning (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5427518Z     --- PASS: TestProviderAPICallReasoning/groq_reasoning (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5427894Z === RUN   TestNativeSchemaAndAdaptiveEffortCoexist
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5428241Z --- PASS: TestNativeSchemaAndAdaptiveEffortCoexist (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5428540Z === RUN   TestClaudeAdaptiveProfiles
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5428794Z --- PASS: TestClaudeAdaptiveProfiles (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5429045Z === RUN   TestOpenAIModelProfiles
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5429297Z === RUN   TestOpenAIModelProfiles/gpt-6.1-sol/high
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5429574Z === RUN   TestOpenAIModelProfiles/gpt-6.1-sol/none
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5429858Z === RUN   TestOpenAIModelProfiles/gpt-6.1-sol/minimal
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5430141Z === RUN   TestOpenAIModelProfiles/gpt-6-astra/max
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5430416Z === RUN   TestOpenAIModelProfiles/gpt-6-astra/none
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5430684Z === RUN   TestOpenAIModelProfiles/gpt-6-luna/none
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5430946Z === RUN   TestOpenAIModelProfiles/gpt-6-sol/none
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5431213Z === RUN   TestOpenAIModelProfiles/gpt-6-luna/high
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5431479Z === RUN   TestOpenAIModelProfiles/gpt-6-luna/
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5431779Z === RUN   TestOpenAIModelProfiles/gpt-6.1-sol-2026-10-01/xhigh
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5432100Z === RUN   TestOpenAIModelProfiles/openai/gpt-6-luna/max
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5432385Z === RUN   TestOpenAIModelProfiles/o3-mini/medium
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5432664Z === RUN   TestOpenAIModelProfiles/o3-mini/medium#01
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5432957Z === RUN   TestOpenAIModelProfiles/custom-model/high
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5433229Z === RUN   TestOpenAIModelProfiles/custom-model/none
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5433494Z === RUN   TestOpenAIModelProfiles/gpt-6-future/high
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5433759Z --- PASS: TestOpenAIModelProfiles (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5434096Z     --- PASS: TestOpenAIModelProfiles/gpt-6.1-sol/high (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5434550Z     --- PASS: TestOpenAIModelProfiles/gpt-6.1-sol/none (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5434929Z     --- PASS: TestOpenAIModelProfiles/gpt-6.1-sol/minimal (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5435316Z     --- PASS: TestOpenAIModelProfiles/gpt-6-astra/max (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5435911Z     --- PASS: TestOpenAIModelProfiles/gpt-6-astra/none (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5436269Z     --- PASS: TestOpenAIModelProfiles/gpt-6-luna/none (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5436633Z     --- PASS: TestOpenAIModelProfiles/gpt-6-sol/none (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5436983Z     --- PASS: TestOpenAIModelProfiles/gpt-6-luna/high (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5437321Z     --- PASS: TestOpenAIModelProfiles/gpt-6-luna/ (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5437714Z     --- PASS: TestOpenAIModelProfiles/gpt-6.1-sol-2026-10-01/xhigh (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5438136Z     --- PASS: TestOpenAIModelProfiles/openai/gpt-6-luna/max (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5438609Z     --- PASS: TestOpenAIModelProfiles/o3-mini/medium (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5438969Z     --- PASS: TestOpenAIModelProfiles/o3-mini/medium#01 (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5439339Z     --- PASS: TestOpenAIModelProfiles/custom-model/high (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5439697Z     --- PASS: TestOpenAIModelProfiles/custom-model/none (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5440059Z     --- PASS: TestOpenAIModelProfiles/gpt-6-future/high (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5440329Z === RUN   TestOrcaCost
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5440563Z --- PASS: TestOrcaCost (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5440797Z === RUN   TestOrcaDetectionAndCostHeader
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5441065Z --- PASS: TestOrcaDetectionAndCostHeader (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5441326Z === RUN   TestStreamValidation
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5441547Z === RUN   TestStreamValidation/space
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5441817Z === RUN   TestStreamValidation/no-space-cr
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5442060Z === RUN   TestStreamValidation/multiline
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5442296Z === RUN   TestStreamValidation/malformed
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5442521Z === RUN   TestStreamValidation/truncated
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5442754Z === RUN   TestStreamValidation/wrong-type
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5442987Z === RUN   TestStreamValidation/api-error
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5443221Z --- PASS: TestStreamValidation (0.01s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5443506Z     --- PASS: TestStreamValidation/space (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5443835Z     --- PASS: TestStreamValidation/no-space-cr (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5444155Z     --- PASS: TestStreamValidation/multiline (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5444611Z     --- PASS: TestStreamValidation/malformed (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5444948Z     --- PASS: TestStreamValidation/truncated (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5445262Z     --- PASS: TestStreamValidation/wrong-type (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5445572Z     --- PASS: TestStreamValidation/api-error (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5445841Z === RUN   TestStatusErrorsAndRawPreservation
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5446131Z --- PASS: TestStatusErrorsAndRawPreservation (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5446391Z === RUN   TestRedirectCredentials
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5446626Z === RUN   TestRedirectCredentials/ant
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5446858Z === RUN   TestRedirectCredentials/oa
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5447092Z --- PASS: TestRedirectCredentials (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5447384Z     --- PASS: TestRedirectCredentials/ant (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5447687Z     --- PASS: TestRedirectCredentials/oa (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5447950Z === RUN   TestProviderSelectionAndPagination
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5448222Z --- PASS: TestProviderSelectionAndPagination (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5448483Z === RUN   TestAnthropicOptions
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5448716Z --- PASS: TestAnthropicOptions (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5448997Z === RUN   TestRequestValidationAndGatewayNormalization
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5449337Z --- PASS: TestRequestValidationAndGatewayNormalization (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5449644Z === RUN   TestAnthropicStopAndIdleTimeout
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5449914Z --- PASS: TestAnthropicStopAndIdleTimeout (0.03s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5450174Z === RUN   TestDefaultRequestTimeout
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5450409Z === RUN   TestDefaultRequestTimeout/chat
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5450651Z === RUN   TestDefaultRequestTimeout/stream
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5450892Z === RUN   TestDefaultRequestTimeout/models
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5451134Z === RUN   TestDefaultRequestTimeout/raw
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5451514Z === RUN   TestDefaultRequestTimeout/anthropic-chat
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5451803Z === RUN   TestDefaultRequestTimeout/anthropic-stream
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5452070Z --- PASS: TestDefaultRequestTimeout (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5452370Z     --- PASS: TestDefaultRequestTimeout/chat (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5452703Z     --- PASS: TestDefaultRequestTimeout/stream (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5453030Z     --- PASS: TestDefaultRequestTimeout/models (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5453344Z     --- PASS: TestDefaultRequestTimeout/raw (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5453691Z     --- PASS: TestDefaultRequestTimeout/anthropic-chat (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5454211Z     --- PASS: TestDefaultRequestTimeout/anthropic-stream (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5454614Z === RUN   TestRequestTimeoutCoversHeadersAndBody
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5454937Z === RUN   TestRequestTimeoutCoversHeadersAndBody/chat/headers
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5455267Z === RUN   TestRequestTimeoutCoversHeadersAndBody/chat/body
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5455597Z === RUN   TestRequestTimeoutCoversHeadersAndBody/stream/headers
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5455937Z === RUN   TestRequestTimeoutCoversHeadersAndBody/stream/body
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5456265Z === RUN   TestRequestTimeoutCoversHeadersAndBody/models/headers
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5456587Z === RUN   TestRequestTimeoutCoversHeadersAndBody/models/body
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5456897Z === RUN   TestRequestTimeoutCoversHeadersAndBody/raw/headers
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5457211Z === RUN   TestRequestTimeoutCoversHeadersAndBody/raw/body
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5457566Z === RUN   TestRequestTimeoutCoversHeadersAndBody/anthropic-chat/headers
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5457960Z === RUN   TestRequestTimeoutCoversHeadersAndBody/anthropic-chat/body
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5458346Z === RUN   TestRequestTimeoutCoversHeadersAndBody/anthropic-stream/headers
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5458742Z === RUN   TestRequestTimeoutCoversHeadersAndBody/anthropic-stream/body
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5459098Z --- PASS: TestRequestTimeoutCoversHeadersAndBody (0.61s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5459536Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/chat/headers (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5459969Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/chat/body (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5460432Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/stream/headers (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5460878Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/stream/body (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5461329Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/models/headers (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5461764Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/models/body (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5462201Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/raw/headers (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5462619Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/raw/body (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5463085Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/anthropic-chat/headers (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5463577Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/anthropic-chat/body (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5464081Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/anthropic-stream/headers (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5464672Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/anthropic-stream/body (0.05s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5465044Z === RUN   TestDisabledTimeoutPreservesCallerDeadline
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5465370Z --- PASS: TestDisabledTimeoutPreservesCallerDeadline (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5465668Z === RUN   TestAnthropicCacheUsage
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5465900Z --- PASS: TestAnthropicCacheUsage (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5466146Z === RUN   TestOpenAIUsageDoesNotAddCache
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5466405Z --- PASS: TestOpenAIUsageDoesNotAddCache (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5466660Z === RUN   TestUserAgentOnEveryCatalogPage
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5466919Z --- PASS: TestUserAgentOnEveryCatalogPage (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5467152Z PASS
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5467328Z ok  	callm/internal/client	1.698s
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5467563Z === RUN   TestKeyIsolationAndPrecedence
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5467823Z --- PASS: TestKeyIsolationAndPrecedence (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5468208Z === RUN   TestBaseURLPrecedence
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5468430Z --- PASS: TestBaseURLPrecedence (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5468653Z === RUN   TestOrcaConfiguration
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5468866Z --- PASS: TestOrcaConfiguration (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5469095Z === RUN   TestPoolsideConfiguration
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5469335Z --- PASS: TestPoolsideConfiguration (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5469570Z === RUN   TestKimiConfiguration
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5469781Z --- PASS: TestKimiConfiguration (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5470115Z === RUN   TestEnvFilesSkipNamedPipes
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5470363Z --- PASS: TestEnvFilesSkipNamedPipes (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5470614Z === RUN   TestWorkspaceDotenvLoading
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5470870Z === RUN   TestWorkspaceDotenvLoading/ignored_by_default
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5471172Z === RUN   TestWorkspaceDotenvLoading/cannot_enable_itself
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5471477Z === RUN   TestWorkspaceDotenvLoading/unrelated_variables
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5471765Z === RUN   TestWorkspaceDotenvLoading/already_set
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5472091Z === RUN   TestWorkspaceDotenvLoading/environment_opt-in_keeps_precedence
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5472435Z === RUN   TestWorkspaceDotenvLoading/trusted_file_opt-in
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5472719Z === RUN   TestWorkspaceDotenvLoading/environment_wins
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5473003Z === RUN   TestWorkspaceDotenvLoading/opt-out_is_silent
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5473288Z === RUN   TestWorkspaceDotenvLoading/invalid_setting
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5473552Z --- PASS: TestWorkspaceDotenvLoading (0.01s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5473912Z     --- PASS: TestWorkspaceDotenvLoading/ignored_by_default (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5474317Z     --- PASS: TestWorkspaceDotenvLoading/cannot_enable_itself (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5474894Z     --- PASS: TestWorkspaceDotenvLoading/unrelated_variables (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5475266Z     --- PASS: TestWorkspaceDotenvLoading/already_set (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5475705Z     --- PASS: TestWorkspaceDotenvLoading/environment_opt-in_keeps_precedence (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5476160Z     --- PASS: TestWorkspaceDotenvLoading/trusted_file_opt-in (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5476545Z     --- PASS: TestWorkspaceDotenvLoading/environment_wins (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5476931Z     --- PASS: TestWorkspaceDotenvLoading/opt-out_is_silent (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5477313Z     --- PASS: TestWorkspaceDotenvLoading/invalid_setting (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5477605Z === RUN   TestWorkspaceDotenvSameAsTrusted
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5477883Z --- PASS: TestWorkspaceDotenvSameAsTrusted (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5478120Z PASS
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5478290Z ok  	callm/internal/config	1.022s
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5478503Z === RUN   TestNormalizeFormat
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5478720Z --- PASS: TestNormalizeFormat (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5478929Z === RUN   TestSlug
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5479103Z --- PASS: TestSlug (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5479333Z === RUN   TestRenderJSONPreservesProviderFields
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5479636Z --- PASS: TestRenderJSONPreservesProviderFields (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5479909Z === RUN   TestRenderJSONEmptyCatalog
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5480151Z --- PASS: TestRenderJSONEmptyCatalog (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5480379Z === RUN   TestRenderZed
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5480569Z --- PASS: TestRenderZed (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5480773Z === RUN   TestRenderKilo
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5480972Z --- PASS: TestRenderKilo (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5481182Z === RUN   TestRenderContinue
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5481387Z --- PASS: TestRenderContinue (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5481620Z === RUN   TestNativeProtocolExportGuard
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5481872Z --- PASS: TestNativeProtocolExportGuard (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5482094Z PASS
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5482258Z ok  	callm/internal/export	1.016s
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5482480Z === RUN   TestSchemaValidation
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5482697Z --- PASS: TestSchemaValidation (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5482967Z === RUN   TestSchemaCompilationRejectsInvalidAndExternal
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5483429Z --- PASS: TestSchemaCompilationRejectsInvalidAndExternal (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5483780Z === RUN   TestResultDistinguishesCompletionAndSchemaFailures
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5484135Z --- PASS: TestResultDistinguishesCompletionAndSchemaFailures (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5484417Z PASS
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5484673Z ok  	callm/internal/pipeline	1.023s
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5484885Z === RUN   TestFilterModels
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5485088Z === RUN   TestFilterModels/normalized_dot
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5485327Z === RUN   TestFilterModels/comma_terms
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5485647Z === RUN   TestFilterModels/display_name
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5485879Z === RUN   TestFilterModels/regex_and_terms
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5486109Z === RUN   TestFilterModels/regex_only
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5486335Z === RUN   TestFilterModels/separator_terms
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5486562Z === RUN   TestFilterModels/unused_terms
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5486780Z --- PASS: TestFilterModels (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5487061Z     --- PASS: TestFilterModels/normalized_dot (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5487375Z     --- PASS: TestFilterModels/comma_terms (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5487680Z     --- PASS: TestFilterModels/display_name (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5487989Z     --- PASS: TestFilterModels/regex_and_terms (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5488288Z     --- PASS: TestFilterModels/regex_only (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5488590Z     --- PASS: TestFilterModels/separator_terms (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5488885Z     --- PASS: TestFilterModels/unused_terms (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5489130Z === RUN   TestFilterModelsInvalidRegex
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5489380Z --- PASS: TestFilterModelsInvalidRegex (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5489634Z === RUN   TestStreamRendererInlineThinking
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5489894Z --- PASS: TestStreamRendererInlineThinking (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5490153Z === RUN   TestStreamRendererNoReasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5490392Z --- PASS: TestStreamRendererNoReasoning (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5490645Z === RUN   TestStreamRendererOnlyReasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5490901Z --- PASS: TestStreamRendererOnlyReasoning (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5491154Z === RUN   TestStreamRendererDeltaFields
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5491394Z --- PASS: TestStreamRendererDeltaFields (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5491639Z === RUN   TestLiteralThinkingPreserved
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5491875Z --- PASS: TestLiteralThinkingPreserved (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5492120Z === RUN   TestUnknownMetadataAndStringCost
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5492368Z --- PASS: TestUnknownMetadataAndStringCost (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5492618Z === RUN   TestRendererWriteFailures
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5492852Z === RUN   TestRendererWriteFailures/content
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5493098Z === RUN   TestRendererWriteFailures/reasoning
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5493341Z === RUN   TestRendererWriteFailures/short
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5493572Z === RUN   TestRendererWriteFailures/newline
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5493802Z === RUN   TestRendererWriteFailures/flush
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5494035Z --- PASS: TestRendererWriteFailures (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5494338Z     --- PASS: TestRendererWriteFailures/content (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5494748Z     --- PASS: TestRendererWriteFailures/reasoning (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5495067Z     --- PASS: TestRendererWriteFailures/short (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5495376Z     --- PASS: TestRendererWriteFailures/newline (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5495674Z     --- PASS: TestRendererWriteFailures/flush (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5495920Z === RUN   TestAuxiliaryWriteFailures
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5496154Z --- PASS: TestAuxiliaryWriteFailures (0.00s)
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5496371Z PASS
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5496532Z ok  	callm/internal/ui	1.008s
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.5496710Z FAIL
+Lint & Test (Go 1.26.x)	Go Test	2026-10-09T12:14:21.6813912Z ##[error]Process completed with exit code 1.
+Lint & Test (Go 1.27.x)	Go Test	﻿2026-10-09T12:13:09.3193188Z ##[group]Run go test -race -timeout=60s -v ./...
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:13:09.3193675Z [36;1mgo test -race -timeout=60s -v ./...[0m
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:13:09.3256444Z shell: /usr/bin/bash -e {0}
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:13:09.3256701Z ##[endgroup]
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9879497Z === RUN   TestCompletionExitStatus
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9880129Z === RUN   TestCompletionExitStatus/null_tool_fields
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9880805Z === RUN   TestCompletionExitStatus/complete
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9881375Z === RUN   TestCompletionExitStatus/length
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9881938Z === RUN   TestCompletionExitStatus/empty_shape
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9882776Z === RUN   TestCompletionExitStatus/refusal
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9883373Z === RUN   TestCompletionExitStatus/filtered
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9883957Z === RUN   TestCompletionExitStatus/tools
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9884520Z === RUN   TestCompletionExitStatus/empty
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9885097Z === RUN   TestCompletionExitStatus/allowed_empty
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9885784Z === RUN   TestCompletionExitStatus/allow_empty_still_truncated
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9886573Z === RUN   TestCompletionExitStatus/legacy_missing_reason
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9887230Z === RUN   TestCompletionExitStatus/strict_missing_reason
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9887907Z === RUN   TestCompletionExitStatus/json_diagnostics
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9888518Z === RUN   TestCompletionExitStatus/json_strict
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9889145Z === RUN   TestCompletionExitStatus/reasoning_only
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9889742Z --- PASS: TestCompletionExitStatus (6.51s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9890569Z     --- PASS: TestCompletionExitStatus/null_tool_fields (1.04s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9891404Z     --- PASS: TestCompletionExitStatus/complete (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9892139Z     --- PASS: TestCompletionExitStatus/length (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9893165Z     --- PASS: TestCompletionExitStatus/empty_shape (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9893994Z     --- PASS: TestCompletionExitStatus/refusal (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9894798Z     --- PASS: TestCompletionExitStatus/filtered (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9895640Z     --- PASS: TestCompletionExitStatus/tools (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9896431Z     --- PASS: TestCompletionExitStatus/empty (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9897283Z     --- PASS: TestCompletionExitStatus/allowed_empty (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9898312Z     --- PASS: TestCompletionExitStatus/allow_empty_still_truncated (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9899118Z     --- PASS: TestCompletionExitStatus/legacy_missing_reason (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9900284Z     --- PASS: TestCompletionExitStatus/strict_missing_reason (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9901435Z     --- PASS: TestCompletionExitStatus/json_diagnostics (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9902441Z     --- PASS: TestCompletionExitStatus/json_strict (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9904073Z     --- PASS: TestCompletionExitStatus/reasoning_only (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9904784Z === RUN   TestStreamingCompletionExitStatus
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9905432Z === RUN   TestStreamingCompletionExitStatus/complete
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9906129Z === RUN   TestStreamingCompletionExitStatus/truncated
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9906827Z === RUN   TestStreamingCompletionExitStatus/done_only
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9907587Z === RUN   TestStreamingCompletionExitStatus/anthropic_truncation
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9908416Z === RUN   TestStreamingCompletionExitStatus/anthropic_tools
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9909166Z --- PASS: TestStreamingCompletionExitStatus (1.16s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9910489Z     --- PASS: TestStreamingCompletionExitStatus/complete (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9911484Z     --- PASS: TestStreamingCompletionExitStatus/truncated (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9912781Z     --- PASS: TestStreamingCompletionExitStatus/done_only (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9913919Z     --- PASS: TestStreamingCompletionExitStatus/anthropic_truncation (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9915063Z     --- PASS: TestStreamingCompletionExitStatus/anthropic_tools (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9915837Z === RUN   TestParsedReasoningCompletion
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9916434Z --- PASS: TestParsedReasoningCompletion (2.10s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9917381Z === RUN   TestDeepSeekCLI
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9917847Z === RUN   TestDeepSeekCLI/default_model
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9918396Z === RUN   TestDeepSeekCLI/reasoning_display
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9918935Z === RUN   TestDeepSeekCLI/model_override
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9919422Z === RUN   TestDeepSeekCLI/effort
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9919930Z === RUN   TestDeepSeekCLI/raw_thinking_switch
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9920486Z --- PASS: TestDeepSeekCLI (5.17s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9921120Z     --- PASS: TestDeepSeekCLI/default_model (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9921854Z     --- PASS: TestDeepSeekCLI/reasoning_display (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9922832Z     --- PASS: TestDeepSeekCLI/model_override (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9923516Z     --- PASS: TestDeepSeekCLI/effort (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9924239Z     --- PASS: TestDeepSeekCLI/raw_thinking_switch (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9924872Z === RUN   TestDeepSeekThinkingBudgetRejected
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9925485Z --- PASS: TestDeepSeekThinkingBudgetRejected (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9926103Z === RUN   TestDefaultPresetDetection
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9926649Z === RUN   TestDefaultPresetDetection/no_keys
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9927291Z === RUN   TestDefaultPresetDetection/unrelated_keys_only
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9927938Z === RUN   TestDefaultPresetDetection/poolside
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9928549Z === RUN   TestDefaultPresetDetection/orcarouter
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9929180Z === RUN   TestDefaultPresetDetection/straitly
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9929852Z === RUN   TestDefaultPresetDetection/deepseek
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9930452Z === RUN   TestDefaultPresetDetection/openrouter
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9931070Z === RUN   TestDefaultPresetDetection/kimi
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9931716Z === RUN   TestDefaultPresetDetection/priority_pool_over_all
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9932485Z === RUN   TestDefaultPresetDetection/priority_orca_over_straitly
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9933556Z === RUN   TestDefaultPresetDetection/explicit_st_overrides_keys
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9934376Z === RUN   TestDefaultPresetDetection/explicit_pool_overrides_keys
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9935246Z === RUN   TestDefaultPresetDetection/claude_with_only_anthropic_key
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9936178Z === RUN   TestDefaultPresetDetection/claude_with_anthropic_and_poolside_keys
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9937237Z === RUN   TestDefaultPresetDetection/claude_with_anthropic_and_openrouter_keys
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9938114Z --- PASS: TestDefaultPresetDetection (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9938914Z     --- PASS: TestDefaultPresetDetection/no_keys (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9939821Z     --- PASS: TestDefaultPresetDetection/unrelated_keys_only (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9940743Z     --- PASS: TestDefaultPresetDetection/poolside (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9941612Z     --- PASS: TestDefaultPresetDetection/orcarouter (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9942455Z     --- PASS: TestDefaultPresetDetection/straitly (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9943530Z     --- PASS: TestDefaultPresetDetection/deepseek (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9944392Z     --- PASS: TestDefaultPresetDetection/openrouter (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9945229Z     --- PASS: TestDefaultPresetDetection/kimi (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9946160Z     --- PASS: TestDefaultPresetDetection/priority_pool_over_all (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9947267Z     --- PASS: TestDefaultPresetDetection/priority_orca_over_straitly (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9948408Z     --- PASS: TestDefaultPresetDetection/explicit_st_overrides_keys (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9949858Z     --- PASS: TestDefaultPresetDetection/explicit_pool_overrides_keys (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9951015Z     --- PASS: TestDefaultPresetDetection/claude_with_only_anthropic_key (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9952287Z     --- PASS: TestDefaultPresetDetection/claude_with_anthropic_and_poolside_keys (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9954113Z     --- PASS: TestDefaultPresetDetection/claude_with_anthropic_and_openrouter_keys (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9955013Z === RUN   TestMissingKeyDiagnostic
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9955560Z --- PASS: TestMissingKeyDiagnostic (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9956172Z === RUN   TestWorkspaceDotenvCannotRedirectKeys
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9957239Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/reported_reproduction
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9958164Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/key_from_environment
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9959063Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/key_from_user_config
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9960055Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/dotenv_cannot_enable_itself
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9961053Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/opt-out_hides_notice
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9961963Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/environment_opt-in
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9963175Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/user_config_opt-in
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9964083Z === RUN   TestWorkspaceDotenvCannotRedirectKeys/invalid_setting
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9964891Z --- PASS: TestWorkspaceDotenvCannotRedirectKeys (6.27s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9965990Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/reported_reproduction (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9967290Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/key_from_environment (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9968588Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/key_from_user_config (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9969896Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/dotenv_cannot_enable_itself (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9971196Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/opt-out_hides_notice (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9972466Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/environment_opt-in (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9973947Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/user_config_opt-in (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9975074Z     --- PASS: TestWorkspaceDotenvCannotRedirectKeys/invalid_setting (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9975508Z === RUN   TestREADMEHelpReference
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9975810Z --- PASS: TestREADMEHelpReference (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9976256Z === RUN   TestSubcommandHelpTimeouts
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9976561Z === RUN   TestSubcommandHelpTimeouts/models
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9976987Z === RUN   TestSubcommandHelpTimeouts/info
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9977296Z === RUN   TestSubcommandHelpTimeouts/raw
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9977710Z --- PASS: TestSubcommandHelpTimeouts (3.10s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9978119Z     --- PASS: TestSubcommandHelpTimeouts/models (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9978529Z     --- PASS: TestSubcommandHelpTimeouts/info (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9978931Z     --- PASS: TestSubcommandHelpTimeouts/raw (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9979339Z === RUN   TestKimiCLI
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9979555Z === RUN   TestKimiCLI/chat
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9979888Z === RUN   TestKimiCLI/stream
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9980151Z === RUN   TestKimiCLI/model_override
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9980516Z === RUN   TestKimiCLI/key_override
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9980780Z === RUN   TestKimiCLI/models
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9981013Z === RUN   TestKimiCLI/info
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9981243Z === RUN   TestKimiCLI/raw
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9981470Z === RUN   TestKimiCLI/moonshot
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9981711Z === RUN   TestKimiCLI/ms
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9981945Z --- PASS: TestKimiCLI (9.31s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9982234Z     --- PASS: TestKimiCLI/chat (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9982766Z     --- PASS: TestKimiCLI/stream (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9983143Z     --- PASS: TestKimiCLI/model_override (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9983555Z     --- PASS: TestKimiCLI/key_override (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9984132Z     --- PASS: TestKimiCLI/models (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9984571Z     --- PASS: TestKimiCLI/info (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9984883Z     --- PASS: TestKimiCLI/raw (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9985304Z     --- PASS: TestKimiCLI/moonshot (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9985624Z     --- PASS: TestKimiCLI/ms (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9985896Z === RUN   TestKimiInvalidOptions
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9986173Z --- PASS: TestKimiInvalidOptions (0.12s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9986552Z === RUN   TestModelsFormatsAndFilter
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9986895Z === RUN   TestModelsFormatsAndFilter/json_raw_fidelity
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9987498Z === RUN   TestModelsFormatsAndFilter/json_alias
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9987880Z === RUN   TestModelsFormatsAndFilter/zed
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9988209Z === RUN   TestModelsFormatsAndFilter/kilo
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9988545Z === RUN   TestModelsFormatsAndFilter/kilo_provider_name
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9988892Z === RUN   TestModelsFormatsAndFilter/continue
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9989222Z === RUN   TestModelsFormatsAndFilter/table_filter
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9989593Z === RUN   TestModelsFormatsAndFilter/conflicting_output_modes
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9989970Z === RUN   TestModelsFormatsAndFilter/unknown_format
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9990461Z === RUN   TestModelsFormatsAndFilter/invalid_positional_regex
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9990880Z --- PASS: TestModelsFormatsAndFilter (7.35s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9991376Z     --- PASS: TestModelsFormatsAndFilter/json_raw_fidelity (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9992085Z     --- PASS: TestModelsFormatsAndFilter/json_alias (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9992751Z     --- PASS: TestModelsFormatsAndFilter/zed (1.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9993169Z     --- PASS: TestModelsFormatsAndFilter/kilo (1.04s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9993624Z     --- PASS: TestModelsFormatsAndFilter/kilo_provider_name (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9994190Z     --- PASS: TestModelsFormatsAndFilter/continue (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9994631Z     --- PASS: TestModelsFormatsAndFilter/table_filter (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9995249Z     --- PASS: TestModelsFormatsAndFilter/conflicting_output_modes (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9995867Z     --- PASS: TestModelsFormatsAndFilter/unknown_format (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9996378Z     --- PASS: TestModelsFormatsAndFilter/invalid_positional_regex (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9996763Z === RUN   TestModelsHelpFlags
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9997119Z --- PASS: TestModelsHelpFlags (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9997409Z === RUN   TestZedMissingContextWarning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9997714Z --- PASS: TestZedMissingContextWarning (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9998003Z === RUN   TestOrcaCLI
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9998222Z === RUN   TestOrcaCLI/chat
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9998455Z === RUN   TestOrcaCLI/stream
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9998688Z === RUN   TestOrcaCLI/claude
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9998929Z === RUN   TestOrcaCLI/model_override
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9999185Z === RUN   TestOrcaCLI/models
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9999423Z === RUN   TestOrcaCLI/info
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9999646Z === RUN   TestOrcaCLI/raw
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:31.9999897Z === RUN   TestOrcaCLI/openrouter_unchanged
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0000175Z --- PASS: TestOrcaCLI (8.27s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0000459Z     --- PASS: TestOrcaCLI/chat (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0000765Z     --- PASS: TestOrcaCLI/stream (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0001079Z     --- PASS: TestOrcaCLI/claude (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0001408Z     --- PASS: TestOrcaCLI/model_override (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0001743Z     --- PASS: TestOrcaCLI/models (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0002047Z     --- PASS: TestOrcaCLI/info (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0002353Z     --- PASS: TestOrcaCLI/raw (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0002845Z     --- PASS: TestOrcaCLI/openrouter_unchanged (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0003160Z === RUN   TestOrcaInvalidOptions
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0003435Z --- PASS: TestOrcaInvalidOptions (0.06s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0003748Z === RUN   TestPipelineInputAndSchemaProtocols
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0004085Z === RUN   TestPipelineInputAndSchemaProtocols/oa
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0004579Z === RUN   TestPipelineInputAndSchemaProtocols/or
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0004993Z === RUN   TestPipelineInputAndSchemaProtocols/ant
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0005558Z --- PASS: TestPipelineInputAndSchemaProtocols (3.11s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0006113Z     --- PASS: TestPipelineInputAndSchemaProtocols/oa (1.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0006576Z     --- PASS: TestPipelineInputAndSchemaProtocols/or (1.04s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0007150Z     --- PASS: TestPipelineInputAndSchemaProtocols/ant (1.04s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0007626Z === RUN   TestPipelineFailureOutputAndLocalOnly
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0008001Z --- PASS: TestPipelineFailureOutputAndLocalOnly (0.13s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0008622Z === RUN   TestPipelinePreflightAndRawBody
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0009056Z --- PASS: TestPipelinePreflightAndRawBody (2.31s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0009379Z === RUN   TestRawBodyStdinDeadline
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0009763Z --- PASS: TestRawBodyStdinDeadline (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0010064Z === RUN   TestGlobalSubcommandDispatch
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0010489Z --- PASS: TestGlobalSubcommandDispatch (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0010797Z === RUN   TestStdinWaitAndDeadline
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0011185Z --- PASS: TestStdinWaitAndDeadline (0.17s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0011480Z === RUN   TestCLIOutputAndValidation
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0011890Z === RUN   TestCLIOutputAndValidation/json_stats
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0012281Z === RUN   TestCLIOutputAndValidation/inline_hidden
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0012917Z panic: test timed out after 1m0s
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0013248Z 	running tests:
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0013538Z 		TestCLIOutputAndValidation (2s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0013866Z 		TestCLIOutputAndValidation/inline_hidden (1s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0014201Z 
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0014302Z goroutine 571 [running]:
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0014546Z testing.(*M).startAlarm.func1()
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0015435Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2961 +0x605
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0015907Z created by time.goFunc
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0016349Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/time/sleep.go:182 +0x45
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0016619Z 
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0016725Z goroutine 1 [chan receive]:
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0017128Z testing.(*T).Run(0xc0003a86c8, {0xb143ea, 0x1a}, 0xfc8c60)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0017586Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2268 +0xb3e
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0017971Z testing.runTests.func1(0xc0003a86c8)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0018468Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2744 +0x85
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0018860Z testing.tRunner(0xc0003a86c8, 0xc000045a40)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0019388Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2195 +0x21d
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0020171Z testing.runTests({0xb07856, 0x5}, {0xb0c9c2, 0xf}, 0xc00014a618, {0x1032fe0, 0x1e, 0x1e}, {0xc2aa5489fa6cfb84, 0xdfa88205b, ...})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0020962Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2742 +0x9ea
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0021343Z testing.(*M).Run(0xc00013c6e0)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0021812Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2602 +0xf45
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0022232Z main.main()
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0022479Z 	_testmain.go:104 +0x165
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0022873Z 
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0022976Z goroutine 528 [chan receive]:
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0023284Z testing.(*T).Run(0xc0000e5d48, {0xb0b8ee, 0xd}, 0xc0003f54f0)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0023847Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2268 +0xb3e
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0024378Z callm/cmd/callm.TestCLIOutputAndValidation(0xc0000e5d48)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0024846Z 	/home/runner/work/callm/callm/cmd/callm/regression_test.go:86 +0x734
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0025334Z testing.tRunner(0xc0000e5d48, 0xfc8c60)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0025859Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2195 +0x21d
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0026305Z created by testing.(*T).Run in goroutine 1
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0026752Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2260 +0xb13
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0027133Z 
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0027224Z goroutine 568 [select]:
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0027768Z os/exec.(*Cmd).watchCtx(0xc00041e680, 0xc000462070)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0028196Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/exec/exec.go:808 +0x109
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0028690Z created by os/exec.(*Cmd).Start in goroutine 565
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0029202Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/exec/exec.go:794 +0x109d
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0029465Z 
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0029598Z goroutine 565 [syscall]:
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0029989Z syscall.Syscall6(0xf7, 0x3, 0xc, 0xc0000dd9f8, 0x4, 0xc00003d290, 0x0)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0030498Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/syscall/syscall_linux.go:96 +0x45
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0031126Z internal/syscall/unix.Waitid(0x3, 0xc, 0xc0000dd9f8, 0x4, 0xc00003d290)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0031798Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/internal/syscall/unix/waitid_linux.go:18 +0x70
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0032343Z os.(*Process).pidfdWait.func1(...)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0032947Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/pidfd_linux.go:108
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0033294Z os.ignoringEINTR(...)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0033618Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/file_posix.go:263
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0033965Z os.(*Process).pidfdWait(0xc00044f580)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0034357Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/pidfd_linux.go:107 +0x365
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0034728Z os.(*Process).wait(0xc00044f580)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0035081Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/exec_unix.go:25 +0x47
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0035491Z os.(*Process).Wait(...)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0035831Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/exec.go:347
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0036203Z os/exec.(*Cmd).Wait(0xc00041e680)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0036601Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/exec/exec.go:944 +0xb0
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0037051Z os/exec.(*Cmd).Run(0xc00041e680)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0037398Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/exec/exec.go:643 +0x55
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0037761Z os/exec.(*Cmd).CombinedOutput(0xc00041e680)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0038153Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/exec/exec.go:1061 +0x1f1
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0038712Z callm/cmd/callm.TestCLIOutputAndValidation.func1(0xc0001f5b08)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0039263Z 	/home/runner/work/callm/callm/cmd/callm/regression_test.go:97 +0x415
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0039700Z testing.tRunner(0xc0001f5b08, 0xc0003f54f0)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0040204Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2195 +0x21d
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0040602Z created by testing.(*T).Run in goroutine 528
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0041006Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/testing/testing.go:2260 +0xb13
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0041273Z 
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0041369Z goroutine 569 [IO wait]:
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0041707Z internal/poll.runtime_pollWait(0x7ff64ff2f400, 0x72)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0042194Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/runtime/netpoll.go:351 +0x85
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0042834Z internal/poll.(*pollDesc).wait(0xc000138d20, 0x72, 0x0)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0043417Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/internal/poll/fd_poll_runtime.go:84 +0xb1
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0043854Z internal/poll.(*pollDesc).waitRead(...)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0044270Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/internal/poll/fd_poll_runtime.go:89
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0044810Z internal/poll.(*FD).Read(0xc000138d00, {0xc0003a3000, 0x1000, 0x1000})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0045345Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/internal/poll/fd_unix.go:170 +0x499
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0045897Z net.(*netFD).Read(0xc000138d00, {0xc0003a3000, 0x1000, 0x1000})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0046431Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/fd_posix.go:68 +0x4b
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0046834Z net.(*conn).Read(0xc000006658, {0xc0003a3000, 0x1000, 0x1000})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0047355Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/net.go:196 +0xad
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0047791Z net/http.(*connReader).Read(0xc00044f5c0, {0xc0003a3000, 0x1000, 0x1000})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0048274Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/http/server.go:856 +0x288
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0048645Z bufio.(*Reader).fill(0xc00048a1e0)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0049271Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/bufio/bufio.go:113 +0x2a4
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0049756Z bufio.(*Reader).Peek(0xc00048a1e0, 0x4)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0050240Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/bufio/bufio.go:152 +0xaf
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0050670Z net/http.(*conn).serve(0xc0000019e0, {0xfc7708, 0xc0003f8720})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0051238Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/http/server.go:2193 +0x112e
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0051759Z created by net/http.(*Server).Serve in goroutine 566
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0052208Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/http/server.go:3604 +0x92a
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0052963Z 
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0053070Z goroutine 566 [IO wait]:
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0053350Z internal/poll.runtime_pollWait(0x7ff64ff2f600, 0x72)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0053795Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/runtime/netpoll.go:351 +0x85
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0054320Z internal/poll.(*pollDesc).wait(0xc000138ca0, 0x72, 0x0)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0054911Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/internal/poll/fd_poll_runtime.go:84 +0xb1
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0055341Z internal/poll.(*pollDesc).waitRead(...)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0055873Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/internal/poll/fd_poll_runtime.go:89
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0056290Z internal/poll.(*FD).Accept(0xc000138c80)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0056723Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/internal/poll/fd_unix.go:618 +0x4ea
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0057217Z net.(*netFD).accept(0xc000138c80)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0057595Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/fd_unix.go:149 +0x45
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0058062Z net.(*TCPListener).accept(0xc00044f540)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0058551Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/tcpsock_posix.go:159 +0x4e
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0058963Z net.(*TCPListener).Accept(0xc00044f540)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0059552Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/tcpsock.go:387 +0x65
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0060101Z net/http.(*Server).Serve(0xc0004ae3c0, {0xfc73c0, 0xc00044f540})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0060581Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/http/server.go:3574 +0x6ad
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0061021Z net/http/httptest.(*Server).goServe.func1()
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0061530Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/http/httptest/server.go:586 +0xad
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0062022Z created by net/http/httptest.(*Server).goServe in goroutine 565
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0062522Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/net/http/httptest/server.go:584 +0xeb
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0063118Z 
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0063218Z goroutine 567 [IO wait]:
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0063547Z internal/poll.runtime_pollWait(0x7ff64ff2f800, 0x72)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0064062Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/runtime/netpoll.go:351 +0x85
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0064588Z internal/poll.(*pollDesc).wait(0xc000464920, 0x72, 0x1)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0065169Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/internal/poll/fd_poll_runtime.go:84 +0xb1
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0065632Z internal/poll.(*pollDesc).waitRead(...)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0066135Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/internal/poll/fd_poll_runtime.go:89
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0066715Z internal/poll.(*FD).Read(0xc000464900, {0xc000444c07, 0x3f9, 0x3f9})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0067305Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/internal/poll/fd_unix.go:170 +0x499
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0067748Z os.(*File).read(...)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0068086Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/file_posix.go:30
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0068563Z os.(*File).Read(0xc000006630, {0xc000444c07, 0x3f9, 0x3f9})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0068974Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/file.go:144 +0xad
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0069486Z bytes.(*Buffer).ReadFrom(0xc0000e8cf0, {0xfc3a38, 0xc000006630})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0070052Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/bytes/buffer.go:229 +0x10e
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0070600Z io.copyBuffer({0xfc3b98, 0xc0000e8cf0}, {0xfc3a38, 0xc000006630}, {0x0, 0x0, 0x0})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0071117Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/io/io.go:415 +0x20f
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0071531Z io.Copy(...)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0072037Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/io/io.go:388
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0072438Z os.genericWriteTo(0xc000006630, {0xfc3b98, 0xc0000e8cf0})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0073081Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/file.go:295 +0x4a
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0073568Z os.(*File).WriteTo(0xc000006630, {0xfc3b98, 0xc0000e8cf0})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0073970Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/file.go:273 +0xd5
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0074533Z io.copyBuffer({0xfc3b98, 0xc0000e8cf0}, {0xfc3ab8, 0xc000006630}, {0x0, 0x0, 0x0})
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0075114Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/io/io.go:411 +0xd4
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0075700Z io.Copy(...)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0075961Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/io/io.go:388
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0076385Z os/exec.(*Cmd).writerDescriptor.func1()
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0076775Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/exec/exec.go:613 +0x5b
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0077253Z os/exec.(*Cmd).Start.func2(0xc0003ed660)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0077737Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/exec/exec.go:768 +0x3d
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0078123Z created by os/exec.(*Cmd).Start in goroutine 565
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0078642Z 	/opt/hostedtoolcache/go/1.27.2/x64/src/os/exec/exec.go:767 +0x10f2
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0079114Z FAIL	callm/cmd/callm	60.056s
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0079374Z === RUN   TestConvertToAnthropicReq
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0079770Z --- PASS: TestConvertToAnthropicReq (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0080083Z === RUN   TestPrepareRequestOpenAIO1
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0080483Z --- PASS: TestPrepareRequestOpenAIO1 (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0080823Z === RUN   TestPrepareRequestOpenRouterReasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0081323Z --- PASS: TestPrepareRequestOpenRouterReasoning (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0081769Z === RUN   TestProviderAPICallMinimal
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0082071Z === RUN   TestProviderAPICallMinimal/straitly
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0082495Z === RUN   TestProviderAPICallMinimal/openrouter
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0082966Z === RUN   TestProviderAPICallMinimal/deepseek
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0083408Z === RUN   TestProviderAPICallMinimal/openai
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0083724Z === RUN   TestProviderAPICallMinimal/moonshot
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0084037Z === RUN   TestProviderAPICallMinimal/zhipu
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0084338Z === RUN   TestProviderAPICallMinimal/qwen
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0084646Z === RUN   TestProviderAPICallMinimal/groq
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0084954Z === RUN   TestProviderAPICallMinimal/poolside
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0085265Z === RUN   TestProviderAPICallMinimal/ollama
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0085575Z --- PASS: TestProviderAPICallMinimal (0.02s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0085975Z     --- PASS: TestProviderAPICallMinimal/straitly (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0086423Z     --- PASS: TestProviderAPICallMinimal/openrouter (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0086977Z     --- PASS: TestProviderAPICallMinimal/deepseek (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0087451Z     --- PASS: TestProviderAPICallMinimal/openai (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0087932Z     --- PASS: TestProviderAPICallMinimal/moonshot (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0088466Z     --- PASS: TestProviderAPICallMinimal/zhipu (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0088976Z     --- PASS: TestProviderAPICallMinimal/qwen (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0089379Z     --- PASS: TestProviderAPICallMinimal/groq (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0089896Z     --- PASS: TestProviderAPICallMinimal/poolside (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0090415Z     --- PASS: TestProviderAPICallMinimal/ollama (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0090751Z === RUN   TestProviderAPICallReasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0091208Z === RUN   TestProviderAPICallReasoning/deepseek_flash_thinking
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0091620Z === RUN   TestProviderAPICallReasoning/openrouter_reasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0092042Z === RUN   TestProviderAPICallReasoning/openai_o3_mini_reasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0092672Z === RUN   TestProviderAPICallReasoning/moonshot_reasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0093077Z === RUN   TestProviderAPICallReasoning/zhipu_glm_reasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0093565Z === RUN   TestProviderAPICallReasoning/qwen_qwq_reasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0094216Z === RUN   TestProviderAPICallReasoning/groq_reasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0094568Z --- PASS: TestProviderAPICallReasoning (0.01s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0095053Z     --- PASS: TestProviderAPICallReasoning/deepseek_flash_thinking (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0095726Z     --- PASS: TestProviderAPICallReasoning/openrouter_reasoning (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0096403Z     --- PASS: TestProviderAPICallReasoning/openai_o3_mini_reasoning (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0097059Z     --- PASS: TestProviderAPICallReasoning/moonshot_reasoning (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0097700Z     --- PASS: TestProviderAPICallReasoning/zhipu_glm_reasoning (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0098526Z     --- PASS: TestProviderAPICallReasoning/qwen_qwq_reasoning (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0099129Z     --- PASS: TestProviderAPICallReasoning/groq_reasoning (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0099535Z === RUN   TestNativeSchemaAndAdaptiveEffortCoexist
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0099930Z --- PASS: TestNativeSchemaAndAdaptiveEffortCoexist (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0100372Z === RUN   TestClaudeAdaptiveProfiles
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0100717Z --- PASS: TestClaudeAdaptiveProfiles (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0101109Z === RUN   TestOpenAIModelProfiles
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0101424Z === RUN   TestOpenAIModelProfiles/gpt-6.1-sol/high
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0101865Z === RUN   TestOpenAIModelProfiles/gpt-6.1-sol/none
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0102213Z === RUN   TestOpenAIModelProfiles/gpt-6.1-sol/minimal
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0102792Z === RUN   TestOpenAIModelProfiles/gpt-6-astra/max
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0103140Z === RUN   TestOpenAIModelProfiles/gpt-6-astra/none
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0103480Z === RUN   TestOpenAIModelProfiles/gpt-6-luna/none
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0103807Z === RUN   TestOpenAIModelProfiles/gpt-6-sol/none
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0104138Z === RUN   TestOpenAIModelProfiles/gpt-6-luna/high
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0104466Z === RUN   TestOpenAIModelProfiles/gpt-6-luna/
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0104947Z === RUN   TestOpenAIModelProfiles/gpt-6.1-sol-2026-10-01/xhigh
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0105354Z === RUN   TestOpenAIModelProfiles/openai/gpt-6-luna/max
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0105821Z === RUN   TestOpenAIModelProfiles/o3-mini/medium
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0106170Z === RUN   TestOpenAIModelProfiles/o3-mini/medium#01
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0106621Z === RUN   TestOpenAIModelProfiles/custom-model/high
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0106963Z === RUN   TestOpenAIModelProfiles/custom-model/none
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0107307Z === RUN   TestOpenAIModelProfiles/gpt-6-future/high
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0107632Z --- PASS: TestOpenAIModelProfiles (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0108050Z     --- PASS: TestOpenAIModelProfiles/gpt-6.1-sol/high (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0128068Z     --- PASS: TestOpenAIModelProfiles/gpt-6.1-sol/none (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0128806Z     --- PASS: TestOpenAIModelProfiles/gpt-6.1-sol/minimal (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0129404Z     --- PASS: TestOpenAIModelProfiles/gpt-6-astra/max (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0129898Z     --- PASS: TestOpenAIModelProfiles/gpt-6-astra/none (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0130497Z     --- PASS: TestOpenAIModelProfiles/gpt-6-luna/none (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0131058Z     --- PASS: TestOpenAIModelProfiles/gpt-6-sol/none (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0131508Z     --- PASS: TestOpenAIModelProfiles/gpt-6-luna/high (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0132005Z     --- PASS: TestOpenAIModelProfiles/gpt-6-luna/ (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0132785Z     --- PASS: TestOpenAIModelProfiles/gpt-6.1-sol-2026-10-01/xhigh (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0133331Z     --- PASS: TestOpenAIModelProfiles/openai/gpt-6-luna/max (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0133925Z     --- PASS: TestOpenAIModelProfiles/o3-mini/medium (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0134391Z     --- PASS: TestOpenAIModelProfiles/o3-mini/medium#01 (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0134878Z     --- PASS: TestOpenAIModelProfiles/custom-model/high (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0135351Z     --- PASS: TestOpenAIModelProfiles/custom-model/none (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0135811Z     --- PASS: TestOpenAIModelProfiles/gpt-6-future/high (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0136343Z === RUN   TestOrcaCost
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0136595Z --- PASS: TestOrcaCost (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0136877Z === RUN   TestOrcaDetectionAndCostHeader
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0137214Z --- PASS: TestOrcaDetectionAndCostHeader (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0137545Z === RUN   TestStreamValidation
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0137809Z === RUN   TestStreamValidation/space
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0138106Z === RUN   TestStreamValidation/no-space-cr
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0138406Z === RUN   TestStreamValidation/multiline
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0138696Z === RUN   TestStreamValidation/malformed
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0138982Z === RUN   TestStreamValidation/truncated
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0139400Z === RUN   TestStreamValidation/wrong-type
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0139705Z === RUN   TestStreamValidation/api-error
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0139996Z --- PASS: TestStreamValidation (0.01s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0140350Z     --- PASS: TestStreamValidation/space (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0140752Z     --- PASS: TestStreamValidation/no-space-cr (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0141202Z     --- PASS: TestStreamValidation/multiline (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0141590Z     --- PASS: TestStreamValidation/malformed (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0141971Z     --- PASS: TestStreamValidation/truncated (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0142358Z     --- PASS: TestStreamValidation/wrong-type (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0143003Z     --- PASS: TestStreamValidation/api-error (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0143344Z === RUN   TestStatusErrorsAndRawPreservation
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0143689Z --- PASS: TestStatusErrorsAndRawPreservation (0.01s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0144021Z === RUN   TestRedirectCredentials
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0144312Z === RUN   TestRedirectCredentials/ant
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0144592Z === RUN   TestRedirectCredentials/oa
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0144881Z --- PASS: TestRedirectCredentials (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0145249Z     --- PASS: TestRedirectCredentials/ant (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0145628Z     --- PASS: TestRedirectCredentials/oa (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0145967Z === RUN   TestProviderSelectionAndPagination
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0146316Z --- PASS: TestProviderSelectionAndPagination (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0146644Z === RUN   TestAnthropicOptions
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0146915Z --- PASS: TestAnthropicOptions (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0147259Z === RUN   TestRequestValidationAndGatewayNormalization
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0147683Z --- PASS: TestRequestValidationAndGatewayNormalization (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0148067Z === RUN   TestAnthropicStopAndIdleTimeout
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0148391Z --- PASS: TestAnthropicStopAndIdleTimeout (0.03s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0148712Z === RUN   TestDefaultRequestTimeout
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0148998Z === RUN   TestDefaultRequestTimeout/chat
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0149303Z === RUN   TestDefaultRequestTimeout/stream
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0149607Z === RUN   TestDefaultRequestTimeout/models
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0149904Z === RUN   TestDefaultRequestTimeout/raw
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0150224Z === RUN   TestDefaultRequestTimeout/anthropic-chat
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0150588Z === RUN   TestDefaultRequestTimeout/anthropic-stream
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0150927Z --- PASS: TestDefaultRequestTimeout (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0151307Z     --- PASS: TestDefaultRequestTimeout/chat (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0151704Z     --- PASS: TestDefaultRequestTimeout/stream (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0152107Z     --- PASS: TestDefaultRequestTimeout/models (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0152496Z     --- PASS: TestDefaultRequestTimeout/raw (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0153067Z     --- PASS: TestDefaultRequestTimeout/anthropic-chat (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0153548Z     --- PASS: TestDefaultRequestTimeout/anthropic-stream (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0153941Z === RUN   TestRequestTimeoutCoversHeadersAndBody
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0154335Z === RUN   TestRequestTimeoutCoversHeadersAndBody/chat/headers
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0154747Z === RUN   TestRequestTimeoutCoversHeadersAndBody/chat/body
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0155167Z === RUN   TestRequestTimeoutCoversHeadersAndBody/stream/headers
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0155734Z === RUN   TestRequestTimeoutCoversHeadersAndBody/stream/body
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0156155Z === RUN   TestRequestTimeoutCoversHeadersAndBody/models/headers
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0156575Z === RUN   TestRequestTimeoutCoversHeadersAndBody/models/body
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0156988Z === RUN   TestRequestTimeoutCoversHeadersAndBody/raw/headers
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0157388Z === RUN   TestRequestTimeoutCoversHeadersAndBody/raw/body
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0157988Z === RUN   TestRequestTimeoutCoversHeadersAndBody/anthropic-chat/headers
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0158592Z === RUN   TestRequestTimeoutCoversHeadersAndBody/anthropic-chat/body
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0159337Z === RUN   TestRequestTimeoutCoversHeadersAndBody/anthropic-stream/headers
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0159949Z === RUN   TestRequestTimeoutCoversHeadersAndBody/anthropic-stream/body
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0160419Z --- PASS: TestRequestTimeoutCoversHeadersAndBody (0.61s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0161035Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/chat/headers (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0161704Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/chat/body (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0162379Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/stream/headers (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0163212Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/stream/body (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0163785Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/models/headers (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0164462Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/models/body (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0165117Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/raw/headers (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0165767Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/raw/body (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0166476Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/anthropic-chat/headers (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0167223Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/anthropic-chat/body (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0167979Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/anthropic-stream/headers (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0168758Z     --- PASS: TestRequestTimeoutCoversHeadersAndBody/anthropic-stream/body (0.05s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0169333Z === RUN   TestDisabledTimeoutPreservesCallerDeadline
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0169843Z --- PASS: TestDisabledTimeoutPreservesCallerDeadline (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0170216Z === RUN   TestAnthropicCacheUsage
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0170576Z --- PASS: TestAnthropicCacheUsage (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0170918Z === RUN   TestOpenAIUsageDoesNotAddCache
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0171340Z --- PASS: TestOpenAIUsageDoesNotAddCache (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0171679Z === RUN   TestUserAgentOnEveryCatalogPage
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0172014Z --- PASS: TestUserAgentOnEveryCatalogPage (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0172305Z PASS
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0172509Z ok  	callm/internal/client	1.720s
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0172932Z === RUN   TestKeyIsolationAndPrecedence
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0173257Z --- PASS: TestKeyIsolationAndPrecedence (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0173576Z === RUN   TestBaseURLPrecedence
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0173952Z --- PASS: TestBaseURLPrecedence (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0174263Z === RUN   TestOrcaConfiguration
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0174618Z --- PASS: TestOrcaConfiguration (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0174930Z === RUN   TestPoolsideConfiguration
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0175322Z --- PASS: TestPoolsideConfiguration (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0175627Z === RUN   TestKimiConfiguration
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0176000Z --- PASS: TestKimiConfiguration (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0176298Z === RUN   TestEnvFilesSkipNamedPipes
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0176707Z --- PASS: TestEnvFilesSkipNamedPipes (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0177032Z === RUN   TestWorkspaceDotenvLoading
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0177460Z === RUN   TestWorkspaceDotenvLoading/ignored_by_default
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0177937Z === RUN   TestWorkspaceDotenvLoading/cannot_enable_itself
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0178330Z === RUN   TestWorkspaceDotenvLoading/unrelated_variables
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0178683Z === RUN   TestWorkspaceDotenvLoading/already_set
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0179253Z === RUN   TestWorkspaceDotenvLoading/environment_opt-in_keeps_precedence
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0179696Z === RUN   TestWorkspaceDotenvLoading/trusted_file_opt-in
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0180063Z === RUN   TestWorkspaceDotenvLoading/environment_wins
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0180426Z === RUN   TestWorkspaceDotenvLoading/opt-out_is_silent
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0180783Z === RUN   TestWorkspaceDotenvLoading/invalid_setting
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0181119Z --- PASS: TestWorkspaceDotenvLoading (0.01s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0181565Z     --- PASS: TestWorkspaceDotenvLoading/ignored_by_default (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0182211Z     --- PASS: TestWorkspaceDotenvLoading/cannot_enable_itself (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0182956Z     --- PASS: TestWorkspaceDotenvLoading/unrelated_variables (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0183437Z     --- PASS: TestWorkspaceDotenvLoading/already_set (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0183990Z     --- PASS: TestWorkspaceDotenvLoading/environment_opt-in_keeps_precedence (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0184575Z     --- PASS: TestWorkspaceDotenvLoading/trusted_file_opt-in (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0185069Z     --- PASS: TestWorkspaceDotenvLoading/environment_wins (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0185557Z     --- PASS: TestWorkspaceDotenvLoading/opt-out_is_silent (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0186046Z     --- PASS: TestWorkspaceDotenvLoading/invalid_setting (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0186417Z === RUN   TestWorkspaceDotenvSameAsTrusted
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0186756Z --- PASS: TestWorkspaceDotenvSameAsTrusted (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0187045Z PASS
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0187243Z ok  	callm/internal/config	1.025s
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0187505Z === RUN   TestNormalizeFormat
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0187764Z --- PASS: TestNormalizeFormat (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0188019Z === RUN   TestSlug
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0188229Z --- PASS: TestSlug (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0188511Z === RUN   TestRenderJSONPreservesProviderFields
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0188889Z --- PASS: TestRenderJSONPreservesProviderFields (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0189240Z === RUN   TestRenderJSONEmptyCatalog
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0189536Z --- PASS: TestRenderJSONEmptyCatalog (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0189897Z === RUN   TestRenderZed
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0190171Z --- PASS: TestRenderZed (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0190416Z === RUN   TestRenderKilo
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0190743Z --- PASS: TestRenderKilo (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0191019Z === RUN   TestRenderContinue
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0191268Z --- PASS: TestRenderContinue (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0191550Z === RUN   TestNativeProtocolExportGuard
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0191872Z --- PASS: TestNativeProtocolExportGuard (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0192155Z PASS
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0192346Z ok  	callm/internal/export	1.016s
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0192860Z === RUN   TestSchemaValidation
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0193134Z --- PASS: TestSchemaValidation (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0193542Z === RUN   TestSchemaCompilationRejectsInvalidAndExternal
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0194027Z --- PASS: TestSchemaCompilationRejectsInvalidAndExternal (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0194594Z === RUN   TestResultDistinguishesCompletionAndSchemaFailures
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0195059Z --- PASS: TestResultDistinguishesCompletionAndSchemaFailures (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0195425Z PASS
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0195626Z ok  	callm/internal/pipeline	1.038s
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0195992Z === RUN   TestFilterModels
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0196255Z === RUN   TestFilterModels/normalized_dot
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0196647Z === RUN   TestFilterModels/comma_terms
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0196935Z === RUN   TestFilterModels/display_name
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0197321Z === RUN   TestFilterModels/regex_and_terms
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0197617Z === RUN   TestFilterModels/regex_only
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0197900Z === RUN   TestFilterModels/separator_terms
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0198181Z === RUN   TestFilterModels/unused_terms
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0198455Z --- PASS: TestFilterModels (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0198853Z     --- PASS: TestFilterModels/normalized_dot (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0199445Z     --- PASS: TestFilterModels/comma_terms (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0199947Z     --- PASS: TestFilterModels/display_name (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0200455Z     --- PASS: TestFilterModels/regex_and_terms (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0200854Z     --- PASS: TestFilterModels/regex_only (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0201240Z     --- PASS: TestFilterModels/separator_terms (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0201624Z     --- PASS: TestFilterModels/unused_terms (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0201943Z === RUN   TestFilterModelsInvalidRegex
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0202255Z --- PASS: TestFilterModelsInvalidRegex (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0202851Z === RUN   TestStreamRendererInlineThinking
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0203334Z --- PASS: TestStreamRendererInlineThinking (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0203669Z === RUN   TestStreamRendererNoReasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0203985Z --- PASS: TestStreamRendererNoReasoning (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0204319Z === RUN   TestStreamRendererOnlyReasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0204645Z --- PASS: TestStreamRendererOnlyReasoning (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0204974Z === RUN   TestStreamRendererDeltaFields
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0205408Z --- PASS: TestStreamRendererDeltaFields (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0205728Z === RUN   TestLiteralThinkingPreserved
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0206139Z --- PASS: TestLiteralThinkingPreserved (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0206464Z === RUN   TestUnknownMetadataAndStringCost
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0206792Z --- PASS: TestUnknownMetadataAndStringCost (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0207112Z === RUN   TestRendererWriteFailures
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0207407Z === RUN   TestRendererWriteFailures/content
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0207827Z === RUN   TestRendererWriteFailures/reasoning
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0208142Z === RUN   TestRendererWriteFailures/short
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0208541Z === RUN   TestRendererWriteFailures/newline
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0208846Z === RUN   TestRendererWriteFailures/flush
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0209246Z --- PASS: TestRendererWriteFailures (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0209694Z     --- PASS: TestRendererWriteFailures/content (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0210165Z     --- PASS: TestRendererWriteFailures/reasoning (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0210687Z     --- PASS: TestRendererWriteFailures/short (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0211199Z     --- PASS: TestRendererWriteFailures/newline (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0211597Z     --- PASS: TestRendererWriteFailures/flush (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0212014Z === RUN   TestAuxiliaryWriteFailures
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0212314Z --- PASS: TestAuxiliaryWriteFailures (0.00s)
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0212731Z PASS
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0212925Z ok  	callm/internal/ui	1.011s
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.0213149Z FAIL
+Lint & Test (Go 1.27.x)	Go Test	2026-10-09T12:14:32.1088255Z ##[error]Process completed with exit code 1.

@@ -65,7 +65,7 @@ func TestUserAgentCLI(t *testing.T) {
 				defer server.Close()
 				args := append([]string{"--api", server.URL, "--api-key", "dummy"}, tc.flags...)
 				cmd := testCLI(t, append(args, mode.args...)...)
-				cmd.Env = append(cmd.Env, "CALLM_USER_AGENT="+tc.env, "GORACE=atexit_sleep_ms=0")
+				cmd.Env = append(cmd.Env, "CALLM_USER_AGENT="+tc.env, cliRaceEnvironment())
 				out, err := cmd.CombinedOutput()
 				if tc.invalid {
 					if err == nil || calls.Load() != 0 || !strings.Contains(string(out), "user-agent must not contain control characters") {
