@@ -1,6 +1,37 @@
 # Changelog
 
-## Unreleased
+## v0.11.0 — 2026-11-09
+
+### New
+
+- Add `--web-search` and `--web-fetch` to chat for Straitly's hosted tools. The
+  provider runs them and returns a finished answer, so no tool loop is needed.
+- Add a per-provider web tool map. Straitly is enabled; every other preset and custom
+  endpoint fails with a clear error before any request. `callm raw` can still send a
+  provider's own tool format.
+- Report sources separately from the answer: text and streaming output list them on
+  stderr, leaving stdout answer-only; `--result-json` gains an additive `sources`
+  array; `--json` keeps the original `annotations`.
+
+### Changed
+
+- Completion validation accepts web tool records only when the matching request
+  enabled web tools and the answer finished. Other tool calls and a `tool_calls`
+  finish reason still fail.
+- The agent skill marks web tools as paid: agents must get explicit user confirmation
+  before each use and must not enable them by default in scripts or pipelines.
+- Release notes are now published from the tagged version's `CHANGELOG.md` section,
+  and a release fails if that section is missing.
+
+### Cost and known limits
+
+- Each search or fetch is billed on top of tokens, and the model chooses how many to
+  run. `--stats`, `--json` and `--result-json` report the total the provider charged.
+- Straitly did not apply `--schema` when web tools were on (three models tested). Ask
+  for JSON in the prompt and use `--validate-schema FILE`; failed validations are billed.
+- Sources are provider-reported and can include pages the answer did not use.
+
+### Maintenance
 
 - Keep local development audit records out of version control and remove public
   documentation links to them. Preserve local copies for development use.
