@@ -24,6 +24,15 @@ jobs:
           go-version: '1.27.2'
           check-latest: true
 
+      - name: Extract release notes from CHANGELOG
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          awk -v tag="${TAG}" '/^## / { if (found) exit; found = ($2 == tag); next } found' CHANGELOG.md > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "CHANGELOG.md has no notes for ${TAG}" >&2
+            exit 1
+          fi
+
       - name: Build and Package Binaries
         run: |
           set -e
@@ -76,6 +85,7 @@ jobs:
             dist/*.tar.gz
             dist/*.zip
             dist/checksums.txt
+          body_path: release-notes.md
           generate_release_notes: true
           draft: false
           prerelease: false
