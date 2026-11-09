@@ -294,6 +294,11 @@ func (c *Client) Chat(ctx context.Context, req ChatRequest) (*ChatResponse, erro
 		return nil, fmt.Errorf("response has no completion choices")
 	}
 	result.Raw = append([]byte(nil), b...)
+	if len(req.Tools) > 0 {
+		for i := range result.Choices {
+			result.Choices[i].AllowWebTools = true
+		}
+	}
 	return &result, nil
 }
 

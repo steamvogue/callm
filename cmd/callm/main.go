@@ -107,6 +107,8 @@ Options (chat unless stated otherwise):
       --system-file FILE           Read system instructions verbatim (conflicts with --system)
       --prompt-file FILE           Read prompt text without a file wrapper
       --body-file FILE|-           Raw command JSON body from a file or stdin
+      --web-search                 Let the provider search the web (Straitly only; billed per search)
+      --web-fetch                  Let the provider read web pages (Straitly only; billed per fetch)
       --max-input-bytes N          Combined wire-body limit (default 67108864; maximum 64 MiB)
   -t, --temp, --temperature T      Sampling temperature (omitted by default)
   -n, --max-tokens N               Maximum tokens to generate
@@ -167,6 +169,8 @@ Defaults and precedence:
   OpenRouter, Kimi Code. Other configured keys require an explicit preset (e.g. --oa).
   Streaming/reasoning display default on only when stdout is a terminal.
   Text output rejects truncation, refusal, tools and empty answers; --allow-empty permits empty.
+  Validation accepts web tool records only with --web-search/--web-fetch, and only on finished answers.
+  Web tools list sources on stderr and in --result-json "sources"; --stats cost includes tool fees.
   --strict also requires a terminal reason; --json alone preserves diagnostic envelopes.
   Schema validation buffers output; external schema references are disabled.
   --result-json errors may contain partial answers; publish only exit 0 and status "ok".
@@ -211,6 +215,9 @@ Examples:
 
   # Pipe stdin + add instruction:
   cat main.go | callm "Find concurrency race conditions"
+
+  # Answer from the live web through Straitly, with sources on stderr and cost:
+  callm --st --web-search --strict --stats "Latest stable Go release? Cite the source."
 
   # Attach files and show reasoning + latency/cost stats:
   callm -f schema.sql --reasoning --stats "Generate 3 sample INSERT statements"
@@ -797,6 +804,8 @@ func runChat(ctx context.Context, args []string) {
 		strictOutput  bool
 		allowEmpty    bool
 		versionFlag   bool
+		webSearch     bool
+		webFetch      bool
 	)
 
 	fs.BoolVar(&versionFlag, "v", false, "Show version")
@@ -883,6 +892,8 @@ func runChat(ctx context.Context, args []string) {
 	fs.BoolVar(&jsonOutput, "json", false, "Output full unparsed JSON (transport success unless --strict)")
 	fs.BoolVar(&strictOutput, "strict", false, "Require usable output and a terminal finish/stop reason, including with --json")
 	fs.BoolVar(&allowEmpty, "allow-empty", false, "Permit intentionally empty output; still reject failed completions")
+	fs.BoolVar(&webSearch, "web-search", false, "Let the provider search the web")
+	fs.BoolVar(&webFetch, "web-fetch", false, "Let the provider read web pages")
 
 	fs.Usage = printUsage
 
@@ -1118,6 +1129,17 @@ func runChat(ctx context.Context, args []string) {
 	}
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
+	var webTools []string
+	if webSearch {
+		webTools = append(webTools, client.WebSearchTool)
+	}
+	if webFetch {
+		webTools = append(webTools, client.WebFetchTool)
+	}
+	chatReq.Tools, err = client.WebToolDefinitions(apiClient.Provider, webTools...)
+	if err != nil {
+		die(err)
+	}
 	apiClient.UserAgent = *userAgent
 	apiClient.MaxRequestBytes = *maxInput
 	apiClient.HTTPClient.Timeout = *timeout
@@ -1176,12 +1198,14 @@ func runChat(ctx context.Context, args []string) {
 	}
 
 	if isStreaming {
-		var completion client.Completion
+		completion := client.Completion{AllowWebTools: len(chatReq.Tools) > 0}
+		var sources []client.Source
 		renderer := ui.NewStreamRenderer(os.Stdout, os.Stderr, displayReasoning, onlyReasoning)
 		renderer.ParseThinking = parseThinking
 		usage, err := apiClient.StreamChat(ctx, chatReq, func(chunk client.StreamChunk) error {
 			if len(chunk.Choices) > 0 {
 				completion.Add(chunk.Choices[0])
+				sources = client.AppendSources(sources, chunk.Choices[0].Delta.Annotations)
 				return renderer.HandleDelta(chunk.Choices[0].Delta)
 			}
 			return nil
@@ -1192,6 +1216,9 @@ func runChat(ctx context.Context, args []string) {
 		completion.HasReasoning = renderer.HasReasoned
 		if err == nil {
 			err = completion.Validate(strictOutput, allowEmpty, onlyReasoning)
+		}
+		if err == nil && len(chatReq.Tools) > 0 {
+			err = ui.PrintSources(os.Stderr, sources)
 		}
 		if showStats {
 			err = errors.Join(err, ui.PrintStats(os.Stderr, time.Since(startTime), usage, model))
@@ -1274,7 +1301,11 @@ func runChat(ctx context.Context, args []string) {
 	if _, err := os.Stdout.Write(answer.Bytes()); err != nil {
 		die(err)
 	}
-
+	if len(chatReq.Tools) > 0 {
+		if err := ui.PrintSources(os.Stderr, client.AppendSources(nil, message.Annotations)); err != nil {
+			die(err)
+		}
+	}
 }
 
 func encodeImageToDataURI(pathOrURL string) (string, error) {
