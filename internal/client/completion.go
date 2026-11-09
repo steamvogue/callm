@@ -12,8 +12,11 @@ type Completion struct {
 	HasContent   bool
 	HasReasoning bool
 	HasTools     bool
+	HasWebTools  bool
 	Refusal      string
 	FinishReason string
+	// AllowWebTools accepts hosted web-tool records the caller requested.
+	AllowWebTools bool
 }
 
 func (s *Completion) Add(choice StreamChoice) {
@@ -21,7 +24,17 @@ func (s *Completion) Add(choice StreamChoice) {
 	d := choice.Delta
 	s.HasContent = s.HasContent || strings.TrimSpace(d.Content) != ""
 	s.HasReasoning = s.HasReasoning || strings.TrimSpace(d.Reasoning+d.ReasoningContent+d.Thought) != ""
-	s.HasTools = s.HasTools || len(d.ToolCalls) > 0 || len(d.FunctionCall) > 0 && strings.TrimSpace(string(d.FunctionCall)) != "null"
+	for _, call := range d.ToolCalls {
+		switch classifyToolCall(call) {
+		case webToolCall:
+			s.HasWebTools = true
+		case toolCallContinuation:
+			s.HasTools = s.HasTools || !s.HasWebTools
+		default:
+			s.HasTools = true
+		}
+	}
+	s.HasTools = s.HasTools || len(d.FunctionCall) > 0 && strings.TrimSpace(string(d.FunctionCall)) != "null"
 	s.Refusal += d.Refusal
 	if choice.FinishReason != nil {
 		s.FinishReason = *choice.FinishReason
@@ -29,7 +42,7 @@ func (s *Completion) Add(choice StreamChoice) {
 }
 
 func (choice ChatChoice) Completion() Completion {
-	s := Completion{}
+	s := Completion{AllowWebTools: choice.AllowWebTools}
 	m := choice.Message
 	s.Add(StreamChoice{Delta: StreamDelta{Content: m.Content, Reasoning: m.Reasoning, ReasoningContent: m.ReasoningContent, Thought: m.Thought, Refusal: m.Refusal, ToolCalls: m.ToolCalls, FunctionCall: m.FunctionCall}, FinishReason: &choice.FinishReason})
 	return s
@@ -55,7 +68,7 @@ func (s Completion) Validate(strict, allowEmpty, onlyReasoning bool) error {
 	default:
 		return fmt.Errorf("unsupported completion reason %q", s.FinishReason)
 	}
-	if s.HasTools {
+	if s.HasTools || s.HasWebTools && !s.AllowWebTools {
 		return fmt.Errorf("response contains unsupported tool calls; use --json to inspect the envelope")
 	}
 	if strict && s.FinishReason == "" {

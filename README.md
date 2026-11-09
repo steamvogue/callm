@@ -24,6 +24,7 @@ See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/
 
 - **Zero Runtime Dependencies**: Compiled into a single static binary (`callm`). Eliminates external dependencies on `curl`, `jq`, or Python runtimes.
 - **Millisecond Startup**: Low process startup overhead for Unix pipelines and automated scripts.
+- **Hosted Web Tools**: `--web-search` and `--web-fetch` on Straitly, with sources reported separately from the answer.
 - **Provider Presets**:
   - `--st`: Straitly Gateway (`https://api.straitly.ai/v1`)
   - `--or`: OpenRouter Gateway (`https://openrouter.ai/api/v1`)
@@ -312,6 +313,40 @@ callm --only-reasoning "Which is larger: 9.11 or 9.9?"
 callm --no-reasoning "What is the capital of France?"
 ```
 
+### Web Search and Fetch
+
+```bash
+# Search the web; the answer goes to stdout, sources and cost to stderr
+callm --st --web-search --strict --stats "Latest stable Go release? Cite the source."
+
+# Let the model search and read pages; sources are in the result envelope
+callm --st --web-search --web-fetch --result-json "Summarize the current Go release policy" | jq '.answer, .sources'
+```
+
+The provider runs these tools and returns a finished answer, so callm needs no
+tool loop. Each flag is checked against a per-provider map before any request is sent:
+
+| Provider | `--web-search` | `--web-fetch` |
+|---|---|---|
+| Straitly (`--st`) | yes | yes |
+| All other presets and custom endpoints | error | error |
+
+Other providers use different request and continuation protocols. For those, send
+the provider's own format with `callm raw`.
+
+- **Cost**: each search or fetch is billed in addition to tokens. `--stats`, `--json`
+  and `--result-json` report the total the provider charged; models may run several
+  searches for one prompt.
+- **Validation**: web tool records are accepted only when you requested the tool and
+  the answer finished. Other tool calls, and any `finish_reason` of `tool_calls`, still fail.
+- **Schemas**: Straitly did not apply `--schema` when web tools were on (three models
+  tested; each returned prose and failed local validation). Instead, ask for JSON in the
+  prompt and use `--validate-schema FILE`; a failed validation is still billed.
+- **Sources**: text output lists them on stderr, leaving stdout answer-only.
+  `--result-json` adds a `sources` array and `--json` keeps the original `annotations`.
+  Sources are what the provider reports and can include pages the answer did not use.
+  Answers can also contain the model's interim narration between tool uses.
+
 ### Multimodal Vision Models
 
 ```bash
@@ -417,6 +452,8 @@ Options (chat unless stated otherwise):
       --system-file FILE           Read system instructions verbatim (conflicts with --system)
       --prompt-file FILE           Read prompt text without a file wrapper
       --body-file FILE|-           Raw command JSON body from a file or stdin
+      --web-search                 Let the provider search the web (Straitly only; billed per search)
+      --web-fetch                  Let the provider read web pages (Straitly only; billed per fetch)
       --max-input-bytes N          Combined wire-body limit (default 67108864; maximum 64 MiB)
   -t, --temp, --temperature T      Sampling temperature (omitted by default)
   -n, --max-tokens N               Maximum tokens to generate
@@ -477,6 +514,8 @@ Defaults and precedence:
   OpenRouter, Kimi Code. Other configured keys require an explicit preset (e.g. --oa).
   Streaming/reasoning display default on only when stdout is a terminal.
   Text output rejects truncation, refusal, tools and empty answers; --allow-empty permits empty.
+  Validation accepts web tool records only with --web-search/--web-fetch, and only on finished answers.
+  Web tools list sources on stderr and in --result-json "sources"; --stats cost includes tool fees.
   --strict also requires a terminal reason; --json alone preserves diagnostic envelopes.
   Schema validation buffers output; external schema references are disabled.
   --result-json errors may contain partial answers; publish only exit 0 and status "ok".

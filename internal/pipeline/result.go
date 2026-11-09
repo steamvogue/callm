@@ -10,17 +10,18 @@ import (
 // Result is versioned separately from the original provider JSON (--json).
 // An answer in an error result may be partial and must not be published.
 type Result struct {
-	Version        int           `json:"version"`
-	Status         string        `json:"status"`
-	RequestedModel string        `json:"requested_model"`
-	ReturnedModel  string        `json:"returned_model"`
-	Answer         string        `json:"answer"`
-	FinishReason   string        `json:"finish_reason"`
-	Refusal        string        `json:"refusal"`
-	Usage          *client.Usage `json:"usage"`
-	DurationMS     int64         `json:"duration_ms"`
-	SchemaValid    *bool         `json:"schema_valid"`
-	Error          *ResultError  `json:"error"`
+	Version        int             `json:"version"`
+	Status         string          `json:"status"`
+	RequestedModel string          `json:"requested_model"`
+	ReturnedModel  string          `json:"returned_model"`
+	Answer         string          `json:"answer"`
+	FinishReason   string          `json:"finish_reason"`
+	Refusal        string          `json:"refusal"`
+	Usage          *client.Usage   `json:"usage"`
+	DurationMS     int64           `json:"duration_ms"`
+	SchemaValid    *bool           `json:"schema_valid"`
+	Sources        []client.Source `json:"sources,omitempty"`
+	Error          *ResultError    `json:"error"`
 }
 
 type ResultError struct {
@@ -37,6 +38,7 @@ func NewResult(requested string, response *client.ChatResponse, duration time.Du
 		if len(response.Choices) > 0 {
 			choice := response.Choices[0]
 			r.Answer, r.FinishReason, r.Refusal = choice.Message.Content, choice.FinishReason, choice.Message.Refusal
+			r.Sources = client.AppendSources(nil, choice.Message.Annotations)
 			if err == nil {
 				err, code = choice.Completion().Validate(true, false, false), "invalid_completion"
 			}

@@ -1,12 +1,12 @@
 ---
 name: callm
-description: Use the fast, standalone `callm` CLI tool to query external LLMs (DeepSeek V4, Claude, OpenAI, OpenRouter, OrcaRouter, Kimi Code, etc.) for second opinions, complex logic, code review, or specialized model capabilities.
+description: Use the fast, standalone `callm` CLI tool to query external LLMs (DeepSeek V4, Claude, OpenAI, OpenRouter, OrcaRouter, Kimi Code, etc.) for second opinions, complex logic, code review, or specialized model capabilities. Paid web search/fetch flags require explicit user confirmation before every use.
 ---
 
 # callm (call - llm) Agent Skill
 
 `callm` is a fast standalone CLI utility installed at `/usr/local/bin/callm` (and in `$PATH`).
-It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.10.0; check `callm --version` and `callm --help` when using an older installation.
+It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.11.0; check `callm --version` and `callm --help` when using an older installation.
 
 Default provider: **Poolside** (`poolside/laguna-s-2.1`). Without a preset flag,
 callm uses the first provider whose key is set, checked in order Poolside,
@@ -204,6 +204,37 @@ Flash); use `-m deepseek-v4-pro` for V4 Pro. DeepSeek retired `deepseek-chat` an
 `--effort` sends `reasoning_effort` (DeepSeek maps `medium` to `high`), and
 `--thinking-budget` is rejected. For a non-thinking request, use
 `callm --ds raw /chat/completions` with `"thinking": {"type": "disabled"}` in the body.
+
+### 8. Web search and fetch (Straitly only)
+
+> **Paid action: never run these without the user's explicit confirmation.**
+> `--web-search`, `--web-fetch`, and `callm raw` requests with `web_search` or
+> `web_fetch` tools are billed per search or fetch on top of tokens. The model
+> decides how many to run, and a call that fails validation is still billed.
+> Before running one, show the user the command, say that it costs money, and wait
+> for a clear yes. A yes covers only that task, so ask again for a new task, batch,
+> loop or retry. Never enable these tools by default in scripts or pipelines.
+
+Check `callm --help` for these flags on older installations.
+
+```bash
+callm --st --web-search --strict --stats "Latest stable Go release? Cite the source."
+callm --st --web-search --web-fetch --result-json "Summarize the current Go release policy"
+```
+
+Straitly runs the tools and returns a finished answer, so no tool loop is needed.
+Other presets and custom endpoints fail before any request; use `callm raw` with
+that provider's own format. Each search or fetch is billed on top of tokens, and a
+model may run several per prompt; `--stats` shows the total charged.
+
+Stdout stays answer-only. Text output lists sources on stderr; `--result-json` adds
+`sources`; `--json` keeps the original `annotations`. Sources are provider-reported
+and can include pages the answer did not use, so verify them before citing. Answers
+can contain interim narration between tool uses. Validation accepts web tool records
+only when requested and on finished answers.
+
+`--schema` was not applied by Straitly with web tools on (three models tested); ask
+for JSON in the prompt and use `--validate-schema FILE`. Failed validations are billed.
 
 ## Result and model behavior in v0.10.0
 

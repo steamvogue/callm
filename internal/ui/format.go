@@ -208,6 +208,22 @@ func (r *StreamRenderer) Finish() error {
 	return r.writeErr
 }
 
+// PrintSources lists the pages a provider reported for a web-tool answer.
+func PrintSources(err io.Writer, sources []client.Source) error {
+	if len(sources) == 0 {
+		return nil
+	}
+	text := "\nSources:\n"
+	for i, source := range sources {
+		if source.Title != "" {
+			text += fmt.Sprintf("  [%d] %s\n      %s\n", i+1, source.Title, source.URL)
+		} else {
+			text += fmt.Sprintf("  [%d] %s\n", i+1, source.URL)
+		}
+	}
+	return writeText(err, text)
+}
+
 // PrintStats prints performance and cost metrics to stderr.
 func PrintStats(err io.Writer, duration time.Duration, usage *client.Usage, model string) error {
 	isTTY := IsTerminal(err)

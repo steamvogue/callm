@@ -55,21 +55,22 @@ type ThinkingConfig struct {
 
 // ChatRequest is the payload sent to /v1/chat/completions.
 type ChatRequest struct {
-	Model               string           `json:"model"`
-	Messages            []Message        `json:"messages"`
-	Stream              bool             `json:"stream,omitempty"`
-	Temperature         *float64         `json:"temperature,omitempty"`
-	MaxTokens           *int             `json:"max_tokens,omitempty"`
-	MaxCompletionTokens *int             `json:"max_completion_tokens,omitempty"`
-	ReasoningEffort     string           `json:"reasoning_effort,omitempty"`
-	Reasoning           *ReasoningConfig `json:"reasoning,omitempty"`
-	IncludeReasoning    bool             `json:"include_reasoning,omitempty"`
-	Thinking            *ThinkingConfig  `json:"thinking,omitempty"`
-	TopP                *float64         `json:"top_p,omitempty"`
-	ResponseFormat      *ResponseFormat  `json:"response_format,omitempty"`
-	Provider            *ProviderRouting `json:"provider,omitempty"`
-	Stop                []string         `json:"stop,omitempty"`
-	StreamOptions       *StreamOptions   `json:"stream_options,omitempty"`
+	Model               string            `json:"model"`
+	Messages            []Message         `json:"messages"`
+	Stream              bool              `json:"stream,omitempty"`
+	Temperature         *float64          `json:"temperature,omitempty"`
+	MaxTokens           *int              `json:"max_tokens,omitempty"`
+	MaxCompletionTokens *int              `json:"max_completion_tokens,omitempty"`
+	ReasoningEffort     string            `json:"reasoning_effort,omitempty"`
+	Reasoning           *ReasoningConfig  `json:"reasoning,omitempty"`
+	IncludeReasoning    bool              `json:"include_reasoning,omitempty"`
+	Thinking            *ThinkingConfig   `json:"thinking,omitempty"`
+	TopP                *float64          `json:"top_p,omitempty"`
+	ResponseFormat      *ResponseFormat   `json:"response_format,omitempty"`
+	Provider            *ProviderRouting  `json:"provider,omitempty"`
+	Stop                []string          `json:"stop,omitempty"`
+	StreamOptions       *StreamOptions    `json:"stream_options,omitempty"`
+	Tools               []json.RawMessage `json:"tools,omitempty"`
 }
 
 type StreamOptions struct {
@@ -136,11 +137,14 @@ type ChatChoice struct {
 	Index        int     `json:"index"`
 	Message      RespMsg `json:"message"`
 	FinishReason string  `json:"finish_reason"`
+	// AllowWebTools records that this request enabled hosted web tools.
+	AllowWebTools bool `json:"-"`
 }
 
 // RespMsg holds the assistant response content and reasoning.
 type RespMsg struct {
 	Refusal          string            `json:"refusal,omitempty"`
+	Annotations      json.RawMessage   `json:"annotations,omitempty"`
 	ToolCalls        []json.RawMessage `json:"tool_calls,omitempty"`
 	FunctionCall     json.RawMessage   `json:"function_call,omitempty"`
 	Role             string            `json:"role"`
@@ -165,6 +169,7 @@ type ChatResponse struct {
 // StreamDelta holds streaming token delta.
 type StreamDelta struct {
 	Refusal          string            `json:"refusal,omitempty"`
+	Annotations      json.RawMessage   `json:"annotations,omitempty"`
 	ToolCalls        []json.RawMessage `json:"tool_calls,omitempty"`
 	FunctionCall     json.RawMessage   `json:"function_call,omitempty"`
 	Role             string            `json:"role,omitempty"`
