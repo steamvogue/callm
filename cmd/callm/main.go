@@ -62,6 +62,9 @@ Usage:
   callm info [OPTIONS] <MODEL>     Inspect full technical specs, pricing, and parameters for a model.
   callm raw [OPTIONS] <ENDPOINT> ['<JSON>']
                                     POST raw JSON body to any endpoint (e.g. /chat/completions).
+  callm image [OPTIONS] -m MODEL ["PROMPT"...]
+                                    Generate images to files with OpenRouter's Image API (billed).
+                                    --ref IMAGE adds reference images; --list shows image models.
   callm version | -v | --version   Print version, commit, and build date.
   callm -h | --help                Show this help message.
 
@@ -150,7 +153,7 @@ Environment Variables:
   CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
   OPENROUTER_REGION, CALLM_PROXY
-  CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
+  CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL, CALLM_IMAGE_MODEL (image command)
   CALLM_LOAD_DOTENV
 
 Defaults and precedence:
@@ -238,6 +241,11 @@ Examples:
   # Send the request through a SOCKS5 proxy:
   callm --proxy socks5h://127.0.0.1:1080 "Hello"
 
+  # Generate an image; edit one from a reference (OpenRouter, billed per image):
+  callm image --list recraft
+  callm image -m MODEL -o hero.png --aspect-ratio 16:9 "A lighthouse at dusk"
+  callm image -m MODEL --ref photo.jpg -o watercolor.png "Repaint as a watercolor"
+
   # Attach files and show reasoning + latency/cost stats:
   callm -f schema.sql --reasoning --stats "Generate 3 sample INSERT statements"
 
@@ -292,6 +300,9 @@ func main() {
 		return
 	case "raw":
 		runRaw(ctx, commandArgs)
+		return
+	case "image":
+		runImage(ctx, commandArgs)
 		return
 	case "chat":
 		runChat(ctx, commandArgs)
@@ -1452,7 +1463,7 @@ func splitCommand(args []string) (string, []string) {
 			continue
 		}
 		switch arg {
-		case "models", "info", "raw", "chat":
+		case "models", "info", "raw", "image", "chat":
 			rest := append([]string{}, args[:i]...)
 			return arg, append(rest, args[i+1:]...)
 		case "version", "help":

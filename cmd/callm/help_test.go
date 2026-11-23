@@ -28,7 +28,7 @@ func TestREADMEHelpReference(t *testing.T) {
 }
 
 func TestSubcommandHelpTimeouts(t *testing.T) {
-	for _, command := range []string{"models", "info", "raw"} {
+	for _, command := range []string{"models", "info", "raw", "image"} {
 		t.Run(command, func(t *testing.T) {
 			output, err := testCLI(t, command, "--help").CombinedOutput()
 			if err != nil {

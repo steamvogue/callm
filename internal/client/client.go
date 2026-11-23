@@ -376,6 +376,22 @@ func (c *Client) RawRequest(ctx context.Context, endpoint string, body []byte) (
 	return responseBytes(resp)
 }
 
+// GetRaw fetches an endpoint and returns the response body unchanged.
+func (c *Client) GetRaw(ctx context.Context, endpoint string) ([]byte, error) {
+	if !strings.HasPrefix(endpoint, "/") {
+		endpoint = "/" + endpoint
+	}
+	req, err := c.request(ctx, http.MethodGet, endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	return responseBytes(resp)
+}
+
 // openStream applies content-type validation and an independently configurable idle timer.
 func (c *Client) openStream(ctx context.Context, endpoint string, body []byte) (*http.Response, error) {
 	ctx, cancel := context.WithCancelCause(ctx)

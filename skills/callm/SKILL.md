@@ -6,7 +6,7 @@ description: Use the fast, standalone `callm` CLI tool to query external LLMs (D
 # callm (call - llm) Agent Skill
 
 `callm` is a fast standalone CLI utility installed at `/usr/local/bin/callm` (and in `$PATH`).
-It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.12.0; check `callm --version` and `callm --help` when using an older installation.
+It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.13.0; check `callm --version` and `callm --help` when using an older installation.
 
 Default provider: **Poolside** (`poolside/laguna-s-2.1`). Without a preset flag,
 callm uses the first provider whose key is set, checked in order Poolside,
@@ -232,7 +232,40 @@ callm --proxy socks5h://127.0.0.1:1080 "Hello"
   directly. Do not print proxy URLs that contain credentials.
 - A proxy changes the network path, not where the provider processes data.
 
-### 9. Web search and fetch (Straitly only)
+### 9. Image generation (OpenRouter, billed)
+
+```bash
+# Free discovery: models, whether each accepts reference images, accepted parameters:
+callm image --list
+callm image --list flux
+
+# Text to image; prints the saved path:
+callm image -m MODEL -o hero.png --aspect-ratio 16:9 "A lighthouse at dusk"
+
+# Edit or restyle from reference images (local files or URLs):
+callm image -m MODEL --ref photo.jpg -o result.png "Repaint as a watercolor"
+
+# Several images with a JSON summary (paths, usage) for scripts:
+callm image -m MODEL -n 3 -o set --json "Three logo ideas"
+```
+
+- Every generation costs money unless the model ID ends in `:free`. Ask the user
+  before a paid generation, name the model, and do not retry a failed or
+  unsatisfying result without asking again. `--list` is free.
+- `-m` is required (or `CALLM_IMAGE_MODEL`). Use an ID from `callm image --list`;
+  chat model IDs do not work here.
+- Reference images go in `--ref` (repeatable), and only for models marked `yes`
+  under REFERENCES. Do not use `-f` for pictures: it inlines text.
+- stdout holds only the saved paths (or the `--json` summary); read the image from
+  that path. An existing output file stops the command before the request; use a new
+  name or `--force`.
+- Options: `--aspect-ratio`, `--resolution`, `--size`, `--quality`, `--format`,
+  `--background`, `-n`, `--seed`, and `--param KEY=VALUE` for any other field. A
+  model rejects parameters it does not list.
+- OpenRouter only (`OPENROUTER_API_KEY`), global host only: the regional hosts
+  reject image generation. `chat --image` is the separate vision-input flag.
+
+### 10. Web search and fetch (Straitly only)
 
 > **Paid action: never run these without the user's explicit confirmation.**
 > `--web-search`, `--web-fetch`, and `callm raw` requests with `web_search` or

@@ -1,5 +1,39 @@
 # Changelog
 
+## v0.13.0 — 2026-11-23
+
+### New
+
+- Add `callm image` for OpenRouter's Image API (`POST /images`). It writes the
+  returned images to files and prints their paths. Options: `--aspect-ratio`,
+  `--resolution`, `--size`, `--quality`, `--format`, `--background`, `-n`, `--seed`,
+  and `--param KEY=VALUE` for any other request field.
+- Add reference images for image-to-image generation: `--ref FILE|URL` (repeatable,
+  alias `--image`), sent as `input_references`.
+- Add `callm image --list [FILTER]`: image models, whether each accepts reference
+  images, and the parameters each accepts. `--json` prints the catalog entries.
+- Add `CALLM_IMAGE_MODEL` as the default image model. `--json` prints a summary of
+  the saved files and usage; `--stats` prints latency, tokens and reported cost.
+
+### Behavior
+
+- `image` is now a subcommand name. A chat prompt whose first unquoted word is
+  `image` must be quoted or follow `chat`.
+- `callm image` uses the OpenRouter preset without `--or`. Another preset is an
+  error unless a compatible `--base-url` is given.
+- An existing output file stops the command before the request; `--force`
+  overwrites it. A name found taken after the response is saved under a numbered
+  name instead, so a billed image is kept.
+- Nothing is retried and no streaming is requested.
+
+### Known limits
+
+- OpenRouter only. The regional hosts (`--region eu|us`) do not offer image
+  generation.
+- Live validation: one generation with a zero-price `:free` model (text to image)
+  and the image model list. Reference images, multiple images and the other options
+  are tested with local mocks only; no paid model was called.
+
 ## v0.12.0 — 2026-11-23
 
 ### New

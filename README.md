@@ -54,6 +54,8 @@ See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/
   - Piped stdin with cancellation and an EOF deadline (`cat log.txt | callm "Extract errors"`)
   - Context file attachments (`-f schema.sql -f queries.sql`)
   - Multimodal Vision: `--image diagram.png` (auto base64 data-URI encoded)
+- **Image Generation** (OpenRouter Image API):
+  - `callm image -m MODEL -o out.png "prompt"`, with `--ref` reference images and `--list` discovery
 - **Observability & Cost Transparency**:
   - `--stats` displays latency, token counts, tokens/sec, and reported cost in USD when supplied by the gateway (`usage.cost`, or OrcaRouter’s `usage.cost_usd`).
 - **Catalog Explorer**:
@@ -429,6 +431,49 @@ the provider's own format with `callm raw`.
 callm --ant --image ./chart.png "Explain the trend shown in this chart"
 ```
 
+### Image Generation
+
+`callm image` generates images with OpenRouter's Image API (`POST /images`) and
+saves them to files. It uses `OPENROUTER_API_KEY` without a preset flag. Every
+generation is billed unless the model is free, and nothing is retried.
+
+```bash
+# List image models, whether each takes reference images, and its parameters:
+callm image --list
+callm image --list recraft
+
+# Text to image. The extension comes from the returned format when you leave it out:
+callm image -m MODEL -o hero --aspect-ratio 16:9 "A lighthouse at dusk, flat illustration"
+
+# Image to image: one or more reference images (local files or URLs):
+callm image -m MODEL --ref photo.jpg --ref style.png -o result.png "Repaint in this style"
+
+# Several images, a JSON summary and the reported cost:
+callm image -m MODEL -n 3 -o set --json --stats "Three logo ideas for a bakery"
+```
+
+- **Output.** stdout lists the saved paths, one per line; `--json` prints a summary
+  (`model`, `files`, `usage`) without image data. Several images become `name-1.ext`,
+  `name-2.ext`. Without `-o` the name is `callm-image-<time>` in the current folder.
+- **Existing files.** An existing output file stops the command before the request;
+  `--force` overwrites it. If the name is taken only after the extension is known,
+  the image is saved beside it as `name.1.ext`, so a paid image is not lost.
+- **Options.** `--aspect-ratio`, `--resolution`, `--size`, `--quality`, `--format`,
+  `--background`, `-n`, `--seed`. `--param KEY=VALUE` sends any other request field,
+  for example `--param output_compression=80` or `--param 'provider={"only":["SLUG"]}'`.
+  Models accept different subsets; `--list` shows them and OpenRouter rejects the rest.
+- **Model.** `-m` is required; `CALLM_IMAGE_MODEL` sets a default. `CALLM_MODEL` is
+  not used, because chat models cannot serve this endpoint.
+- **References.** Only models marked `yes` under REFERENCES accept `--ref`
+  (`--image` is an alias). Local files are sent as base64 data URLs.
+- **Limits.** OpenRouter only: another preset needs a compatible `--base-url`. No
+  streaming or partial previews. The Image API is not available on the regional
+  hosts (`--region eu|us`). `--proxy` and the timeout flags work as elsewhere; slow
+  models can take over a minute.
+
+`--image` on `chat` is different: it shows a picture to a vision model that answers
+in text.
+
 ### Model Discovery & Inspection
 
 ```bash
@@ -483,6 +528,9 @@ Usage:
   callm info [OPTIONS] <MODEL>     Inspect full technical specs, pricing, and parameters for a model.
   callm raw [OPTIONS] <ENDPOINT> ['<JSON>']
                                     POST raw JSON body to any endpoint (e.g. /chat/completions).
+  callm image [OPTIONS] -m MODEL ["PROMPT"...]
+                                    Generate images to files with OpenRouter's Image API (billed).
+                                    --ref IMAGE adds reference images; --list shows image models.
   callm version | -v | --version   Print version, commit, and build date.
   callm -h | --help                Show this help message.
 
@@ -571,7 +619,7 @@ Environment Variables:
   CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
   OPENROUTER_REGION, CALLM_PROXY
-  CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
+  CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL, CALLM_IMAGE_MODEL (image command)
   CALLM_LOAD_DOTENV
 
 Defaults and precedence:
