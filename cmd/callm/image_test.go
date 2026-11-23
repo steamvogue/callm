@@ -30,6 +30,15 @@ func (m *imageMock) last(t *testing.T) map[string]interface{} {
 	return m.bodies[len(m.bodies)-1]
 }
 
+func (m *imageMock) firstPath() string {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if len(m.paths) == 0 {
+		return ""
+	}
+	return m.paths[0]
+}
+
 func (m *imageMock) posts() int {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -115,8 +124,8 @@ func TestImageCLIWritesFilesAndSendsReferences(t *testing.T) {
 	if first["type"] != "image_url" || local != "data:image/jpeg;base64,"+base64.StdEncoding.EncodeToString([]byte("jpeg-bytes")) || remote != "https://example.com/a.png" {
 		t.Fatalf("references: %v", references)
 	}
-	if mock.paths[0] != "POST /images" {
-		t.Fatalf("path: %v", mock.paths)
+	if mock.firstPath() != "POST /images" {
+		t.Fatalf("path: %v", mock.firstPath())
 	}
 }
 
@@ -245,8 +254,8 @@ func TestImageCLIListAndEnvironmentModel(t *testing.T) {
 	if err != nil || strings.Contains(out, "acme/paint") || !strings.Contains(out, `"id": "acme/sketch:free"`) {
 		t.Fatalf("err=%v output=%s", err, out)
 	}
-	if mock.posts() != 0 || mock.paths[0] != "GET /images/models" {
-		t.Fatalf("list must only read the catalog: %v", mock.paths)
+	if mock.posts() != 0 || mock.firstPath() != "GET /images/models" {
+		t.Fatalf("list must only read the catalog: %v", mock.firstPath())
 	}
 	cmd := testCLI(t, "image", "--api", mock.URL, "-o", "env", "x")
 	cmd.Dir = dir
