@@ -1,5 +1,35 @@
 # Changelog
 
+## v0.12.0 — 2026-11-23
+
+### New
+
+- Add `--region eu|us|global` for OpenRouter in-region routing. `eu` uses
+  `https://eu.openrouter.ai/api/v1` and `us` uses `https://us.openrouter.ai/api/v1`,
+  for `chat`, `models`, `info` and `raw`. `OPENROUTER_REGION` sets the default.
+- Add `--proxy URL` and `CALLM_PROXY` for `http`, `https`, `socks5` and `socks5h`
+  proxies on every API command. `--proxy direct` ignores all proxy variables.
+
+### Behavior
+
+- A region together with `--base-url` or `CALLM_BASE_URL` is an error, and so is
+  `--region` with a provider other than OpenRouter. A regional host is never
+  replaced silently.
+- The regional OpenRouter hosts use the same request shape as `openrouter.ai`
+  (reasoning options, schema routing).
+- With a proxy set, a request fails when the proxy is unreachable; there is no direct
+  fallback. SOCKS5 proxies resolve DNS. Loopback API hosts connect directly.
+- `OPENROUTER_REGION` and `CALLM_PROXY` in a current-directory `.env` follow the
+  existing rule: ignored unless `CALLM_LOAD_DOTENV=1`.
+
+### Known limits
+
+- Regional hosts need an OpenRouter Business or Enterprise plan. OpenRouter rejects
+  the Auto Router, web search, web fetch, files, image generation and the Batch API
+  there, and fails a model that has no endpoint in the region.
+- Tested with local mocks only: no live request was sent to a regional OpenRouter
+  host or through a real proxy in the test suite.
+
 ## v0.11.0 — 2026-11-09
 
 ### New

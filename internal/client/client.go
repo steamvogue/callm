@@ -38,7 +38,7 @@ func NewClient(baseURL, apiKey string, provider ...string) *Client {
 		switch u.Hostname() {
 		case "api.anthropic.com":
 			selected = "ant"
-		case "openrouter.ai":
+		case "openrouter.ai", "eu.openrouter.ai", "us.openrouter.ai":
 			selected = "or"
 		case "api.orcarouter.ai":
 			selected = "orca"

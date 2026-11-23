@@ -1,6 +1,9 @@
 package config
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestKeyIsolationAndPrecedence(t *testing.T) {
 	for _, key := range []string{"CALLM_API_KEY", "STRAITLY_API_KEY", "OPENAI_API_KEY", "DEEPSEEK_API_KEY", "ZAI_API_KEY", "ZHIPU_API_KEY", "DASHSCOPE_API_KEY", "QWEN_API_KEY", "OLLAMA_API_KEY", "POOLSIDE_API_KEY"} {
@@ -136,5 +139,40 @@ func TestKimiConfiguration(t *testing.T) {
 	t.Setenv("CALLM_BASE_URL", "http://proxy.invalid/v1")
 	if ResolveBaseURL("kimi", "") != "http://proxy.invalid/v1" || ResolveBaseURL("kimi", "http://explicit.invalid") != "http://explicit.invalid" {
 		t.Fatal("endpoint overrides")
+	}
+}
+
+func TestResolveEndpointRegion(t *testing.T) {
+	for _, tc := range []struct {
+		preset, explicit, flag, envRegion, envBase, want, wantErr string
+	}{
+		{"or", "", "", "", "", "https://openrouter.ai/api/v1", ""},
+		{"or", "", "eu", "", "", "https://eu.openrouter.ai/api/v1", ""},
+		{"or", "", " US ", "", "", "https://us.openrouter.ai/api/v1", ""},
+		{"or", "", "", "eu", "", "https://eu.openrouter.ai/api/v1", ""},
+		{"or", "", "global", "eu", "", "https://openrouter.ai/api/v1", ""},
+		{"or", "", "us", "eu", "", "https://us.openrouter.ai/api/v1", ""},
+		{"or", "http://custom/v1", "global", "eu", "", "http://custom/v1", ""},
+		{"or", "", "", "", "http://env/v1", "http://env/v1", ""},
+		{"pool", "", "", "eu", "", "https://inference.poolside.ai/v1", ""},
+		{"st", "", "eu", "", "", "", "OpenRouter only"},
+		{"st", "", "global", "", "", "", "OpenRouter only"},
+		{"or", "", "europe", "", "", "", "choose eu, us or global"},
+		{"or", "", "", "asia", "", "", "choose eu, us or global"},
+		{"or", "http://custom/v1", "eu", "", "", "", "conflicts with a custom base URL"},
+		{"or", "", "", "eu", "http://env/v1", "", "conflicts with a custom base URL"},
+	} {
+		t.Setenv("OPENROUTER_REGION", tc.envRegion)
+		t.Setenv("CALLM_BASE_URL", tc.envBase)
+		got, err := ResolveEndpoint(tc.preset, tc.explicit, tc.flag)
+		if tc.wantErr != "" {
+			if err == nil || !strings.Contains(err.Error(), tc.wantErr) {
+				t.Fatalf("%+v: got %q, %v", tc, got, err)
+			}
+			continue
+		}
+		if err != nil || got != tc.want {
+			t.Fatalf("%+v: got %q, %v", tc, got, err)
+		}
 	}
 }

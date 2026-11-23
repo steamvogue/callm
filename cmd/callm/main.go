@@ -94,15 +94,19 @@ Provider Presets:
   --ollama                         Ollama Local Gateway
                                    URL: http://localhost:11434/v1 | Model: deepseek-r1
   --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)
+      --region REGION              OpenRouter data region: eu, us or global (OpenRouter only)
+                                   eu: https://eu.openrouter.ai/api/v1 | us: https://us.openrouter.ai/api/v1
 
 Options (chat unless stated otherwise):
-  Provider, URL, key, --user-agent, --timeout and --header-timeout apply to all API commands.
+  Provider, URL, --region, key, --proxy, --user-agent, --timeout and --header-timeout
+  apply to all API commands.
   Flags must precede positional arguments; use COMMAND --help for command-specific help.
 
   -m, --model MODEL                Model ID override
   -k, --key, --api-key KEY         API key value override
       --key-env, --api-key-env ENV Custom environment variable name containing API key
       --user-agent TEXT           HTTP User-Agent override (empty string omits header)
+      --proxy URL                  Proxy: http, https, socks5 or socks5h URL; "direct" uses none
   -s, --system SYSTEM              System prompt instruction
       --system-file FILE           Read system instructions verbatim (conflicts with --system)
       --prompt-file FILE           Read prompt text without a file wrapper
@@ -145,6 +149,7 @@ Environment Variables:
   DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, POOLSIDE_API_KEY, OLLAMA_API_KEY (optional)
   CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
+  OPENROUTER_REGION, CALLM_PROXY
   CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
   CALLM_LOAD_DOTENV
 
@@ -157,6 +162,13 @@ Defaults and precedence:
   max_tokens defaults to 4096 (increased if needed for an implicit thinking cap).
   Key: explicit key > named key-env > CALLM_API_KEY > selected provider key/alias.
   URL/model: explicit flag > CALLM_* > selected provider STRAITLY_*/OPENAI_* > preset.
+  OpenRouter region: --region > OPENROUTER_REGION (with --or or when OpenRouter is the
+  detected provider) > global. A region plus --base-url or CALLM_BASE_URL is an error.
+  Regional hosts need an OpenRouter Business or Enterprise plan; requests fail rather
+  than leave the region, and the Auto Router and hosted web tools are unavailable there.
+  Proxy: --proxy > CALLM_PROXY > HTTPS_PROXY/HTTP_PROXY/NO_PROXY. Both SOCKS5 forms
+  resolve DNS at the proxy. Loopback API hosts connect directly; other requests fail
+  when the proxy is down (no direct fallback).
   Unset variables are filled from .env one directory above the executable, then
   ~/.config/callm/config (legacy ~/.config/straitly/config last). A .env in the
   current directory could redirect API keys, so it loads first only when
@@ -218,6 +230,13 @@ Examples:
 
   # Answer from the live web through Straitly, with sources on stderr and cost:
   callm --st --web-search --strict --stats "Latest stable Go release? Cite the source."
+
+  # Keep an OpenRouter request in Europe (Business or Enterprise plan):
+  callm --or --region eu models
+  callm --or --region eu -m MODEL "Hello"
+
+  # Send the request through a SOCKS5 proxy:
+  callm --proxy socks5h://127.0.0.1:1080 "Hello"
 
   # Attach files and show reasoning + latency/cost stats:
   callm -f schema.sql --reasoning --stats "Generate 3 sample INSERT statements"
@@ -422,6 +441,38 @@ func missingKeyError(preset string) error {
 	return errors.New(message)
 }
 
+// netFlags holds the endpoint region and proxy options shared by every API command.
+type netFlags struct {
+	fs     *flag.FlagSet
+	region string
+	proxy  string
+}
+
+func (n *netFlags) Register(fs *flag.FlagSet) {
+	n.fs = fs
+	fs.StringVar(&n.region, "region", "", "OpenRouter data region: eu, us or global (OPENROUTER_REGION; OpenRouter only)")
+	fs.StringVar(&n.proxy, "proxy", "", "Proxy URL: http, https, socks5 or socks5h (CALLM_PROXY; \"direct\" ignores proxy variables)")
+}
+
+func (n *netFlags) baseURL(preset, explicit string) string {
+	resolved, err := config.ResolveEndpoint(preset, explicit, n.region)
+	if err != nil {
+		die(err)
+	}
+	return resolved
+}
+
+// applyProxy prefers --proxy, even when empty, over CALLM_PROXY.
+func (n *netFlags) applyProxy(c *client.Client) {
+	value := n.proxy
+	if !flagWasSet(n.fs, "proxy") {
+		value = os.Getenv("CALLM_PROXY")
+	}
+	if err := c.SetProxy(value); err != nil {
+		die(err)
+	}
+}
+
 // registerTimeout accepts either seconds or a duration such as "5m" or "500ms".
 func registerTimeout(fs *flag.FlagSet) *time.Duration {
 	return registerDuration(fs, "timeout", client.DefaultTimeout)
@@ -464,6 +515,8 @@ func runModels(ctx context.Context, args []string) {
 	userAgent := registerUserAgent(fs)
 	var pFlags presetFlags
 	pFlags.Register(fs)
+	var nFlags netFlags
+	nFlags.Register(fs)
 	var customAPI, keyFlag, keyEnvFlag string
 	var formatFlag, providerName string
 	var jsonFlag bool
@@ -508,7 +561,7 @@ func runModels(ctx context.Context, args []string) {
 	}
 
 	presetName := pFlags.ResolvePreset()
-	baseURL := config.ResolveBaseURL(presetName, customAPI)
+	baseURL := nFlags.baseURL(presetName, customAPI)
 
 	apiKey, err := config.ResolveAPIKey(presetName, keyFlag, keyEnvFlag)
 	if err != nil {
@@ -520,6 +573,7 @@ func runModels(ctx context.Context, args []string) {
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
 	apiClient.UserAgent = *userAgent
+	nFlags.applyProxy(apiClient)
 	apiClient.HTTPClient.Timeout = *timeout
 	if !flagWasSet(fs, "header-timeout") {
 		*headerTimeout = *timeout
@@ -602,6 +656,8 @@ func runInfo(ctx context.Context, args []string) {
 	userAgent := registerUserAgent(fs)
 	var pFlags presetFlags
 	pFlags.Register(fs)
+	var nFlags netFlags
+	nFlags.Register(fs)
 	var customAPI, keyFlag, keyEnvFlag string
 
 	fs.StringVar(&customAPI, "api", "", "Custom API Base URL")
@@ -624,7 +680,7 @@ func runInfo(ctx context.Context, args []string) {
 	modelID := fs.Args()[0]
 
 	presetName := pFlags.ResolvePreset()
-	baseURL := config.ResolveBaseURL(presetName, customAPI)
+	baseURL := nFlags.baseURL(presetName, customAPI)
 
 	apiKey, err := config.ResolveAPIKey(presetName, keyFlag, keyEnvFlag)
 	if err != nil {
@@ -636,6 +692,7 @@ func runInfo(ctx context.Context, args []string) {
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
 	apiClient.UserAgent = *userAgent
+	nFlags.applyProxy(apiClient)
 	apiClient.HTTPClient.Timeout = *timeout
 	if !flagWasSet(fs, "header-timeout") {
 		*headerTimeout = *timeout
@@ -670,6 +727,8 @@ func runRaw(ctx context.Context, args []string) {
 	var keyFlag, keyEnvFlag, customAPI string
 	var pFlags presetFlags
 	pFlags.Register(fs)
+	var nFlags netFlags
+	nFlags.Register(fs)
 	fs.StringVar(&keyFlag, "k", "", "API key")
 	fs.StringVar(&keyFlag, "key", "", "API key")
 	fs.StringVar(&keyFlag, "api-key", "", "API key")
@@ -726,10 +785,11 @@ func runRaw(ctx context.Context, args []string) {
 	if apiKey == "" {
 		die(missingKeyError(presetName))
 	}
-	baseURL := config.ResolveBaseURL(presetName, customAPI)
+	baseURL := nFlags.baseURL(presetName, customAPI)
 
 	apiClient := client.NewClient(baseURL, apiKey, pFlags.clientProvider(presetName, baseURL, customAPI))
 	apiClient.UserAgent = *userAgent
+	nFlags.applyProxy(apiClient)
 	apiClient.MaxRequestBytes = *maxInput
 	apiClient.HTTPClient.Timeout = *timeout
 	if !flagWasSet(fs, "header-timeout") {
@@ -811,6 +871,8 @@ func runChat(ctx context.Context, args []string) {
 	fs.BoolVar(&versionFlag, "v", false, "Show version")
 	fs.BoolVar(&versionFlag, "version", false, "Show version")
 	pFlags.Register(fs)
+	var nFlags netFlags
+	nFlags.Register(fs)
 
 	fs.StringVar(&customAPI, "api", "", "Custom API base URL")
 	fs.StringVar(&customAPI, "base-url", "", "Custom API base URL")
@@ -967,7 +1029,7 @@ func runChat(ctx context.Context, args []string) {
 	checkSize(0)
 
 	presetName := pFlags.ResolvePreset()
-	baseURL := config.ResolveBaseURL(presetName, customAPI)
+	baseURL := nFlags.baseURL(presetName, customAPI)
 
 	model := config.Presets[presetName].DefaultModel
 	if pFlags.claudeFlag {
@@ -1141,6 +1203,7 @@ func runChat(ctx context.Context, args []string) {
 		die(err)
 	}
 	apiClient.UserAgent = *userAgent
+	nFlags.applyProxy(apiClient)
 	apiClient.MaxRequestBytes = *maxInput
 	apiClient.HTTPClient.Timeout = *timeout
 	if !flagWasSet(fs, "header-timeout") {

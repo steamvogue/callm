@@ -6,7 +6,7 @@ description: Use the fast, standalone `callm` CLI tool to query external LLMs (D
 # callm (call - llm) Agent Skill
 
 `callm` is a fast standalone CLI utility installed at `/usr/local/bin/callm` (and in `$PATH`).
-It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.11.0; check `callm --version` and `callm --help` when using an older installation.
+It connects to OpenAI-compatible gateways and the native Anthropic API, with millisecond startup and real-time streaming. These instructions describe v0.12.0; check `callm --version` and `callm --help` when using an older installation.
 
 Default provider: **Poolside** (`poolside/laguna-s-2.1`). Without a preset flag,
 callm uses the first provider whose key is set, checked in order Poolside,
@@ -205,7 +205,34 @@ Flash); use `-m deepseek-v4-pro` for V4 Pro. DeepSeek retired `deepseek-chat` an
 `--thinking-budget` is rejected. For a non-thinking request, use
 `callm --ds raw /chat/completions` with `"thinking": {"type": "disabled"}` in the body.
 
-### 8. Web search and fetch (Straitly only)
+### 8. OpenRouter data region and proxy
+
+```bash
+# Keep an OpenRouter request in Europe (EU/EEA, UK, Switzerland) or the US:
+callm --or --region eu models            # models available in that region
+callm --or --region eu -m MODEL "Hello"
+
+# Route API requests through a proxy (http, https, socks5, socks5h):
+callm --proxy socks5h://127.0.0.1:1080 "Hello"
+```
+
+- `--region eu|us|global` is for OpenRouter only (`chat`, `models`, `info`, `raw`);
+  `OPENROUTER_REGION` sets the default and `--region global` overrides it. A region
+  with `--base-url` or `CALLM_BASE_URL` is an error, and so is `--region` with
+  another provider.
+- Regional hosts need an OpenRouter Business or Enterprise plan. A model with no
+  endpoint in the region fails; nothing falls back outside it. The Auto Router and
+  OpenRouter's hosted web search, web fetch, files, image generation and Batch API
+  are unavailable there.
+- When the user asks for EU or US data residency, pass `--region` explicitly and do
+  not remove it to work around an error. Report the error.
+- `--proxy` beats `CALLM_PROXY`, which beats `HTTPS_PROXY`/`HTTP_PROXY`/`NO_PROXY`;
+  `--proxy direct` uses none. SOCKS5 resolves DNS at the proxy. A dead proxy fails
+  the request (no direct fallback). Loopback API hosts such as Ollama connect
+  directly. Do not print proxy URLs that contain credentials.
+- A proxy changes the network path, not where the provider processes data.
+
+### 9. Web search and fetch (Straitly only)
 
 > **Paid action: never run these without the user's explicit confirmation.**
 > `--web-search`, `--web-fetch`, and `callm raw` requests with `web_search` or

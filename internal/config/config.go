@@ -236,7 +236,7 @@ func applyEnv(entries []envEntry) {
 // isCallmVariable reports names that select callm credentials, endpoints, or models.
 func isCallmVariable(key string) bool {
 	switch key {
-	case "ZHIPU_API_KEY", "QWEN_API_KEY", "STRAITLY_BASE_URL", "STRAITLY_MODEL", "OPENAI_BASE_URL", "OPENAI_MODEL":
+	case "ZHIPU_API_KEY", "QWEN_API_KEY", "OPENROUTER_REGION", "STRAITLY_BASE_URL", "STRAITLY_MODEL", "OPENAI_BASE_URL", "OPENAI_MODEL":
 		return true
 	}
 	for _, preset := range Presets {
@@ -308,4 +308,36 @@ func ResolveBaseURL(preset, explicit string) string {
 		return os.Getenv("OPENAI_BASE_URL")
 	}
 	return Presets[preset].BaseURL
+}
+
+// openRouterRegions maps an in-region routing name to its base URL. OpenRouter
+// decrypts and routes requests on these hosts inside that region only.
+var openRouterRegions = map[string]string{
+	"eu": "https://eu.openrouter.ai/api/v1",
+	"us": "https://us.openrouter.ai/api/v1",
+}
+
+// ResolveEndpoint is ResolveBaseURL plus OpenRouter's data region: the --region
+// flag, else OPENROUTER_REGION for the OpenRouter preset. A region never yields
+// to another base URL silently; that combination is an error, so a residency
+// setting cannot be bypassed by a stray CALLM_BASE_URL.
+func ResolveEndpoint(preset, explicit, regionFlag string) (string, error) {
+	region := strings.ToLower(strings.TrimSpace(regionFlag))
+	if region != "" && preset != "or" {
+		return "", fmt.Errorf("--region applies to OpenRouter only; select it with --or")
+	}
+	if region == "" && preset == "or" {
+		region = strings.ToLower(strings.TrimSpace(os.Getenv("OPENROUTER_REGION")))
+	}
+	if region == "" || region == "global" {
+		return ResolveBaseURL(preset, explicit), nil
+	}
+	regional, ok := openRouterRegions[region]
+	if !ok {
+		return "", fmt.Errorf("unknown OpenRouter region %q; choose eu, us or global", region)
+	}
+	if explicit != "" || os.Getenv("CALLM_BASE_URL") != "" {
+		return "", fmt.Errorf("OpenRouter region %q conflicts with a custom base URL (--base-url or CALLM_BASE_URL); remove one, or pass --region global", region)
+	}
+	return regional, nil
 }

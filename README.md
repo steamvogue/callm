@@ -41,6 +41,8 @@ See [release changes](CHANGELOG.md) and [agent usage instructions](skills/callm/
   - `--pool`: Poolside (`https://inference.poolside.ai/v1`)
   - `--ollama`: Ollama Local Gateway (`http://localhost:11434/v1`)
   - `--api=URL` / `--base-url=URL`: Custom OpenAI-compatible endpoint (vLLM, SGLang, etc.)
+- **OpenRouter In-Region Routing**: `--or --region eu|us` sends requests to OpenRouter's regional host, which processes them in Europe or the US only.
+- **Proxy Support**: `--proxy` or `CALLM_PROXY` routes API requests through an HTTP, HTTPS, SOCKS5 or SOCKS5h proxy, with no direct fallback.
 - **Real-Time SSE Streaming**: Native streaming with instant token delivery and graceful `Ctrl+C` handling.
 - **Universal Chain-of-Thought (Reasoning)**:
   - Render provider-returned reasoning fields and explicitly opted-in inline thinking tags. Availability depends on the provider and model; OpenAI o-series does not expose private reasoning text.
@@ -140,6 +142,10 @@ for `--st` or `OPENAI_BASE_URL` for `--oa`, then the preset URL. Model precedenc
 `--oa`, then the preset model (or the `--claude` shortcut). The models above are
 CLI defaults; availability is controlled by each provider.
 
+For OpenRouter, `--region` or `OPENROUTER_REGION` selects a regional base URL (see
+[OpenRouter data regions](#openrouter-data-regions)). Proxy precedence is `--proxy`,
+`CALLM_PROXY`, then the standard `HTTPS_PROXY`/`HTTP_PROXY`/`NO_PROXY` variables.
+
 Without a preset flag, the provider is the first in this order whose key variable
 is set — `POOLSIDE_API_KEY`, `ORCA_API_KEY`, `STRAITLY_API_KEY`,
 `DEEPSEEK_API_KEY`, `OPENROUTER_API_KEY`, `KIMI_API_KEY` — otherwise Poolside.
@@ -223,6 +229,76 @@ callm --user-agent "MyApp/1.0" "Hello"
 CALLM_USER_AGENT="MyApp/1.0" callm --orca models
 callm --user-agent "" --orca "Hello"
 ```
+
+### OpenRouter data regions
+
+OpenRouter's in-region routing decrypts and processes prompts and completions inside
+one region. The API key, model IDs and billing stay the same; only the host changes.
+`--region` selects it for the OpenRouter preset:
+
+| `--region` | Base URL | Processing |
+|:---|:---|:---|
+| `global` (default) | `https://openrouter.ai/api/v1` | Global routing |
+| `eu` | `https://eu.openrouter.ai/api/v1` | EU/EEA, UK and Switzerland |
+| `us` | `https://us.openrouter.ai/api/v1` | United States |
+
+```bash
+# Models OpenRouter can serve inside Europe
+callm --or --region eu models
+
+# Chat, with the request kept in Europe
+callm --or --region eu -m MODEL "Hello"
+
+# Make Europe the default for every OpenRouter call (shell or ~/.config/callm/config)
+export OPENROUTER_REGION=eu
+callm --or --region global "This one call uses global routing"
+```
+
+- `--region` works with `chat`, `models`, `info` and `raw`. Precedence is `--region`,
+  then `OPENROUTER_REGION`, then global. `OPENROUTER_REGION` applies only when
+  OpenRouter is the selected provider; `--region` with another provider is an error.
+- A region together with `--base-url` or `CALLM_BASE_URL` is an error. callm never
+  lets another URL replace a regional host silently.
+- Regional hosts need an OpenRouter Business or Enterprise plan. Other accounts get
+  an error from OpenRouter.
+- OpenRouter fails a request when no provider endpoint in the region serves the
+  model; it does not fall back outside the region. `callm --or --region eu models`
+  lists what is available.
+- OpenRouter rejects features there that would process data elsewhere: the Auto
+  Router (`openrouter/auto`), web search, web fetch, files, image generation and the
+  Batch API. Image input with `--image` is not in that list. Sending those features
+  with `callm raw` returns OpenRouter's error.
+- callm only chooses the host. To make a key, member or workspace unable to use any
+  other region, set a data-region guardrail in OpenRouter; requests through another
+  host then get HTTP 403. Account, billing and security records can still be stored
+  in the US. See OpenRouter's
+  [in-region routing guide](https://openrouter.ai/docs/guides/features/in-region-routing).
+
+### Proxy
+
+`--proxy URL` sends API requests through a proxy. `CALLM_PROXY` sets a persistent
+default (also supported in configuration files). Supported schemes are `http`,
+`https`, `socks5` and `socks5h`; credentials go in the URL (`socks5h://user:pass@host:1080`).
+
+```bash
+callm --proxy socks5h://127.0.0.1:1080 "Hello"
+CALLM_PROXY=http://proxy.example:8080 callm --or models
+callm --proxy direct "Ignore CALLM_PROXY and HTTPS_PROXY for this call"
+```
+
+- Precedence is `--proxy`, `CALLM_PROXY`, then `HTTPS_PROXY`/`HTTP_PROXY`/`NO_PROXY`.
+  `--proxy direct` (or `none`) connects without any proxy.
+- Both `socks5` and `socks5h` send the hostname to the proxy, so DNS resolves at the
+  proxy and not on this machine.
+- If the proxy is down or refuses the connection, the request fails. callm does not
+  retry directly.
+- API hosts on loopback (`localhost`, `127.0.0.1`, `::1`), such as Ollama, always
+  connect directly.
+- HTTPS API traffic stays encrypted end to end; the proxy sees only the host name.
+  With an `http://` base URL the proxy can read the request, including the API key.
+- A proxy changes the network path only. It does not change where a provider
+  processes data; for that, use a provider feature such as `--region`.
+- Error messages for an invalid proxy value do not repeat the value.
 
 ### OrcaRouter
 
@@ -439,15 +515,19 @@ Provider Presets:
   --ollama                         Ollama Local Gateway
                                    URL: http://localhost:11434/v1 | Model: deepseek-r1
   --api, --base-url URL            Custom OpenAI-compatible base URL (e.g. vLLM, SGLang)
+      --region REGION              OpenRouter data region: eu, us or global (OpenRouter only)
+                                   eu: https://eu.openrouter.ai/api/v1 | us: https://us.openrouter.ai/api/v1
 
 Options (chat unless stated otherwise):
-  Provider, URL, key, --user-agent, --timeout and --header-timeout apply to all API commands.
+  Provider, URL, --region, key, --proxy, --user-agent, --timeout and --header-timeout
+  apply to all API commands.
   Flags must precede positional arguments; use COMMAND --help for command-specific help.
 
   -m, --model MODEL                Model ID override
   -k, --key, --api-key KEY         API key value override
       --key-env, --api-key-env ENV Custom environment variable name containing API key
       --user-agent TEXT           HTTP User-Agent override (empty string omits header)
+      --proxy URL                  Proxy: http, https, socks5 or socks5h URL; "direct" uses none
   -s, --system SYSTEM              System prompt instruction
       --system-file FILE           Read system instructions verbatim (conflicts with --system)
       --prompt-file FILE           Read prompt text without a file wrapper
@@ -490,6 +570,7 @@ Environment Variables:
   DASHSCOPE_API_KEY (alias QWEN_API_KEY), GROQ_API_KEY, POOLSIDE_API_KEY, OLLAMA_API_KEY (optional)
   CALLM_USER_AGENT
   CALLM_BASE_URL, STRAITLY_BASE_URL, OPENAI_BASE_URL
+  OPENROUTER_REGION, CALLM_PROXY
   CALLM_MODEL, STRAITLY_MODEL, OPENAI_MODEL
   CALLM_LOAD_DOTENV
 
@@ -502,6 +583,13 @@ Defaults and precedence:
   max_tokens defaults to 4096 (increased if needed for an implicit thinking cap).
   Key: explicit key > named key-env > CALLM_API_KEY > selected provider key/alias.
   URL/model: explicit flag > CALLM_* > selected provider STRAITLY_*/OPENAI_* > preset.
+  OpenRouter region: --region > OPENROUTER_REGION (with --or or when OpenRouter is the
+  detected provider) > global. A region plus --base-url or CALLM_BASE_URL is an error.
+  Regional hosts need an OpenRouter Business or Enterprise plan; requests fail rather
+  than leave the region, and the Auto Router and hosted web tools are unavailable there.
+  Proxy: --proxy > CALLM_PROXY > HTTPS_PROXY/HTTP_PROXY/NO_PROXY. Both SOCKS5 forms
+  resolve DNS at the proxy. Loopback API hosts connect directly; other requests fail
+  when the proxy is down (no direct fallback).
   Unset variables are filled from .env one directory above the executable, then
   ~/.config/callm/config (legacy ~/.config/straitly/config last). A .env in the
   current directory could redirect API keys, so it loads first only when
